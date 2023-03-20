@@ -28,7 +28,7 @@ public class SceneTransition : MonoBehaviour
         // Start Animation
         overlay.DOFade(1, transitionTimeInSeconds).SetEase(Ease.InOutQuad);
         
-        // Once done, Scene can be changed
+        // Once faded in, Scene can be changed
         yield return new WaitForSeconds(transitionTimeInSeconds);
         asyncLoad.allowSceneActivation = true;
         

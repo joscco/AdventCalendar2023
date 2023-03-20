@@ -6,19 +6,20 @@ using UnityEngine.Serialization;
 
 public class StartButton : MonoBehaviour
 {
-    [FormerlySerializedAs("_levelLoader")] [SerializeField]
-    private SceneTransition sceneTransition;
+    public SceneTransition sceneTransition;
     public String mainGameSceneName = "GameScene";
-    public float scaleTimeInSeconds = 0.5f;
-    public float maxScale = 1.2f;
+
+    public const float ScaleTimeInSeconds = 0.5f;
+    public const float MaxScale = 1.2f;
+
     private void OnMouseEnter()
     {
-        transform.DOScale(maxScale, scaleTimeInSeconds).SetEase(Ease.OutBack);
+        transform.DOScale(MaxScale, ScaleTimeInSeconds).SetEase(Ease.OutBack);
     }
 
     private void OnMouseExit()
     {
-        transform.DOScale(1f, scaleTimeInSeconds).SetEase(Ease.OutBack);
+        transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
     }
 
     private void OnMouseUp()

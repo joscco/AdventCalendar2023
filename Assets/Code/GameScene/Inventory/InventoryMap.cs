@@ -1,86 +1,95 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace GameScene.Inventory.Scripts
+namespace Code.GameScene.Inventory
 {
     public class InventoryMap
     {
-        private readonly int _maxSlots = 15;
-        private readonly int _maxItemsPerSlot = 99;
-        
-        private readonly Dictionary<InventoryItem, int> _inventoryItems;
+        public const int MaxSlots = 15;
+        public const int MaxItemsPerSlot = 99;
+
+        private readonly Dictionary<InventoryItemType, int> _inventoryMap;
 
         public InventoryMap()
         {
-            _inventoryItems = new Dictionary<InventoryItem, int>();
+            _inventoryMap = new Dictionary<InventoryItemType, int>();
         }
-        
+
         public InventoryMap Copy()
         {
-            var copy = new InventoryMap();
-            foreach (var key in _inventoryItems.Keys)
+            var mapCopy = new InventoryMap();
+            foreach (var key in _inventoryMap.Keys)
             {
-                copy._inventoryItems.Add(key, _inventoryItems[key]);
+                mapCopy._inventoryMap.Add(key, _inventoryMap[key]);
             }
 
-            return copy;
+            return mapCopy;
         }
 
-        public int GetSlotsNeeded()
+        public int GetNumberOfSlots()
         {
-            return GetAsSlots().Count;
+            return GetSlots().Count;
         }
 
-        public List<InventorySlotEntry> GetAsSlots()
+        public List<InventorySlot> GetSlots()
         {
-            List<InventorySlotEntry> result = new List<InventorySlotEntry>();
-            foreach (var key in _inventoryItems.Keys)
+            List<InventorySlot> result = new List<InventorySlot>();
+            List<InventoryItemType> sortedKeys = GetSortedKeys();
+            
+            foreach (var key in sortedKeys)
             {
-                int amount = _inventoryItems[key];
-                while (amount > 0)
+                int rawItemAmount = _inventoryMap[key];
+                while (rawItemAmount > 0)
                 {
-                    result.Add(new InventorySlotEntry(key, Math.Clamp(amount, 0, _maxItemsPerSlot)));
-                    amount -= _maxItemsPerSlot;
+                    result.Add(new InventorySlot(key, Math.Clamp(rawItemAmount, 0, MaxItemsPerSlot)));
+                    rawItemAmount -= MaxItemsPerSlot;
                 }
             }
+
             return result;
         }
-        
-        public int GetItemCount(InventoryItem item)
+
+        private List<InventoryItemType> GetSortedKeys()
         {
-            return _inventoryItems.ContainsKey(item) ? _inventoryItems[item] : 0;
+            return _inventoryMap.Keys.ToList().OrderByDescending(item => (int)item).ToList();
         }
 
-        public void RemoveItems(InventoryItem item, int n)
+        public int GetNumberOfItemsOf(InventoryItemType itemType)
         {
-            if (_inventoryItems.ContainsKey(item))
+            return _inventoryMap.ContainsKey(itemType) ? _inventoryMap[itemType] : 0;
+        }
+
+        public void RemoveItems(InventoryItemType itemType, int amount)
+        {
+            if (_inventoryMap.ContainsKey(itemType))
             {
-                if (_inventoryItems[item] <= n)
+                if (_inventoryMap[itemType] <= amount)
                 {
-                    _inventoryItems.Remove(item);
+                    _inventoryMap.Remove(itemType);
                 }
                 else
                 {
-                    _inventoryItems[item] -= n;
+                    _inventoryMap[itemType] -= amount;
                 }
             }
         }
 
-        public void AddItems(InventoryItem item, int n)
+        public void AddItems(InventoryItemType itemType, int amount)
         {
-            if (_inventoryItems.ContainsKey(item))
+            if (_inventoryMap.ContainsKey(itemType))
             {
-                _inventoryItems[item] += n;
+                _inventoryMap[itemType] += amount;
             }
             else
             {
-                _inventoryItems.Add(item, n);
+                _inventoryMap.Add(itemType, amount);
             }
         }
 
         public int GetMaxNumberOfSlots()
         {
-            return _maxSlots;
+            return MaxSlots;
         }
     }
 }

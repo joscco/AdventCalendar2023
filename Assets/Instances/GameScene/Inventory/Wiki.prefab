@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c248be2e407455eb53eb16bf772e6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GrassSeedSprite: {fileID: 21300000, guid: 4dca657ed55c3424eb0d702346b35478, type: 3}
+  entities:
+  - {fileID: 11400000, guid: 55999258db04f4422a8cecac2fdcc597, type: 2}
+  fieldEntityPrefab: {fileID: 3027591865990093824, guid: ea333fe71de4344e6a007f587f1ca5e7, type: 3}

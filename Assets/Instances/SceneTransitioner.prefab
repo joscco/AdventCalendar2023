@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionTimeInSeconds: 1
-  overlay: {fileID: 0}
+  overlay: {fileID: 6141062607707124173}
 --- !u!1 &4156968194499947103
 GameObject:
   m_ObjectHideFlags: 0

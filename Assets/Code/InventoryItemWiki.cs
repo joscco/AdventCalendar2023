@@ -1,17 +1,23 @@
 using System.Collections.Generic;
+using Code.GameScene.Inventory;
+using Code.GameScene.Items.Item;
 using UnityEngine;
 
-public class InventoryItemWiki: MonoBehaviour
+namespace Code
 {
-    public List<FieldEntity> entities;
-
-    public FieldEntity GetPrefabForItem(InventoryItem item)
+    public class InventoryItemWiki: MonoBehaviour
     {
-        return entities.Find(entity => entity.item == item);
-    }
+        public List<FieldEntityData> entities;
+        public FieldEntityInstance fieldEntityPrefab;
+        
+        public FieldEntityData GetFieldEntityDataForItem(InventoryItemType itemType)
+        {
+            return entities.Find(entity => entity.itemType == itemType);
+        }
     
-    public Sprite GetInventoryIconSpriteForItem(InventoryItem item)
-    {
-        return entities.Find(entity => entity.item == item).inventoryIcon;
+        public Sprite GetInventoryIconSpriteForItem(InventoryItemType itemType)
+        {
+            return entities.Find(entity => entity.itemType == itemType).iconSprite;
+        }
     }
 }
