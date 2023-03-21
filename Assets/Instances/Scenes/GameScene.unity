@@ -168,8 +168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b14c4fa7abbf40028757a3faee51833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Columns: 15
-  Rows: 10
+  Columns: 10
+  Rows: 5
   spotWrapperInstance: {fileID: 295334417}
   _inventoryInstance: {fileID: 1796312326189337145}
 --- !u!114 &295334417

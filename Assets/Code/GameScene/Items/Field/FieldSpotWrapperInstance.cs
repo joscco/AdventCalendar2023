@@ -3,6 +3,7 @@ using Code.GameScene.Inventory;
 using Code.GameScene.Items.Item;
 using DG.Tweening;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 namespace Code.GameScene.Items.Field
 {
@@ -39,6 +40,15 @@ namespace Code.GameScene.Items.Field
                 }
             }
 
+            // var newSequence = DOTween.Sequence();
+            // newSequence
+            //     .AppendInterval(5f)
+            //     .AppendCallback(() => Rotate(true))
+            //     .AppendInterval(5f)
+            //     .AppendCallback(() => Rotate(false))
+            //     .AppendInterval(5f)
+            //     .AppendCallback(() => Rotate(false));
+
             return sequence;
         }
 
@@ -53,11 +63,16 @@ namespace Code.GameScene.Items.Field
         private Sequence BlendOutAllSpots()
         {
             Sequence sequence = DOTween.Sequence();
-            foreach (var fieldSpotRenderer in fieldSpotInstances)
+            int rows = fieldSpotGrid.GetLength(0);
+            int columns = fieldSpotGrid.GetLength(1);
+            for (int row = 0; row < rows; row++)
             {
-                sequence.Insert(0, fieldSpotRenderer.BlendOut());
+                for (int column = 0; column < columns; column++)
+                {
+                    FieldSpotInstance fieldSpotInstance = fieldSpotGrid[row, column];
+                    sequence.Insert(0, fieldSpotInstance.BlendOut().SetDelay(0.5f + (row + column) * 0.05f));
+                }
             }
-
             return sequence;
         }
 
@@ -91,45 +106,38 @@ namespace Code.GameScene.Items.Field
             }
         }
 
-        // // Rotate the whole Field by 90 degrees
-        // public void RotateLeft()
-        // {
-        //     FieldSpot[,] newSpots = new FieldSpot[Columns, Rows];
-        //
-        //     for (int row = 0; row < Rows; row++)
-        //     {
-        //         for (int column = 0; column < Columns; column++)
-        //         {
-        //             newSpots[column, row] = _fieldSpots[row, Columns - column];
-        //         }
-        //     }
-        //
-        //     (Rows, Columns) = (Columns, Rows);
-        //
-        //     _fieldSpots = newSpots;
-        //
-        //     spotWrapperInstance.UpdateFieldGrid(_fieldSpots);
-        // }
-        //
-        // // Rotate the whole Field by -90 degrees
-        // public void RotateRight()
-        // {
-        //     FieldSpot[,] newSpots = new FieldSpot[Columns, Rows];
-        //
-        //     for (int row = 0; row < Rows; row++)
-        //     {
-        //         for (int column = 0; column < Columns; column++)
-        //         {
-        //             newSpots[column, row] = _fieldSpots[Rows - row, column];
-        //         }
-        //     }
-        //
-        //     (Rows, Columns) = (Columns, Rows);
-        //
-        //     _fieldSpots = newSpots;
-        //
-        //     spotWrapperInstance.UpdateFieldGrid(_fieldSpots);
-        // }
+        public Tween Rotate(bool left)
+        {
+            var sequence = DOTween.Sequence();
+
+            int rows = fieldSpotGrid.GetLength(0);
+            int columns = fieldSpotGrid.GetLength(1);
+            
+            int newRows = columns;
+            int newColumns = rows;
+
+            var newSpotGrid = new FieldSpotInstance[newRows, newColumns];
+
+            for (int row = 0; row < rows; row++)
+            {
+                for (int column = 0; column < columns; column++)
+                {
+                    int newRow = left ? (columns - 1 - column) : column;
+                    int newColumn = left ? row : (rows - 1 - row);
+
+                    FieldSpotInstance fieldSpotInstance = fieldSpotGrid[row, column];
+                    
+                    var pos = GetSpotPosition(newRow, newRows, newColumn, newColumns);
+                    sequence.Insert(1f, fieldSpotInstance.DoMoveTo(pos));
+                    fieldSpotInstance.SetRowAndColumn(newRow, newColumn);
+                    newSpotGrid[newRow, newColumn] = fieldSpotInstance;
+                }
+            }
+
+            fieldSpotGrid = newSpotGrid;
+
+            return sequence;
+        }
 
         public bool IsFreeAt(int row, int column)
         {

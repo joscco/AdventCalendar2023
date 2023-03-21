@@ -83,6 +83,7 @@ namespace Code.GameScene.Items.Field
 
         public Tween BlendIn()
         {
+            Debug.Log("Blend in!");
             return transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
         }
 
@@ -115,6 +116,11 @@ namespace Code.GameScene.Items.Field
         public Dictionary<InventoryItemType, int> GetHarvest()
         {
             return fieldEntityInstance.Harvest();
+        }
+
+        public Tween DoMoveTo(Vector3 pos)
+        {
+            return transform.DOMove(pos, 0.3f).SetEase(Ease.InOutBack);
         }
     }
 }
