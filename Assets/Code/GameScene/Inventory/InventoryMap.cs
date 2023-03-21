@@ -52,7 +52,7 @@ namespace Code.GameScene.Inventory
 
         private List<InventoryItemType> GetSortedKeys()
         {
-            return _inventoryMap.Keys.ToList().OrderByDescending(item => (int)item).ToList();
+            return _inventoryMap.Keys.ToList().OrderBy(item => (int)item).ToList();
         }
 
         public int GetNumberOfItemsOf(InventoryItemType itemType)
