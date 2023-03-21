@@ -8,7 +8,6 @@ namespace Code
     public class InventoryItemWiki: MonoBehaviour
     {
         public List<FieldEntityData> entities;
-        public FieldEntityInstance fieldEntityPrefab;
         
         public FieldEntityData GetFieldEntityDataForItem(InventoryItemType itemType)
         {

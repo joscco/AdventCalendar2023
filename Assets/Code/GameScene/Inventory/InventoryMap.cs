@@ -6,7 +6,7 @@ namespace Code.GameScene.Inventory
 {
     public class InventoryMap
     {
-        public const int MaxSlots = 15;
+        public const int MaxSlots = 10;
         public const int MaxItemsPerSlot = 99;
 
         private readonly Dictionary<InventoryItemType, int> _inventoryMap;

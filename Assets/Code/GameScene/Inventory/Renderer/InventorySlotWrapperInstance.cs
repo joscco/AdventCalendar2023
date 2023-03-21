@@ -21,8 +21,6 @@ namespace Code.GameScene.Inventory.Renderer
         private List<InventorySlotInstance> _activeSlotRenderers;
         private List<InventorySlotInstance> _inactiveSlots;
 
-        private InventoryInstance _inventoryInstance;
-        
         private void Start()
         {
             _outlineRenderer = GetComponent<SpriteRenderer>();
@@ -51,13 +49,14 @@ namespace Code.GameScene.Inventory.Renderer
         public void UpdateSlots(List<InventorySlot> newSlotList)
         {
             // Slot Liste folgt immer der gleichen Ordnung -> Vorteil!
+            var tweenSequence = DOTween.Sequence();
             
             var currentActiveSlotRendererIndex = 0;
             var currentSlotInfoIndex = 0;
             
             List<InventorySlotInstance> newActiveSlotRenderers = new List<InventorySlotInstance>();
 
-            while(currentSlotInfoIndex < newSlotList.Count)
+            while (currentSlotInfoIndex < newSlotList.Count)
             {
                 InventorySlotInstance currentActiveSlotInstance = null;
                 if (currentActiveSlotRendererIndex < _activeSlotRenderers.Count)
@@ -70,7 +69,7 @@ namespace Code.GameScene.Inventory.Renderer
                 {
                     // No Active Renderers left. Take a deactivated one
                     currentActiveSlotInstance = PopInactiveSlotRenderer();
-                    currentActiveSlotInstance.UpdateSlot(newSlotInfo);
+                    tweenSequence.Insert(0, currentActiveSlotInstance.UpdateSlot(newSlotInfo));
                     newActiveSlotRenderers.Add(currentActiveSlotInstance);
                     
                     currentActiveSlotRendererIndex++;
@@ -163,11 +162,11 @@ namespace Code.GameScene.Inventory.Renderer
             }
         }
         
-        private void ResizeSlotContainer(int numberOfActiveSlots)
+        private Tween ResizeSlotContainer(int numberOfActiveSlots)
         {
             float newWidth = 50 + numberOfActiveSlots * (SlotWidth + SlotMargin) - SlotMargin;
             Vector2 newSize = new Vector2(Math.Max(MinWidthOutlineContainer, newWidth), _outlineRenderer.size.y);
-            DOTween.To(() => _outlineRenderer.size,
+            return DOTween.To(() => _outlineRenderer.size,
                     (val) => { _outlineRenderer.size = val; },
                     newSize, 
                     0.3f)
@@ -189,7 +188,6 @@ namespace Code.GameScene.Inventory.Renderer
 
         public void SetInventory(InventoryInstance instance)
         {
-            _inventoryInstance = instance;
             foreach (var slotInstance in _slotRenderers)
             {
                 slotInstance.SetInventory(instance);

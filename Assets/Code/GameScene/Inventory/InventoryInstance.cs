@@ -1,5 +1,6 @@
 using Code.GameScene.Inventory.Renderer;
 using Code.GameScene.Items.Item;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Code.GameScene.Inventory
@@ -26,13 +27,11 @@ namespace Code.GameScene.Inventory
 
         public void SelectItemSlot(InventorySlotInstance slot)
         {
-            Debug.Log("All Slots DeSelected");
             InventorySlotInstance previouslySelectedSlot = _selectedSlot;
             DeselectItemSlot();
             
             if (previouslySelectedSlot != slot)
             {
-                Debug.Log("New Slot Selected");
                 slotWrapperInstance.UpsizeSlot(slot);
                 _selectedSlot = slot;
             }
@@ -46,8 +45,15 @@ namespace Code.GameScene.Inventory
 
         private void AddStartItems()
         {
-            AddInventoryItems(InventoryItemType.Grass, 5);
-            slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
+            var sequence = DOTween.Sequence();
+            sequence.AppendInterval(0.5f);
+            sequence.AppendCallback(() =>
+            {
+                AddInventoryItems(InventoryItemType.Grass, 1);
+                AddInventoryItems(InventoryItemType.Tree, 1);
+                slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
+            });
+            sequence.Play();
         }
 
         public void AddInventoryItems(InventoryItemType itemType, int amount)
@@ -64,12 +70,23 @@ namespace Code.GameScene.Inventory
 
         public FieldEntityData GetSelectedItem()
         {
-            if (_selectedSlot != null)
+            if (_selectedSlot == null)
             {
-                return wiki.GetFieldEntityDataForItem(_selectedSlot.GetItemType());
+                return null;
             }
 
-            return null;
+            if (_selectedSlot.GetCount() <= 0)
+            {
+                DeselectItemSlot();
+                return null;
+            }
+            
+            return wiki.GetFieldEntityDataForItem(_selectedSlot.GetItemType());
+        }
+
+        public InventorySlotInstance GetSelectedSlot()
+        {
+            return _selectedSlot;
         }
     }
 }

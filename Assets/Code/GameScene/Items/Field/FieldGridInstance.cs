@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using Code.GameScene.Inventory;
-using Code.GameScene.Items.Item;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 // 2D Field which exists 
 
@@ -32,6 +30,11 @@ namespace Code.GameScene.Items.Field
                 var selectedItemData = _inventoryInstance.GetSelectedItem();
                 spotWrapperInstance.SetUpItemAt(row, column, selectedItemData);
                 _inventoryInstance.RemoveInventoryItems(selectedItemData.itemType, 1);
+
+                if (_inventoryInstance.GetSelectedSlot().GetCount() <= 0)
+                {
+                    _inventoryInstance.SelectItemSlot(null);
+                }
             }
         }
         
@@ -52,7 +55,7 @@ namespace Code.GameScene.Items.Field
         private void BlendInField()
         {
             var sequence = DOTween.Sequence();
-            sequence.AppendInterval(1f);
+            sequence.AppendInterval(0.5f);
             sequence.AppendCallback(() => spotWrapperInstance.BlendInFieldGrid(Rows, Columns));
             sequence.Play();
         }

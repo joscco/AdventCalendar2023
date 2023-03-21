@@ -35,7 +35,7 @@ namespace Code.GameScene.Items.Field
                     fieldSpotInstance.InstantUpdateFieldSpot(null);
                     fieldSpotInstance.SetRowAndColumn(row, column);
                     fieldSpotGrid[row, column] = fieldSpotInstance;
-                    sequence.Insert(0, fieldSpotInstance.BlendIn().SetDelay(0.5f + (columns * row + column) * 0.01f));
+                    sequence.Insert(0, fieldSpotInstance.BlendIn().SetDelay(0.5f + (row + column) * 0.05f));
                 }
             }
 

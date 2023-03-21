@@ -1,23 +1,19 @@
 using DG.Tweening;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Code.GameScene.Inventory.Renderer
 {
     public class InventorySlotInstance : MonoBehaviour
     {
         private InventorySlot _slotInfo;
-        
-        [SerializeField]
-        private TextMeshPro counterText;
-        [SerializeField]
-        private SpriteRenderer itemSpriteRenderer;
-        
+
+        [SerializeField] private TextMeshPro counterText;
+        [SerializeField] private SpriteRenderer itemSpriteRenderer;
+
         private InventoryInstance _inventoryInstance;
         private InventoryItemWiki _wiki;
-        
+
         private bool _shown;
 
         private void Start()
@@ -31,23 +27,29 @@ namespace Code.GameScene.Inventory.Renderer
             _inventoryInstance.SelectItemSlot(this);
         }
 
-        public void UpdateSlot(InventorySlot newSlotInfo)
+        public Tween UpdateSlot(InventorySlot newSlotInfo)
         {
             if (null == newSlotInfo)
             {
-                BlendOutThenErase();
+                return BlendOutThenErase();
             }
             else
             {
+                var oldSlotInfo = _slotInfo;
                 _slotInfo = newSlotInfo;
+                
                 if (_shown)
                 {
-                    WiggleAndUpdate(newSlotInfo);
+                    if (oldSlotInfo == null || newSlotInfo.Amount != oldSlotInfo.Amount ||
+                        newSlotInfo.ItemType != oldSlotInfo.ItemType)
+                    {
+                        return WiggleAndUpdate(newSlotInfo);
+                    }
+
+                    return null;
                 }
-                else
-                {
-                    UpdateThenBlendIn(newSlotInfo);
-                }
+
+                return UpdateThenBlendIn(newSlotInfo);
             }
         }
 
@@ -71,34 +73,46 @@ namespace Code.GameScene.Inventory.Renderer
             return _slotInfo.ItemType;
         }
         
-        private void UpdateThenBlendIn(InventorySlot newSlotInfo)
+        public int GetCount()
+        {
+            return _slotInfo == null ? 0 : _slotInfo.Amount;
+        }
+
+        private Tween UpdateThenBlendIn(InventorySlot newSlotInfo)
         {
             ChangeItemSprite(newSlotInfo.ItemType);
             ChangeNumber(newSlotInfo.Amount);
-            BlendIn();
+            return BlendIn();
         }
-        
-        private void BlendOutThenErase()
+
+        private Tween BlendOutThenErase()
         {
             var sequence = DOTween.Sequence();
             sequence.Append(BlendOut());
             sequence.AppendCallback(() => EraseData());
             sequence.Play();
+
+            return sequence;
         }
 
-        private void WiggleAndUpdate(InventorySlot newSlotInfo)
+        private Tween WiggleAndUpdate(InventorySlot newSlotInfo)
         {
+            float preScale = _inventoryInstance.GetSelectedSlot() == this ? 0.85f : 0.75f;
+            float postScale = _inventoryInstance.GetSelectedSlot() == this ? 1.2f : 1f;
+            
             var sequence = DOTween.Sequence();
-            sequence.Append(transform.DOScale(0.75f, 0.2f)).SetEase(Ease.OutBack);
-            sequence.Append(transform.DOScale(1f, 0.2f)).SetEase(Ease.OutBack);
+            sequence.Append(transform.DOScale(preScale, 0.2f)).SetEase(Ease.OutBack);
+            sequence.Append(transform.DOScale(postScale, 0.2f)).SetEase(Ease.OutBack);
             sequence.AppendCallback(() =>
             {
                 ChangeItemSprite(newSlotInfo.ItemType);
                 ChangeNumber(newSlotInfo.Amount);
             });
             sequence.Play();
+
+            return sequence;
         }
-        
+
         private void ChangeNumber(int newAmount)
         {
             counterText.text = newAmount.ToString();
@@ -109,10 +123,10 @@ namespace Code.GameScene.Inventory.Renderer
             itemSpriteRenderer.sprite = _wiki.GetInventoryIconSpriteForItem(newItemType);
         }
 
-        private void BlendIn()
+        private Tween BlendIn()
         {
             _shown = true;
-            transform.DOScale(1, 0.5f).SetEase(Ease.OutBack);
+            return transform.DOScale(1, 0.5f).SetEase(Ease.OutBack);
         }
 
         private Tween BlendOut()
@@ -120,7 +134,7 @@ namespace Code.GameScene.Inventory.Renderer
             _shown = false;
             return transform.DOScale(0, 0.5f).SetEase(Ease.InBack);
         }
-        
+
         private void EraseData()
         {
             _slotInfo = null;
