@@ -7,16 +7,16 @@ namespace Code
 {
     public class InventoryItemWiki: MonoBehaviour
     {
-        public List<FieldEntityData> entities;
+        public List<PlantData> entities;
         
-        public FieldEntityData GetFieldEntityDataForItem(InventoryItemType itemType)
+        public PlantData GetFieldEntityDataForItem(PlantType itemType)
         {
-            return entities.Find(entity => entity.itemType == itemType);
+            return entities.Find(entity => entity.plantType == itemType);
         }
     
-        public Sprite GetInventoryIconSpriteForItem(InventoryItemType itemType)
+        public Sprite GetInventoryIconSpriteForItem(PlantType itemType)
         {
-            return entities.Find(entity => entity.itemType == itemType).iconSprite;
+            return entities.Find(entity => entity.plantType == itemType).inventoryIconSprite;
         }
     }
 }

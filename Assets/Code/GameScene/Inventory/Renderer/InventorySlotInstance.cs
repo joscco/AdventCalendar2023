@@ -68,7 +68,7 @@ namespace Code.GameScene.Inventory.Renderer
             }
         }
 
-        public InventoryItemType GetItemType()
+        public PlantType GetItemType()
         {
             return _slotInfo.ItemType;
         }
@@ -118,7 +118,7 @@ namespace Code.GameScene.Inventory.Renderer
             counterText.text = newAmount.ToString();
         }
 
-        private void ChangeItemSprite(InventoryItemType newItemType)
+        private void ChangeItemSprite(PlantType newItemType)
         {
             itemSpriteRenderer.sprite = _wiki.GetInventoryIconSpriteForItem(newItemType);
         }

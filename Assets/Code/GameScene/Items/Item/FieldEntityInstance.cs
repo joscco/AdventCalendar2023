@@ -14,20 +14,19 @@ namespace Code.GameScene.Items.Item
 
         private bool _shown;
 
-        private FieldEntityData _entityData;
+        private PlantData _entityData;
 
         private FieldSpotInstance _spot;
 
         private FieldEntityStatus _status;
 
-        private int _growingLevel;
-
         private FieldGridInstance _gridInstance;
 
         public enum FieldEntityStatus
         {
-            Growing,
-            Finished
+            ONE = 1,
+            TWO = 2,
+            THREE = 3
         }
 
         public void SetFieldSpot(FieldSpotInstance spot)
@@ -35,45 +34,45 @@ namespace Code.GameScene.Items.Item
             _spot = spot;
         }
 
-        public InventoryItemType GetItemType()
+        public PlantType GetItemType()
         {
-            return _entityData.itemType;
+            return _entityData.plantType;
         }
 
         public Sprite GetInventoryIconSprite()
         {
-            return _entityData.iconSprite;
+            return _entityData.inventoryIconSprite;
         }
 
-        private void StartEvolution()
+        public void Evolve()
         {
-            StartCoroutine(Evolve());
-        }
-
-        private IEnumerator Evolve()
-        {
-            while (_growingLevel < _entityData.growingSprites.Count - 1)
+            switch (_status)
             {
-                yield return new WaitForSeconds(_entityData.secondsPerGrowingStage);
-                _growingLevel++;
-                InstantUpdateSprite();
+                case FieldEntityStatus.ONE:
+                    _status = FieldEntityStatus.TWO;
+                    break;
+                case FieldEntityStatus.TWO:
+                case FieldEntityStatus.THREE:
+                    _status = FieldEntityStatus.THREE;
+                    break;
+                default:
+                    _status = FieldEntityStatus.ONE;
+                    break;
             }
-
-            yield return new WaitForSeconds(_entityData.secondsPerGrowingStage);
-            _status = FieldEntityStatus.Finished;
             InstantUpdateSprite();
         }
 
         public bool CanHarvest()
         {
-            return _status == FieldEntityStatus.Finished;
+            // Only true for plants!
+            return true;
         }
 
-        public Dictionary<InventoryItemType, int> Harvest()
+        public Dictionary<PlantType, int> Harvest()
         {
-            return new Dictionary<InventoryItemType, int>()
+            return new Dictionary<PlantType, int>()
             {
-                { _entityData.itemType, 10 }
+                { _entityData.plantType, (int) _status}
             };
         }
 
@@ -101,11 +100,10 @@ namespace Code.GameScene.Items.Item
             transform.localScale = Vector3.one;
         }
 
-        public void UpdateFieldEntity(FieldEntityData fieldData)
+        public void UpdateFieldEntity(PlantData fieldData)
         {
             _entityData = fieldData;
-            _status = FieldEntityStatus.Growing;
-            _growingLevel = 0;
+            _status = FieldEntityStatus.ONE;
 
             if (fieldData == null)
             {
@@ -122,26 +120,23 @@ namespace Code.GameScene.Items.Item
                     sequence.Append(transform.DOScale(0.8f, 0.2f).SetEase(Ease.InBack));
                     sequence.AppendCallback(() =>
                     {
-                        spriteRenderer.sprite = GetCurrentSprite(_entityData, _status, _growingLevel);
+                        spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
                     });
                     sequence.Append(transform.DOScale(1f, 0.2f).SetEase(Ease.InBack));
                     sequence.Play();
                 }
                 else
                 {
-                    spriteRenderer.sprite = GetCurrentSprite(_entityData, _status, _growingLevel);
+                    spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
                     BlendIn();
                 }
-
-                StartEvolution();
             }
         }
 
-        public void InstantUpdateFieldEntity(FieldEntityData fieldData)
+        public void InstantUpdateFieldEntity(PlantData fieldData)
         {
             _entityData = fieldData;
-            _status = FieldEntityStatus.Growing;
-            _growingLevel = 0;
+            _status = FieldEntityStatus.ONE;
 
             InstantUpdateSprite();
 
@@ -155,29 +150,32 @@ namespace Code.GameScene.Items.Item
                 {
                     InstantBlendIn();
                 }
-
-                StartEvolution();
             }
         }
 
         private void InstantUpdateSprite()
         {
-            spriteRenderer.sprite = GetCurrentSprite(_entityData, _status, _growingLevel);
+            spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
         }
 
-        private Sprite GetCurrentSprite(FieldEntityData entityData, FieldEntityStatus status, int growingLevel)
+        private Sprite GetCurrentSprite(PlantData entityData, FieldEntityStatus status)
         {
             if (entityData == null)
             {
                 return null;
             }
 
-            if (status == FieldEntityStatus.Finished)
+            if (status == FieldEntityStatus.ONE)
             {
-                return entityData.finishedSprite;
+                return entityData.oneSprite;
             }
-
-            return entityData.growingSprites[growingLevel];
+            else if (status == FieldEntityStatus.TWO)
+            {
+                return entityData.twoSprite;
+            }
+            
+            // _status == FieldEntityStatus.THREE
+            return entityData.threeSprite;
         }
 
         public void SetGrid(FieldGridInstance instance)

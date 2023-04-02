@@ -29,7 +29,7 @@ namespace Code.GameScene.Items.Field
             {
                 var selectedItemData = _inventoryInstance.GetSelectedItem();
                 spotWrapperInstance.SetUpItemAt(row, column, selectedItemData);
-                _inventoryInstance.RemoveInventoryItems(selectedItemData.itemType, 1);
+                _inventoryInstance.RemoveInventoryItems(selectedItemData.plantType, 1);
 
                 if (_inventoryInstance.GetSelectedSlot().GetCount() <= 0)
                 {
@@ -43,7 +43,7 @@ namespace Code.GameScene.Items.Field
             Debug.Log("Field Entity " + row + "/" + column + " was clicked.");
             if (spotWrapperInstance.CanHarvest(row, column))
             {
-                Dictionary<InventoryItemType, int> harvest = spotWrapperInstance.GetHarvest(row, column);
+                Dictionary<PlantType, int> harvest = spotWrapperInstance.GetHarvest(row, column);
                 foreach (var harvestType in harvest.Keys)
                 {
                     _inventoryInstance.AddInventoryItems(harvestType, harvest[harvestType]);

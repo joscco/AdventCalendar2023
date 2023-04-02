@@ -44,33 +44,33 @@ namespace Code.GameScene.Items.Field
             column = newColumn;
         }
 
-        public void UpdateFieldSpot(FieldEntityData data)
+        public void UpdateFieldSpot(PlantData data)
         {
             if (null == data)
             {
                 free = true;
-                fieldSpriteRenderer.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
+                //fieldSpriteRenderer.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
             }
             else
             {
                 free = false;
-                fieldSpriteRenderer.transform.DOScale(0, 0.3f).SetEase(Ease.InBack);
+                //fieldSpriteRenderer.transform.DOScale(0, 0.3f).SetEase(Ease.InBack);
             }
 
             fieldEntityInstance.UpdateFieldEntity(data);
         }
 
-        public void InstantUpdateFieldSpot(FieldEntityData data)
+        public void InstantUpdateFieldSpot(PlantData data)
         {
             if (null == data)
             {
                 free = true;
-                fieldSpriteRenderer.transform.localScale = Vector3.one;
+                //fieldSpriteRenderer.transform.localScale = Vector3.one;
             }
             else
             {
                 free = false;
-                fieldSpriteRenderer.transform.localScale = Vector3.zero;
+                //fieldSpriteRenderer.transform.localScale = Vector3.zero;
             }
 
             fieldEntityInstance.InstantUpdateFieldEntity(data);
@@ -113,7 +113,7 @@ namespace Code.GameScene.Items.Field
             return fieldEntityInstance.CanHarvest();
         }
 
-        public Dictionary<InventoryItemType, int> GetHarvest()
+        public Dictionary<PlantType, int> GetHarvest()
         {
             return fieldEntityInstance.Harvest();
         }

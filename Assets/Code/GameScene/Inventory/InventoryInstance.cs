@@ -49,26 +49,27 @@ namespace Code.GameScene.Inventory
             sequence.AppendInterval(0.5f);
             sequence.AppendCallback(() =>
             {
-                AddInventoryItems(InventoryItemType.Grass, 1);
-                AddInventoryItems(InventoryItemType.Tree, 1);
+                AddInventoryItems(PlantType.Daisies, 1);
+                AddInventoryItems(PlantType.Sunflowers, 1);
+                AddInventoryItems(PlantType.Roses, 1);
                 slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
             });
             sequence.Play();
         }
 
-        public void AddInventoryItems(InventoryItemType itemType, int amount)
+        public void AddInventoryItems(PlantType itemType, int amount)
         {
             _inventoryMap.AddItems(itemType, amount);
             slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
         }
 
-        public void RemoveInventoryItems(InventoryItemType itemType, int amount)
+        public void RemoveInventoryItems(PlantType itemType, int amount)
         {
             _inventoryMap.RemoveItems(itemType, amount);
             slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
         }
 
-        public FieldEntityData GetSelectedItem()
+        public PlantData GetSelectedItem()
         {
             if (_selectedSlot == null)
             {

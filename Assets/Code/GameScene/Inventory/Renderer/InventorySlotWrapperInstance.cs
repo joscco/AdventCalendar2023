@@ -10,9 +10,10 @@ namespace Code.GameScene.Inventory.Renderer
         public InventorySlotInstance slotInstancePrefab;
         private SpriteRenderer _outlineRenderer;
 
-        private const int SlotWidth = 100;
-        private const int SlotMargin = 20;
-        private const int MinWidthOutlineContainer = 100;
+        private const int SlotWidth = 108;
+        private const int SlotMargin = 25;
+        private const int MinWidthOutlineContainer = 0;
+        private const int SideOffsetContainer = 50;
         
         // All Slots, no matter if available or not
         private InventorySlotInstance[] _slotRenderers;
@@ -24,6 +25,7 @@ namespace Code.GameScene.Inventory.Renderer
         private void Start()
         {
             _outlineRenderer = GetComponent<SpriteRenderer>();
+            _outlineRenderer.size = new Vector2(0, _outlineRenderer.size.y);
 
             _slotRenderers = InitSlots(InventoryMap.MaxSlots);
             
@@ -172,7 +174,12 @@ namespace Code.GameScene.Inventory.Renderer
         
         private Tween ResizeSlotContainer(int numberOfActiveSlots)
         {
-            float newWidth = 50 + numberOfActiveSlots * (SlotWidth + SlotMargin) - SlotMargin;
+            float newWidth = 0;
+            if (numberOfActiveSlots > 0)
+            {
+                newWidth = SideOffsetContainer + numberOfActiveSlots * (SlotWidth + SlotMargin) - SlotMargin;
+            }
+            
             Vector2 newSize = new Vector2(Math.Max(MinWidthOutlineContainer, newWidth), _outlineRenderer.size.y);
             return DOTween.To(() => _outlineRenderer.size,
                     (val) => { _outlineRenderer.size = val; },

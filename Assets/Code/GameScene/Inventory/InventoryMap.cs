@@ -9,11 +9,11 @@ namespace Code.GameScene.Inventory
         public const int MaxSlots = 10;
         public const int MaxItemsPerSlot = 99;
 
-        private readonly Dictionary<InventoryItemType, int> _inventoryMap;
+        private readonly Dictionary<PlantType, int> _inventoryMap;
 
         public InventoryMap()
         {
-            _inventoryMap = new Dictionary<InventoryItemType, int>();
+            _inventoryMap = new Dictionary<PlantType, int>();
         }
 
         public InventoryMap Copy()
@@ -35,7 +35,7 @@ namespace Code.GameScene.Inventory
         public List<InventorySlot> GetSlots()
         {
             List<InventorySlot> result = new List<InventorySlot>();
-            List<InventoryItemType> sortedKeys = GetSortedKeys();
+            List<PlantType> sortedKeys = GetSortedKeys();
             
             foreach (var key in sortedKeys)
             {
@@ -50,17 +50,17 @@ namespace Code.GameScene.Inventory
             return result;
         }
 
-        private List<InventoryItemType> GetSortedKeys()
+        private List<PlantType> GetSortedKeys()
         {
             return _inventoryMap.Keys.ToList().OrderBy(item => (int)item).ToList();
         }
 
-        public int GetNumberOfItemsOf(InventoryItemType itemType)
+        public int GetNumberOfItemsOf(PlantType itemType)
         {
             return _inventoryMap.ContainsKey(itemType) ? _inventoryMap[itemType] : 0;
         }
 
-        public void RemoveItems(InventoryItemType itemType, int amount)
+        public void RemoveItems(PlantType itemType, int amount)
         {
             if (_inventoryMap.ContainsKey(itemType))
             {
@@ -75,7 +75,7 @@ namespace Code.GameScene.Inventory
             }
         }
 
-        public void AddItems(InventoryItemType itemType, int amount)
+        public void AddItems(PlantType itemType, int amount)
         {
             if (_inventoryMap.ContainsKey(itemType))
             {

@@ -9,8 +9,8 @@ namespace Code.GameScene.Items.Field
 {
     public class FieldSpotWrapperInstance : MonoBehaviour
     {
-        public const float SpotWidth = 100;
-        public const float SpotHeight = 70;
+        public const float SpotWidth = 120;
+        public const float SpotHeight = 90;
         public const int MaxNumberOfRenderers = 170;
 
         public FieldSpotInstance spotInstancePrefab;
@@ -106,39 +106,6 @@ namespace Code.GameScene.Items.Field
             }
         }
 
-        public Tween Rotate(bool left)
-        {
-            var sequence = DOTween.Sequence();
-
-            int rows = fieldSpotGrid.GetLength(0);
-            int columns = fieldSpotGrid.GetLength(1);
-            
-            int newRows = columns;
-            int newColumns = rows;
-
-            var newSpotGrid = new FieldSpotInstance[newRows, newColumns];
-
-            for (int row = 0; row < rows; row++)
-            {
-                for (int column = 0; column < columns; column++)
-                {
-                    int newRow = left ? (columns - 1 - column) : column;
-                    int newColumn = left ? row : (rows - 1 - row);
-
-                    FieldSpotInstance fieldSpotInstance = fieldSpotGrid[row, column];
-                    
-                    var pos = GetSpotPosition(newRow, newRows, newColumn, newColumns);
-                    sequence.Insert(1f, fieldSpotInstance.DoMoveTo(pos));
-                    fieldSpotInstance.SetRowAndColumn(newRow, newColumn);
-                    newSpotGrid[newRow, newColumn] = fieldSpotInstance;
-                }
-            }
-
-            fieldSpotGrid = newSpotGrid;
-
-            return sequence;
-        }
-
         public bool IsFreeAt(int row, int column)
         {
             if (row < 0 || column < 0 || row >= fieldSpotGrid.GetLength(0) || column >= fieldSpotGrid.GetLength(1))
@@ -149,7 +116,7 @@ namespace Code.GameScene.Items.Field
             return fieldSpotGrid[row, column].IsFree();
         }
 
-        public void SetUpItemAt(int row, int column, FieldEntityData selectedItemData)
+        public void SetUpItemAt(int row, int column, PlantData selectedItemData)
         {
             fieldSpotGrid[row, column].UpdateFieldSpot(selectedItemData);
         }
@@ -159,7 +126,7 @@ namespace Code.GameScene.Items.Field
             return fieldSpotGrid[row, column].CanHarvest();
         }
 
-        public Dictionary<InventoryItemType,int> GetHarvest(int row, int column)
+        public Dictionary<PlantType,int> GetHarvest(int row, int column)
         {
             return fieldSpotGrid[row, column].GetHarvest();
         }
