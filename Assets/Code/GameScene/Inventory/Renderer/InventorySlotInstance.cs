@@ -1,3 +1,5 @@
+using System;
+using Code.GameScene.UI;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -15,10 +17,27 @@ namespace Code.GameScene.Inventory.Renderer
         private InventoryItemWiki _wiki;
 
         private bool _shown;
+        private bool _upSized;
 
         private void Start()
         {
             transform.localScale = Vector3.zero;
+        }
+
+        public void OnMouseEnter()
+        {
+            if (!_upSized)
+            {
+                transform.DOScale(1.1f, 0.3f).SetEase(Ease.OutBack);
+            }
+        }
+
+        public void OnMouseExit()
+        {
+            if (!_upSized)
+            {
+                transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+            }
         }
 
         public void OnMouseUp()
@@ -144,11 +163,13 @@ namespace Code.GameScene.Inventory.Renderer
 
         public Tween SizeUp()
         {
+            _upSized = true;
             return transform.DOScale(1.2f, 0.3f).SetEase(Ease.OutBack);
         }
 
         public Tween SizeDownToNormal()
         {
+            _upSized = false;
             return transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
         }
 

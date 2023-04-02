@@ -1,16 +1,12 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Code
+namespace Code.GameScene.UI
 {
-    public class StartButton : MonoBehaviour
+    public abstract class ScalingButton: MonoBehaviour
     {
-        public String mainGameSceneName = "GameScene";
-
         public const float ScaleTimeInSeconds = 0.5f;
-        public const float MaxScale = 1.2f;
+        public float MaxScale = 1.2f;
 
         private void OnMouseEnter()
         {
@@ -24,7 +20,9 @@ namespace Code
 
         private void OnMouseUp()
         {
-            SceneTransitionManager.get().TransitionTo(mainGameSceneName);
+            OnClick();
         }
+
+        public abstract void OnClick();
     }
 }

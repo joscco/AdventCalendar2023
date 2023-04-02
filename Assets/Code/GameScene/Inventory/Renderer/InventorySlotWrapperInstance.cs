@@ -11,9 +11,9 @@ namespace Code.GameScene.Inventory.Renderer
         private SpriteRenderer _outlineRenderer;
 
         private const int SlotWidth = 108;
-        private const int SlotMargin = 25;
+        private const int SlotMargin = 30;
         private const int MinWidthOutlineContainer = 0;
-        private const int SideOffsetContainer = 50;
+        private const int SideOffsetContainer = 70;
         
         // All Slots, no matter if available or not
         private InventorySlotInstance[] _slotRenderers;
