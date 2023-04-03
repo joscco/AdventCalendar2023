@@ -295,6 +295,55 @@ MeshRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &160914843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 160914844}
+  - component: {fileID: 160914845}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &160914844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160914843}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1117785090}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &160914845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160914843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc00c02ee28314f0bb7910a5a8bdd6e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startMoney: 5
+  startDays: 10
+  actionsPerDay: 1
+  _moneyLabel: {fileID: 1155746580}
+  _actionsLabel: {fileID: 932633436}
 --- !u!1 &226143361
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,10 +422,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b14c4fa7abbf40028757a3faee51833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Columns: 10
-  Rows: 5
+  Columns: 12
+  Rows: 6
   spotWrapperInstance: {fileID: 295334417}
-  _inventoryInstance: {fileID: 1796312326189337145}
 --- !u!114 &295334417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -688,6 +736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fbf16403c4c4d67a0a8d1b8ddb87501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxScale: 1.2
   priceText: {fileID: 1109110882}
 --- !u!1 &525910646
 GameObject:
@@ -888,7 +937,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1062047662}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &578248106
 MonoBehaviour:
@@ -997,8 +1046,9 @@ GameObject:
   m_Component:
   - component: {fileID: 932633434}
   - component: {fileID: 932633435}
+  - component: {fileID: 932633436}
   m_Layer: 0
-  m_Name: Actions
+  m_Name: ActionsLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1074,6 +1124,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &932633436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932633433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa0b5b9216df34cac9eae269a300ce3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  daysLeftText: {fileID: 73073739}
+  dayActionsLeftText: {fileID: 1217311571}
+  actionsPerDayText: {fileID: 1868955354}
 --- !u!1 &1022165293
 GameObject:
   m_ObjectHideFlags: 0
@@ -1154,10 +1219,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8757324543970609555}
   - {fileID: 578248105}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1117785090}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1094077049
 GameObject:
@@ -1284,6 +1348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f818a4a5eb34566ad4d82f0d63c2deb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxScale: 1.2
   priceText: {fileID: 391665003}
 --- !u!1 &1109110880
 GameObject:
@@ -1459,6 +1524,56 @@ MeshRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1117785089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1117785090}
+  - component: {fileID: 1117785091}
+  m_Layer: 0
+  m_Name: Main
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1117785090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117785089}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8757324543970609555}
+  - {fileID: 160914844}
+  - {fileID: 1062047662}
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1117785091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117785089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3819889e42f400e8db714a2f73dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelManager: {fileID: 160914845}
+  inventory: {fileID: 1796312326189337145}
+  plantWiki: {fileID: 8757324543970609556}
 --- !u!1 &1142052190
 GameObject:
   m_ObjectHideFlags: 0
@@ -1553,6 +1668,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1155746578}
   - component: {fileID: 1155746579}
+  - component: {fileID: 1155746580}
   m_Layer: 0
   m_Name: MoneyLabel
   m_TagString: Untagged
@@ -1628,6 +1744,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1155746580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155746577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba7cbc98de6b74b9682dd28e48be7685, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moneyText: {fileID: 1642601618}
 --- !u!1 &1217311569
 GameObject:
   m_ObjectHideFlags: 0
@@ -2822,7 +2951,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotWrapperInstance: {fileID: 578248106}
-  wiki: {fileID: 8757324543970609556}
 --- !u!1 &8212508480432626306
 GameObject:
   m_ObjectHideFlags: 0
@@ -2847,12 +2975,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8212508480432626306}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -406, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1062047662}
+  m_Father: {fileID: 1117785090}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8757324543970609556

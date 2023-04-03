@@ -1,12 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Code.GameScene.Inventory;
-using Code.GameScene.Items.Field;
+using Code.GameScene.Items.Item;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Code.GameScene.Items.Item
+namespace Code.GameScene.Items.Field
 {
     public class FieldEntityInstance : MonoBehaviour
     {
@@ -20,8 +18,6 @@ namespace Code.GameScene.Items.Item
 
         private FieldEntityStatus _status;
 
-        private FieldGridInstance _gridInstance;
-
         public enum FieldEntityStatus
         {
             ONE = 1,
@@ -29,14 +25,14 @@ namespace Code.GameScene.Items.Item
             THREE = 3
         }
 
-        public void SetFieldSpot(FieldSpotInstance spot)
-        {
-            _spot = spot;
-        }
-
         public PlantType GetItemType()
         {
             return _entityData.plantType;
+        }
+
+        public PlantData GetPlantData()
+        {
+            return _entityData;
         }
 
         public Sprite GetInventoryIconSprite()
@@ -52,14 +48,14 @@ namespace Code.GameScene.Items.Item
                     _status = FieldEntityStatus.TWO;
                     break;
                 case FieldEntityStatus.TWO:
-                case FieldEntityStatus.THREE:
                     _status = FieldEntityStatus.THREE;
                     break;
-                default:
+                case FieldEntityStatus.THREE:
                     _status = FieldEntityStatus.ONE;
+                    UpdateFieldEntity(null);
                     break;
             }
-            InstantUpdateSprite();
+            UpdateSprite();
         }
 
         public bool CanHarvest()
@@ -116,14 +112,7 @@ namespace Code.GameScene.Items.Item
             {
                 if (_shown)
                 {
-                    var sequence = DOTween.Sequence();
-                    sequence.Append(transform.DOScale(0.8f, 0.2f).SetEase(Ease.InBack));
-                    sequence.AppendCallback(() =>
-                    {
-                        spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
-                    });
-                    sequence.Append(transform.DOScale(1f, 0.2f).SetEase(Ease.InBack));
-                    sequence.Play();
+                    UpdateSprite();
                 }
                 else
                 {
@@ -158,6 +147,18 @@ namespace Code.GameScene.Items.Item
             spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
         }
 
+        private void UpdateSprite()
+        {
+            var sequence = DOTween.Sequence();
+            sequence.Append(transform.DOScale(0.75f, 0.1f).SetEase(Ease.InOutQuad));
+            sequence.AppendCallback(() =>
+            {
+                spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
+            });
+            sequence.Append(transform.DOScale(1f, 0.1f).SetEase(Ease.InOutQuad));
+            sequence.Play();
+        }
+
         private Sprite GetCurrentSprite(PlantData entityData, FieldEntityStatus status)
         {
             if (entityData == null)
@@ -169,18 +170,14 @@ namespace Code.GameScene.Items.Item
             {
                 return entityData.oneSprite;
             }
-            else if (status == FieldEntityStatus.TWO)
+            
+            if (status == FieldEntityStatus.TWO)
             {
                 return entityData.twoSprite;
             }
             
             // _status == FieldEntityStatus.THREE
             return entityData.threeSprite;
-        }
-
-        public void SetGrid(FieldGridInstance instance)
-        {
-            _gridInstance = instance;
         }
     }
 }

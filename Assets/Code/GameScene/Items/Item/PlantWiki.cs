@@ -5,16 +5,16 @@ using UnityEngine;
 
 namespace Code
 {
-    public class InventoryItemWiki: MonoBehaviour
+    public class PlantWiki: MonoBehaviour
     {
         public List<PlantData> entities;
         
-        public PlantData GetFieldEntityDataForItem(PlantType itemType)
+        public PlantData GetPlantDataForPlant(PlantType itemType)
         {
             return entities.Find(entity => entity.plantType == itemType);
         }
     
-        public Sprite GetInventoryIconSpriteForItem(PlantType itemType)
+        public Sprite GetInventoryIconSpriteForPlant(PlantType itemType)
         {
             return entities.Find(entity => entity.plantType == itemType).inventoryIconSprite;
         }

@@ -208,13 +208,5 @@ namespace Code.GameScene.Inventory.Renderer
                 slotInstance.SetInventory(instance);
             }
         }
-
-        public void SetWiki(InventoryItemWiki wiki)
-        {
-            foreach (var slotInstance in _slotRenderers)
-            {
-                slotInstance.SetWiki(wiki);
-            }
-        }
     }
 }

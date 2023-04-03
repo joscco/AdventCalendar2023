@@ -1,5 +1,3 @@
-using System;
-using Code.GameScene.UI;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -14,7 +12,6 @@ namespace Code.GameScene.Inventory.Renderer
         [SerializeField] private SpriteRenderer itemSpriteRenderer;
 
         private InventoryInstance _inventoryInstance;
-        private InventoryItemWiki _wiki;
 
         private bool _shown;
         private bool _upSized;
@@ -139,7 +136,7 @@ namespace Code.GameScene.Inventory.Renderer
 
         private void ChangeItemSprite(PlantType newItemType)
         {
-            itemSpriteRenderer.sprite = _wiki.GetInventoryIconSpriteForItem(newItemType);
+            itemSpriteRenderer.sprite = Main.Get().plantWiki.GetInventoryIconSpriteForPlant(newItemType);
         }
 
         private Tween BlendIn()
@@ -176,11 +173,6 @@ namespace Code.GameScene.Inventory.Renderer
         public void SetInventory(InventoryInstance instance)
         {
             _inventoryInstance = instance;
-        }
-
-        public void SetWiki(InventoryItemWiki instance)
-        {
-            _wiki = instance;
         }
     }
 }

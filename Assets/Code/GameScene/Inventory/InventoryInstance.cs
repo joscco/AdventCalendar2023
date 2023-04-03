@@ -1,3 +1,4 @@
+using System;
 using Code.GameScene.Inventory.Renderer;
 using Code.GameScene.Items.Item;
 using DG.Tweening;
@@ -10,9 +11,6 @@ namespace Code.GameScene.Inventory
         [SerializeField]
         private InventorySlotWrapperInstance slotWrapperInstance;
 
-        [SerializeField] 
-        private InventoryItemWiki wiki;
-        
         private InventoryMap _inventoryMap;
 
         private InventorySlotInstance _selectedSlot;
@@ -21,7 +19,6 @@ namespace Code.GameScene.Inventory
         {
             _inventoryMap = new InventoryMap();
             slotWrapperInstance.SetInventory(this);
-            slotWrapperInstance.SetWiki(wiki);
             AddStartItems();
         }
 
@@ -50,7 +47,6 @@ namespace Code.GameScene.Inventory
             sequence.AppendCallback(() =>
             {
                 AddInventoryItems(PlantType.Daisies, 1);
-                AddInventoryItems(PlantType.Sunflowers, 1);
                 AddInventoryItems(PlantType.Roses, 1);
                 slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
             });
@@ -82,7 +78,7 @@ namespace Code.GameScene.Inventory
                 return null;
             }
             
-            return wiki.GetFieldEntityDataForItem(_selectedSlot.GetItemType());
+            return Main.Get().plantWiki.GetPlantDataForPlant(_selectedSlot.GetItemType());
         }
 
         public InventorySlotInstance GetSelectedSlot()

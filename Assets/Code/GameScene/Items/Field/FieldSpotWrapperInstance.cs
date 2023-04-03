@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using Code.GameScene.Inventory;
 using Code.GameScene.Items.Item;
 using DG.Tweening;
 using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
 namespace Code.GameScene.Items.Field
 {
@@ -17,6 +17,8 @@ namespace Code.GameScene.Items.Field
 
         public FieldSpotInstance[] fieldSpotInstances;
         public FieldSpotInstance[,] fieldSpotGrid;
+
+        private bool inEvolution;
 
         public Sequence BlendInFieldGrid(int rows, int columns)
         {
@@ -39,15 +41,6 @@ namespace Code.GameScene.Items.Field
                     sequence.Insert(0, fieldSpotInstance.BlendIn().SetDelay(0.5f + (row + column) * 0.05f));
                 }
             }
-
-            // var newSequence = DOTween.Sequence();
-            // newSequence
-            //     .AppendInterval(5f)
-            //     .AppendCallback(() => Rotate(true))
-            //     .AppendInterval(5f)
-            //     .AppendCallback(() => Rotate(false))
-            //     .AppendInterval(5f)
-            //     .AppendCallback(() => Rotate(false));
 
             return sequence;
         }
@@ -73,6 +66,7 @@ namespace Code.GameScene.Items.Field
                     sequence.Insert(0, fieldSpotInstance.BlendOut().SetDelay(0.5f + (row + column) * 0.05f));
                 }
             }
+
             return sequence;
         }
 
@@ -126,9 +120,114 @@ namespace Code.GameScene.Items.Field
             return fieldSpotGrid[row, column].CanHarvest();
         }
 
-        public Dictionary<PlantType,int> GetHarvest(int row, int column)
+        public Dictionary<PlantType, int> GetHarvest(int row, int column)
         {
             return fieldSpotGrid[row, column].GetHarvest();
+        }
+
+        public void EvolveField()
+        {
+            inEvolution = true;
+            var newPlantDataGrid = CalculatePostEvolutionGrid();
+
+            var sequence = DOTween.Sequence();
+            sequence.AppendInterval(0.5f);
+            sequence.AppendCallback(() => UpdateGridOnEvolution(newPlantDataGrid));
+            sequence.AppendCallback(() => { inEvolution = false; });
+        }
+
+        private FieldUpdateData[,] CalculatePostEvolutionGrid()
+        {
+            int gridRows = fieldSpotGrid.GetLength(0);
+            int gridColumns = fieldSpotGrid.GetLength(1);
+            FieldUpdateData[,] newPlantDataGrid = new FieldUpdateData[gridRows, gridColumns];
+
+            for (int row = 0; row < gridRows; row++)
+            {
+                for (int column = 0; column < gridColumns; column++)
+                {
+                    var neighborFieldPositions = GetNeighborPositions(row, column, gridRows, gridColumns);
+                    var neighborTypes = neighborFieldPositions
+                        .Select(pos => fieldSpotGrid[pos.x, pos.y])
+                        .Select(spot => spot.GetPlantData())
+                        .Where(data => data != null).ToList();
+
+                    FieldSpotInstance fieldSpot = fieldSpotGrid[row, column];
+                    if (fieldSpot.IsFree())
+                    {
+                        if (neighborTypes.Count > 0 && neighborTypes.Count < 4)
+                        {
+                            PlantData newData = neighborTypes[Random.Range(0, neighborTypes.Count)];
+                            newPlantDataGrid[row, column] = new FieldUpdateData(newData);
+                        }
+                    }
+                    else
+                    {
+                        if (neighborTypes.Count >= 3)
+                        {
+                            newPlantDataGrid[row, column] = new FieldUpdateData(false, true);
+                        }
+                        else
+                        {
+                            newPlantDataGrid[row, column] = new FieldUpdateData(true, false);
+                        }
+                    }
+                }
+            }
+
+            return newPlantDataGrid;
+        }
+
+        private void UpdateGridOnEvolution(FieldUpdateData[,] newPlantDataGrid)
+        {
+            int gridRows = fieldSpotGrid.GetLength(0);
+            int gridColumns = fieldSpotGrid.GetLength(1);
+
+            for (int row = 0; row < gridRows; row++)
+            {
+                for (int column = 0; column < gridColumns; column++)
+                {
+                    var newData = newPlantDataGrid[row, column];
+                    if (newData != null)
+                    {
+                        if (newData.shouldEvolve)
+                        {
+                            fieldSpotGrid[row, column].Evolve();
+                        }
+                        else if (newData.newPlantData)
+                        {
+                            fieldSpotGrid[row, column].UpdateFieldSpot(newData.newPlantData);
+                        }
+                        else if (newData.shouldDelete)
+                        {
+                            fieldSpotGrid[row, column].UpdateFieldSpot(null);
+                        }
+                    }
+                }
+            }
+        }
+
+        private List<Vector2Int> GetNeighborPositions(int row, int column, int rows, int columns)
+        {
+            List<Vector2Int> result = new List<Vector2Int>()
+            {
+                new(row - 1, column - 1),
+                new(row, column - 1),
+                new(row + 1, column - 1),
+                new(row - 1, column),
+                new(row, column),
+                new(row + 1, column),
+                new(row - 1, column + 1),
+                new(row, column + 1),
+                new(row + 1, column + 1),
+            };
+            return result.Where(pos => pos.x > 0 && pos.x < rows - 1 && pos.y > 0 && pos.y < columns - 1)
+                .ToList();
+        }
+
+        public bool InEvolution()
+        {
+            return inEvolution;
         }
     }
 }

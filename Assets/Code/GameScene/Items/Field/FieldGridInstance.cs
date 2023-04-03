@@ -3,8 +3,6 @@ using Code.GameScene.Inventory;
 using DG.Tweening;
 using UnityEngine;
 
-// 2D Field which exists 
-
 namespace Code.GameScene.Items.Field
 {
     public class FieldGridInstance : MonoBehaviour
@@ -14,41 +12,59 @@ namespace Code.GameScene.Items.Field
 
         public FieldSpotWrapperInstance spotWrapperInstance;
 
-        [SerializeField] private InventoryInstance _inventoryInstance;
-
         private void Start()
         {
             spotWrapperInstance.SetGridInstance(this);
             BlendInField();
         }
 
+        private void SubtractAction()
+        {
+            Main.Get().levelManager.RemoveAction();
+            if (Main.Get().levelManager.NewDayHasStarted())
+            {
+                spotWrapperInstance.EvolveField();
+            }
+        }
+
         public void OnSpotClick(int row, int column)
         {
             Debug.Log("Spot " + row + "/" + column + " was clicked.");
-            if (spotWrapperInstance.IsFreeAt(row, column) && _inventoryInstance.GetSelectedItem() != null)
+            if (Main.Get().levelManager.HasActionsLeft() 
+                && !spotWrapperInstance.InEvolution()
+                && spotWrapperInstance.IsFreeAt(row, column) 
+                && Main.Get().inventory.GetSelectedItem() != null)
             {
-                var selectedItemData = _inventoryInstance.GetSelectedItem();
+                var selectedItemData = Main.Get().inventory.GetSelectedItem();
                 spotWrapperInstance.SetUpItemAt(row, column, selectedItemData);
-                _inventoryInstance.RemoveInventoryItems(selectedItemData.plantType, 1);
+                
+                Main.Get().inventory.RemoveInventoryItems(selectedItemData.plantType, 1);
 
-                if (_inventoryInstance.GetSelectedSlot().GetCount() <= 0)
+                if (Main.Get().inventory.GetSelectedSlot().GetCount() <= 0)
                 {
-                    _inventoryInstance.SelectItemSlot(null);
+                    Main.Get().inventory.SelectItemSlot(null);
                 }
+                
+                SubtractAction();
             }
         }
-        
+
         public void OnFieldEntityClick(int row, int column)
         {
             Debug.Log("Field Entity " + row + "/" + column + " was clicked.");
-            if (spotWrapperInstance.CanHarvest(row, column))
+            if (Main.Get().levelManager.HasActionsLeft() 
+                && !spotWrapperInstance.InEvolution()
+                && spotWrapperInstance.CanHarvest(row, column))
             {
                 Dictionary<PlantType, int> harvest = spotWrapperInstance.GetHarvest(row, column);
                 foreach (var harvestType in harvest.Keys)
                 {
-                    _inventoryInstance.AddInventoryItems(harvestType, harvest[harvestType]);
+                    Main.Get().inventory.AddInventoryItems(harvestType, harvest[harvestType]);
                 }
+
                 spotWrapperInstance.SetUpItemAt(row, column, null);
+                
+                SubtractAction();
             }
         }
 

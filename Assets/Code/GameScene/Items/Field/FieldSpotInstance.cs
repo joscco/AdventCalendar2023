@@ -8,11 +8,11 @@ namespace Code.GameScene.Items.Field
 {
     public class FieldSpotInstance : MonoBehaviour
     {
-        private int row;
-        private int column;
-        private bool free;
+        private int _row;
+        private int _column;
+        
+        private bool _free;
 
-        [SerializeField] private SpriteRenderer fieldSpriteRenderer;
         [SerializeField] private FieldEntityInstance fieldEntityInstance;
 
         private FieldGridInstance _fieldGridInstance;
@@ -20,41 +20,38 @@ namespace Code.GameScene.Items.Field
         private void Start()
         {
             InstantBlendOut();
-            fieldEntityInstance.SetFieldSpot(this);
         }
 
         public void OnMouseUp()
         {
             Debug.Log("Clicked Spot Advance");
-            if (free)
+            if (_free)
             {
                 Debug.Log("Spot Clicked!");
-                _fieldGridInstance.OnSpotClick(row, column);
+                _fieldGridInstance.OnSpotClick(_row, _column);
             }
             else
             {
                 Debug.Log("Field Clicked!");
-                _fieldGridInstance.OnFieldEntityClick(row, column);
+                _fieldGridInstance.OnFieldEntityClick(_row, _column);
             }
         }
 
         public void SetRowAndColumn(int newRow, int newColumn)
         {
-            row = newRow;
-            column = newColumn;
+            _row = newRow;
+            _column = newColumn;
         }
 
         public void UpdateFieldSpot(PlantData data)
         {
             if (null == data)
             {
-                free = true;
-                //fieldSpriteRenderer.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
+                _free = true;
             }
             else
             {
-                free = false;
-                //fieldSpriteRenderer.transform.DOScale(0, 0.3f).SetEase(Ease.InBack);
+                _free = false;
             }
 
             fieldEntityInstance.UpdateFieldEntity(data);
@@ -64,12 +61,12 @@ namespace Code.GameScene.Items.Field
         {
             if (null == data)
             {
-                free = true;
+                _free = true;
                 //fieldSpriteRenderer.transform.localScale = Vector3.one;
             }
             else
             {
-                free = false;
+                _free = false;
                 //fieldSpriteRenderer.transform.localScale = Vector3.zero;
             }
 
@@ -100,12 +97,21 @@ namespace Code.GameScene.Items.Field
         public void SetGridInstance(FieldGridInstance fieldGridInstance)
         {
             _fieldGridInstance = fieldGridInstance;
-            fieldEntityInstance.SetGrid(fieldGridInstance);
         }
 
         public bool IsFree()
         {
-            return free;
+            return _free;
+        }
+        
+        public PlantData GetPlantData()
+        {
+            if (fieldEntityInstance)
+            {
+                return fieldEntityInstance.GetPlantData();
+            }
+
+            return null;
         }
 
         public bool CanHarvest()
@@ -121,6 +127,14 @@ namespace Code.GameScene.Items.Field
         public Tween DoMoveTo(Vector3 pos)
         {
             return transform.DOMove(pos, 0.3f).SetEase(Ease.InOutBack);
+        }
+
+        public void Evolve()
+        {
+            if (fieldEntityInstance)
+            {
+                fieldEntityInstance.Evolve();
+            }
         }
     }
 }
