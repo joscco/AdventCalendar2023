@@ -7,7 +7,6 @@ namespace Code
 {
     public class Game : MonoBehaviour
     {
-        [FormerlySerializedAs("inventoryMono")] [FormerlySerializedAs("inventory")] public InventoryInstance inventoryInstance;
-        
+        public InventoryInstance inventoryInstance;
     }
 }

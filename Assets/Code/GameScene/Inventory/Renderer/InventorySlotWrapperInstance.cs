@@ -10,9 +10,10 @@ namespace Code.GameScene.Inventory.Renderer
         public InventorySlotInstance slotInstancePrefab;
         private SpriteRenderer _outlineRenderer;
 
-        private const int SlotWidth = 100;
-        private const int SlotMargin = 20;
-        private const int MinWidthOutlineContainer = 100;
+        private const int SlotWidth = 108;
+        private const int SlotMargin = 30;
+        private const int MinWidthOutlineContainer = 0;
+        private const int SideOffsetContainer = 70;
         
         // All Slots, no matter if available or not
         private InventorySlotInstance[] _slotRenderers;
@@ -24,6 +25,7 @@ namespace Code.GameScene.Inventory.Renderer
         private void Start()
         {
             _outlineRenderer = GetComponent<SpriteRenderer>();
+            _outlineRenderer.size = new Vector2(0, _outlineRenderer.size.y);
 
             _slotRenderers = InitSlots(InventoryMap.MaxSlots);
             
@@ -53,7 +55,11 @@ namespace Code.GameScene.Inventory.Renderer
             
             var currentActiveSlotRendererIndex = 0;
             var currentSlotInfoIndex = 0;
-            
+
+            const float BLEND_OUT_TIME = 0;
+            const float RESIZE_TIME = 0.3f;
+            const float BLEND_IN_TIME = 0.5f;
+
             List<InventorySlotInstance> newActiveSlotRenderers = new List<InventorySlotInstance>();
 
             while (currentSlotInfoIndex < newSlotList.Count)
@@ -67,9 +73,9 @@ namespace Code.GameScene.Inventory.Renderer
 
                 if (null == currentActiveSlotInstance)
                 {
-                    // No Active Renderers left. Take a deactivated one
+                    // No Active Renderers left. Take a deactivated one. Blend in
                     currentActiveSlotInstance = PopInactiveSlotRenderer();
-                    tweenSequence.Insert(0, currentActiveSlotInstance.UpdateSlot(newSlotInfo));
+                    tweenSequence.Insert(BLEND_IN_TIME, currentActiveSlotInstance.UpdateSlot(newSlotInfo));
                     newActiveSlotRenderers.Add(currentActiveSlotInstance);
                     
                     currentActiveSlotRendererIndex++;
@@ -80,7 +86,7 @@ namespace Code.GameScene.Inventory.Renderer
                     if (currentActiveSlotInstance.GetItemType() == newSlotInfo.ItemType)
                     {
                         // Renderer fits well, use it but update number if necessary
-                        currentActiveSlotInstance.UpdateSlot(newSlotInfo);
+                        tweenSequence.Insert(BLEND_IN_TIME, currentActiveSlotInstance.UpdateSlot(newSlotInfo));
                         newActiveSlotRenderers.Add(currentActiveSlotInstance);
                         
                         currentActiveSlotRendererIndex++;
@@ -90,17 +96,18 @@ namespace Code.GameScene.Inventory.Renderer
                     {
                         // Current Renderer holds old value that is not needed anymore. Deactivate it
                         // Increase only renderer index and try again with same slot info
-                        currentActiveSlotInstance.UpdateSlot(null);
+                        tweenSequence.Insert(BLEND_OUT_TIME, currentActiveSlotInstance.UpdateSlot(null));
                         _inactiveSlots.Add(currentActiveSlotInstance);
                         
                         currentActiveSlotRendererIndex++;
                     }
                     else
                     {
-                        // Current Renderer holds a more advanced value than the slot info. We need a new renderer here
+                        // Current Renderer holds a more advanced value than the new slot info.
+                        // We either need a new renderer
                         // Do not increase the renderer index but continue
                         currentActiveSlotInstance = PopInactiveSlotRenderer();
-                        currentActiveSlotInstance.UpdateSlot(newSlotInfo);
+                        tweenSequence.Insert(BLEND_IN_TIME, currentActiveSlotInstance.UpdateSlot(newSlotInfo));
                         newActiveSlotRenderers.Add(currentActiveSlotInstance);
 
                         currentSlotInfoIndex++;
@@ -113,14 +120,14 @@ namespace Code.GameScene.Inventory.Renderer
             for (int i = currentActiveSlotRendererIndex; i < _activeSlotRenderers.Count; i++)
             {
                 InventorySlotInstance currentActiveSlotInstance = _activeSlotRenderers[i];
-                currentActiveSlotInstance.UpdateSlot(null);
+                tweenSequence.Insert(BLEND_OUT_TIME, currentActiveSlotInstance.UpdateSlot(null));
                 _inactiveSlots.Add(currentActiveSlotInstance);
             }
 
             _activeSlotRenderers = newActiveSlotRenderers;
 
-            ResizeSlotContainer(_activeSlotRenderers.Count);
-            RepositionSlots(_activeSlotRenderers);
+            tweenSequence.Insert(RESIZE_TIME, ResizeSlotContainer(_activeSlotRenderers.Count));
+            tweenSequence.Insert(RESIZE_TIME, RepositionSlots(_activeSlotRenderers));
         }
 
         private InventorySlotInstance PopInactiveSlotRenderer()
@@ -149,22 +156,30 @@ namespace Code.GameScene.Inventory.Renderer
             }
         }
         
-        private void RepositionSlots(List<InventorySlotInstance> activeSlots)
+        private Tween RepositionSlots(List<InventorySlotInstance> activeSlots)
         {
+            var sequence = DOTween.Sequence();
             float offsetLeft = 50 - (activeSlots.Count * (SlotWidth + SlotMargin) - SlotMargin) / 2;
             for (int i = 0; i < _activeSlotRenderers.Count; i++)
             {
                 InventorySlotInstance slotInstance = _activeSlotRenderers[i];
                 float newX = offsetLeft + i * (SlotWidth + SlotMargin);
-                slotInstance.transform
+                sequence.Insert(0, slotInstance.transform
                     .DOMoveX(newX, 0.5f)
-                    .SetEase(Ease.InOutBack);
+                    .SetEase(Ease.InOutBack));
             }
+
+            return sequence;
         }
         
         private Tween ResizeSlotContainer(int numberOfActiveSlots)
         {
-            float newWidth = 50 + numberOfActiveSlots * (SlotWidth + SlotMargin) - SlotMargin;
+            float newWidth = 0;
+            if (numberOfActiveSlots > 0)
+            {
+                newWidth = SideOffsetContainer + numberOfActiveSlots * (SlotWidth + SlotMargin) - SlotMargin;
+            }
+            
             Vector2 newSize = new Vector2(Math.Max(MinWidthOutlineContainer, newWidth), _outlineRenderer.size.y);
             return DOTween.To(() => _outlineRenderer.size,
                     (val) => { _outlineRenderer.size = val; },
@@ -191,14 +206,6 @@ namespace Code.GameScene.Inventory.Renderer
             foreach (var slotInstance in _slotRenderers)
             {
                 slotInstance.SetInventory(instance);
-            }
-        }
-
-        public void SetWiki(InventoryItemWiki wiki)
-        {
-            foreach (var slotInstance in _slotRenderers)
-            {
-                slotInstance.SetWiki(wiki);
             }
         }
     }

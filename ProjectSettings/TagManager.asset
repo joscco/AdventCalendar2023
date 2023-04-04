@@ -44,6 +44,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Top
+  - name: UI_Backgrounds
+    uniqueID: 2087901693
+    locked: 0
+  - name: UI_Decorations
+    uniqueID: 3540381401
+    locked: 0
+  - name: UI_Buttons
     uniqueID: 3970390913
+    locked: 0
+  - name: UI_Button_Decoration
+    uniqueID: 3235656141
     locked: 0

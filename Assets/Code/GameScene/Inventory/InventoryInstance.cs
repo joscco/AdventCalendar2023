@@ -1,3 +1,4 @@
+using System;
 using Code.GameScene.Inventory.Renderer;
 using Code.GameScene.Items.Item;
 using DG.Tweening;
@@ -10,9 +11,6 @@ namespace Code.GameScene.Inventory
         [SerializeField]
         private InventorySlotWrapperInstance slotWrapperInstance;
 
-        [SerializeField] 
-        private InventoryItemWiki wiki;
-        
         private InventoryMap _inventoryMap;
 
         private InventorySlotInstance _selectedSlot;
@@ -21,7 +19,6 @@ namespace Code.GameScene.Inventory
         {
             _inventoryMap = new InventoryMap();
             slotWrapperInstance.SetInventory(this);
-            slotWrapperInstance.SetWiki(wiki);
             AddStartItems();
         }
 
@@ -49,26 +46,26 @@ namespace Code.GameScene.Inventory
             sequence.AppendInterval(0.5f);
             sequence.AppendCallback(() =>
             {
-                AddInventoryItems(InventoryItemType.Grass, 1);
-                AddInventoryItems(InventoryItemType.Tree, 1);
+                AddInventoryItems(PlantType.Daisies, 1);
+                AddInventoryItems(PlantType.Roses, 1);
                 slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
             });
             sequence.Play();
         }
 
-        public void AddInventoryItems(InventoryItemType itemType, int amount)
+        public void AddInventoryItems(PlantType itemType, int amount)
         {
             _inventoryMap.AddItems(itemType, amount);
             slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
         }
 
-        public void RemoveInventoryItems(InventoryItemType itemType, int amount)
+        public void RemoveInventoryItems(PlantType itemType, int amount)
         {
             _inventoryMap.RemoveItems(itemType, amount);
             slotWrapperInstance.UpdateSlots(_inventoryMap.GetSlots());
         }
 
-        public FieldEntityData GetSelectedItem()
+        public PlantData GetSelectedItem()
         {
             if (_selectedSlot == null)
             {
@@ -81,7 +78,7 @@ namespace Code.GameScene.Inventory
                 return null;
             }
             
-            return wiki.GetFieldEntityDataForItem(_selectedSlot.GetItemType());
+            return Main.Get().plantWiki.GetPlantDataForPlant(_selectedSlot.GetItemType());
         }
 
         public InventorySlotInstance GetSelectedSlot()

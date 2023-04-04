@@ -12,13 +12,29 @@ namespace Code.GameScene.Inventory.Renderer
         [SerializeField] private SpriteRenderer itemSpriteRenderer;
 
         private InventoryInstance _inventoryInstance;
-        private InventoryItemWiki _wiki;
 
         private bool _shown;
+        private bool _upSized;
 
         private void Start()
         {
             transform.localScale = Vector3.zero;
+        }
+
+        public void OnMouseEnter()
+        {
+            if (!_upSized)
+            {
+                transform.DOScale(1.1f, 0.3f).SetEase(Ease.OutBack);
+            }
+        }
+
+        public void OnMouseExit()
+        {
+            if (!_upSized)
+            {
+                transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+            }
         }
 
         public void OnMouseUp()
@@ -68,7 +84,7 @@ namespace Code.GameScene.Inventory.Renderer
             }
         }
 
-        public InventoryItemType GetItemType()
+        public PlantType GetItemType()
         {
             return _slotInfo.ItemType;
         }
@@ -118,9 +134,9 @@ namespace Code.GameScene.Inventory.Renderer
             counterText.text = newAmount.ToString();
         }
 
-        private void ChangeItemSprite(InventoryItemType newItemType)
+        private void ChangeItemSprite(PlantType newItemType)
         {
-            itemSpriteRenderer.sprite = _wiki.GetInventoryIconSpriteForItem(newItemType);
+            itemSpriteRenderer.sprite = Main.Get().plantWiki.GetInventoryIconSpriteForPlant(newItemType);
         }
 
         private Tween BlendIn()
@@ -144,22 +160,19 @@ namespace Code.GameScene.Inventory.Renderer
 
         public Tween SizeUp()
         {
+            _upSized = true;
             return transform.DOScale(1.2f, 0.3f).SetEase(Ease.OutBack);
         }
 
         public Tween SizeDownToNormal()
         {
+            _upSized = false;
             return transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
         }
 
         public void SetInventory(InventoryInstance instance)
         {
             _inventoryInstance = instance;
-        }
-
-        public void SetWiki(InventoryItemWiki instance)
-        {
-            _wiki = instance;
         }
     }
 }
