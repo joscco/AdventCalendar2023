@@ -1,3 +1,5 @@
+using Code.GameScene.Items.Item;
+
 namespace Code.GameScene.Inventory
 {
     public class InventorySlot

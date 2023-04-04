@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Code.GameScene.Inventory;
+using Code.GameScene.Items.Item;
 using DG.Tweening;
 using UnityEngine;
 
