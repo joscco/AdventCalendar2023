@@ -7,9 +7,6 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
-# Uncomment this line if you wish to ignore the asset store tools plugin
-# [Aa]ssets/AssetStoreTools*
-
 # Rider
 .idea
 
@@ -50,4 +47,4 @@ sysinfo.txt
 crashlytics-build.properties
 
 # MacOS
-*.DS_Store
+.DS_Store
