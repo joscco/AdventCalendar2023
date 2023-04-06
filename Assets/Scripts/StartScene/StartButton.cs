@@ -8,11 +8,11 @@ namespace Code
 {
     public class StartButton : ScalingButton
     {
-        public String mainGameSceneName = "GameScene";
+        public String levelChooserSceneName = "LevelChooserScene";
         
         public override void OnClick()
         {
-            SceneTransitionManager.get().TransitionTo(mainGameSceneName);
+            SceneTransitionManager.Get().TransitionTo(levelChooserSceneName);
         }
     }
 }

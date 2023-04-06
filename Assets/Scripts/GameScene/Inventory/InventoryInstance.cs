@@ -2,6 +2,7 @@ using System;
 using Code.GameScene.Inventory.Renderer;
 using Code.GameScene.Items.Item;
 using DG.Tweening;
+using GameScene;
 using UnityEngine;
 
 namespace Code.GameScene.Inventory
@@ -78,7 +79,7 @@ namespace Code.GameScene.Inventory
                 return null;
             }
             
-            return Main.Get().plantWiki.GetPlantDataForPlant(_selectedSlot.GetItemType());
+            return Level.Get().plantWiki.GetPlantDataForPlant(_selectedSlot.GetItemType());
         }
 
         public InventorySlotInstance GetSelectedSlot()

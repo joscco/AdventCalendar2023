@@ -9,16 +9,16 @@ namespace Code
 {
     public class SceneTransitionManager : MonoBehaviour
     {
-        public float transitionTimeInSeconds = 1f;
         public CanvasGroup overlay;
+        
+        private float _transitionTimeInSeconds = 1f;
         private string _currentSceneName;
+        private bool _inTransition;
 
         private static SceneTransitionManager _instance;
 
         private void Awake()
         {
-            // If there is an instance, and it's not me, delete myself.
-
             if (_instance != null && _instance != this)
             {
                 Destroy(this);
@@ -29,9 +29,14 @@ namespace Code
             }
         }
 
-        public static SceneTransitionManager get()
+        public static SceneTransitionManager Get()
         {
             return _instance;
+        }
+
+        public bool IsInTransition()
+        {
+            return _inTransition;
         }
 
         private void Start()
@@ -47,15 +52,17 @@ namespace Code
 
         private IEnumerator FadeInStartAndFadeOut(String levelName)
         {
+            _inTransition = true;
+            
             // Start Loading in Background
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
             asyncLoad.allowSceneActivation = false;
 
             // Start Animation
-            overlay.DOFade(1, transitionTimeInSeconds).SetEase(Ease.InOutQuad);
+            overlay.DOFade(1, _transitionTimeInSeconds).SetEase(Ease.InOutQuad);
 
             // Once faded in, Scene can be changed
-            yield return new WaitForSeconds(transitionTimeInSeconds);
+            yield return new WaitForSeconds(_transitionTimeInSeconds);
             if (_currentSceneName != null)
             {
                 SceneManager.UnloadSceneAsync(_currentSceneName);
@@ -70,7 +77,9 @@ namespace Code
             }
 
             // Scene has transitioned, now reverse Animation
-            overlay.DOFade(0, transitionTimeInSeconds).SetEase(Ease.InOutQuad);
+            overlay.DOFade(0, _transitionTimeInSeconds).SetEase(Ease.InOutQuad);
+            
+            _inTransition = false;
         }
     }
 }

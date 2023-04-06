@@ -1,17 +1,20 @@
+using Code;
+using Code.GameScene;
 using Code.GameScene.Inventory;
 using UnityEngine;
 
-namespace Code.GameScene
+namespace GameScene
 {
-    public class Main : MonoBehaviour
+    public class Level : MonoBehaviour
     {
-        private static Main _instance;
+        private static Level _instance;
 
-        public LevelManager levelManager;
+        public LevelData levelData;
         public InventoryInstance inventory;
         public PlantWiki plantWiki;
+        public WinScreen.WinScreen winScreen;
 
-        public static Main Get()
+        public static Level Get()
         {
             return _instance;
         }

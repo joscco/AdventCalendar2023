@@ -1,5 +1,6 @@
 using Code.GameScene.Items.Item;
 using DG.Tweening;
+using GameScene;
 using TMPro;
 using UnityEngine;
 
@@ -137,7 +138,7 @@ namespace Code.GameScene.Inventory.Renderer
 
         private void ChangeItemSprite(PlantType newItemType)
         {
-            itemSpriteRenderer.sprite = Main.Get().plantWiki.GetInventoryIconSpriteForPlant(newItemType);
+            itemSpriteRenderer.sprite = Level.Get().plantWiki.GetInventoryIconSpriteForPlant(newItemType);
         }
 
         private Tween BlendIn()

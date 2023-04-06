@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Code.GameScene.Inventory;
 using Code.GameScene.Items.Item;
 using DG.Tweening;
+using GameScene;
 using UnityEngine;
 
 namespace Code.GameScene.Items.Field
@@ -21,8 +22,8 @@ namespace Code.GameScene.Items.Field
 
         private void SubtractAction()
         {
-            Main.Get().levelManager.RemoveAction();
-            if (Main.Get().levelManager.NewDayHasStarted())
+            Level.Get().levelData.RemoveAction();
+            if (Level.Get().levelData.NewDayHasStarted())
             {
                 spotWrapperInstance.EvolveField();
             }
@@ -31,21 +32,21 @@ namespace Code.GameScene.Items.Field
         public void OnSpotClick(int row, int column)
         {
             Debug.Log("Spot " + row + "/" + column + " was clicked.");
-            if (Main.Get().levelManager.HasActionsLeft() 
+            if (Level.Get().levelData.HasActionsLeft()
                 && !spotWrapperInstance.InEvolution()
-                && spotWrapperInstance.IsFreeAt(row, column) 
-                && Main.Get().inventory.GetSelectedItem() != null)
+                && spotWrapperInstance.IsFreeAt(row, column)
+                && Level.Get().inventory.GetSelectedItem() != null)
             {
-                var selectedItemData = Main.Get().inventory.GetSelectedItem();
+                var selectedItemData = Level.Get().inventory.GetSelectedItem();
                 spotWrapperInstance.SetUpItemAt(row, column, selectedItemData);
-                
-                Main.Get().inventory.RemoveInventoryItems(selectedItemData.plantType, 1);
 
-                if (Main.Get().inventory.GetSelectedSlot().GetCount() <= 0)
+                Level.Get().inventory.RemoveInventoryItems(selectedItemData.plantType, 1);
+
+                if (Level.Get().inventory.GetSelectedSlot().GetCount() <= 0)
                 {
-                    Main.Get().inventory.SelectItemSlot(null);
+                    Level.Get().inventory.SelectItemSlot(null);
                 }
-                
+
                 SubtractAction();
             }
         }
@@ -53,18 +54,18 @@ namespace Code.GameScene.Items.Field
         public void OnFieldEntityClick(int row, int column)
         {
             Debug.Log("Field Entity " + row + "/" + column + " was clicked.");
-            if (Main.Get().levelManager.HasActionsLeft() 
+            if (Level.Get().levelData.HasActionsLeft()
                 && !spotWrapperInstance.InEvolution()
                 && spotWrapperInstance.CanHarvest(row, column))
             {
                 Dictionary<PlantType, int> harvest = spotWrapperInstance.GetHarvest(row, column);
                 foreach (var harvestType in harvest.Keys)
                 {
-                    Main.Get().inventory.AddInventoryItems(harvestType, harvest[harvestType]);
+                    Level.Get().inventory.AddInventoryItems(harvestType, harvest[harvestType]);
                 }
 
                 spotWrapperInstance.SetUpItemAt(row, column, null);
-                
+
                 SubtractAction();
             }
         }

@@ -1,9 +1,10 @@
 using System;
+using GameScene;
 using UnityEngine;
 
 namespace Code.GameScene
 {
-    public class LevelManager : MonoBehaviour
+    public class LevelData : MonoBehaviour
     {
         [SerializeField] private int startMoney = 5;
         [SerializeField] private int startDays = 1;
@@ -67,6 +68,7 @@ namespace Code.GameScene
             }
             else
             {
+                Level.Get().winScreen.BlendIn();
                 timeOver = true;
             }
         
