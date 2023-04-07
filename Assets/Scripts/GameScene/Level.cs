@@ -1,6 +1,5 @@
-using Code;
-using Code.GameScene;
-using Code.GameScene.Inventory;
+using GameScene.Inventory;
+using GameScene.Items.Item;
 using UnityEngine;
 
 namespace GameScene

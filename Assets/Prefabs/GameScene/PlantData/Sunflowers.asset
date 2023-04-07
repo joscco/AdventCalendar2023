@@ -14,6 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plantType: 1
   inventoryIconSprite: {fileID: 21300000, guid: 6aa8e1e4627284c39ba1b7574e8528fc, type: 3}
-  oneSprite: {fileID: 21300000, guid: 8cc007a78fc3a4763b5199d309f689a8, type: 3}
-  twoSprite: {fileID: 21300000, guid: c2f47e2a608da42dc87fb38b5b7e429e, type: 3}
-  threeSprite: {fileID: 21300000, guid: 14b8e5e1fc81449dfa938bc1a50ab822, type: 3}
+  sprite: {fileID: 21300000, guid: 8cc007a78fc3a4763b5199d309f689a8, type: 3}

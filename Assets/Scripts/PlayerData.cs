@@ -1,20 +1,17 @@
-namespace Code
+public class PlayerData
 {
-    public class PlayerData
+    private int _levelUnlocked = 1;
+
+    public void SetLevelUnlocked(int level)
     {
-        private int _levelUnlocked = 1;
-
-        public void SetLevelUnlocked(int level)
+        if (level >= _levelUnlocked)
         {
-            if (level >= _levelUnlocked)
-            {
-                _levelUnlocked = level;
-            }
+            _levelUnlocked = level;
         }
+    }
 
-        public int GetLevelUnlocked()
-        {
-            return _levelUnlocked;
-        }
+    public int GetLevelUnlocked()
+    {
+        return _levelUnlocked;
     }
 }

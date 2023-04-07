@@ -1,32 +1,26 @@
-
-using System;
-using Code.GameScene.Inventory;
+using Code;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Code
+public class Game : MonoBehaviour
 {
-    public class Game : MonoBehaviour
+    public static Game Instance;
+        
+    public PlayerData PlayerData;
+        
+    void Awake()
     {
-        public static Game Instance = null;
-        
-        public PlayerData PlayerData;
-        
-        void Awake()
+        if (Instance != null)
         {
-            if (Instance != null)
-            {
-                Destroy(gameObject);
-            }
-            else {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
+            Destroy(gameObject);
         }
+        else {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
         
-        private void Start()
-        {
-            PlayerData = new PlayerData();
-        }
+    private void Start()
+    {
+        PlayerData = new PlayerData();
     }
 }

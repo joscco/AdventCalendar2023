@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using Code.GameScene.Inventory;
-using Code.GameScene.Items.Item;
 using UnityEngine;
 
-namespace Code
+namespace GameScene.Items.Item
 {
     public class PlantWiki: MonoBehaviour
     {

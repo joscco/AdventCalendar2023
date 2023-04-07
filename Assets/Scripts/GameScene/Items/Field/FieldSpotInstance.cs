@@ -1,16 +1,12 @@
 using System.Collections.Generic;
-using Code.GameScene.Inventory;
-using Code.GameScene.Items.Item;
 using DG.Tweening;
+using GameScene.Items.Item;
 using UnityEngine;
 
-namespace Code.GameScene.Items.Field
+namespace GameScene.Items.Field
 {
     public class FieldSpotInstance : MonoBehaviour
     {
-        private int _row;
-        private int _column;
-        
         private bool _free;
 
         [SerializeField] private FieldEntityInstance fieldEntityInstance;
@@ -22,54 +18,13 @@ namespace Code.GameScene.Items.Field
             InstantBlendOut();
         }
 
-        public void OnMouseUp()
-        {
-            Debug.Log("Clicked Spot Advance");
-            if (_free)
-            {
-                Debug.Log("Spot Clicked!");
-                _fieldGridInstance.OnSpotClick(_row, _column);
-            }
-            else
-            {
-                Debug.Log("Field Clicked!");
-                _fieldGridInstance.OnFieldEntityClick(_row, _column);
-            }
-        }
-
-        public void SetRowAndColumn(int newRow, int newColumn)
-        {
-            _row = newRow;
-            _column = newColumn;
-        }
-
         public void UpdateFieldSpot(PlantData data)
         {
-            if (null == data)
-            {
-                _free = true;
-            }
-            else
-            {
-                _free = false;
-            }
-
             fieldEntityInstance.UpdateFieldEntity(data);
         }
 
         public void InstantUpdateFieldSpot(PlantData data)
         {
-            if (null == data)
-            {
-                _free = true;
-                //fieldSpriteRenderer.transform.localScale = Vector3.one;
-            }
-            else
-            {
-                _free = false;
-                //fieldSpriteRenderer.transform.localScale = Vector3.zero;
-            }
-
             fieldEntityInstance.InstantUpdateFieldEntity(data);
         }
 
@@ -80,7 +35,6 @@ namespace Code.GameScene.Items.Field
 
         public Tween BlendIn()
         {
-            Debug.Log("Blend in!");
             return transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
         }
 
@@ -117,11 +71,6 @@ namespace Code.GameScene.Items.Field
         public bool CanHarvest()
         {
             return fieldEntityInstance.CanHarvest();
-        }
-
-        public Dictionary<PlantType, int> GetHarvest()
-        {
-            return fieldEntityInstance.Harvest();
         }
 
         public Tween DoMoveTo(Vector3 pos)

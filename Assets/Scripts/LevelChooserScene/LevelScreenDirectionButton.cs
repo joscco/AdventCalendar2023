@@ -1,12 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using Code.GameScene.UI;
 using UnityEngine;
 
-public class LevelScreenDirectionButton : ScalingButton
+namespace LevelChooserScene
 {
-    public override void OnClick()
+    public class LevelScreenDirectionButton : ScalingButton
     {
-        Debug.Log("Change Card");
+        public override void OnClick()
+        {
+            Debug.Log("Change Card");
+        }
     }
 }

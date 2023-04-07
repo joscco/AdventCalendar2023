@@ -1,7 +1,6 @@
-using Code.GameScene.Inventory;
 using UnityEngine;
 
-namespace Code.GameScene.Items.Item
+namespace GameScene.Items.Item
 {
     [CreateAssetMenu(fileName = "New ShopCardData", menuName = "CardData")]
     public class ShopCardData : ScriptableObject

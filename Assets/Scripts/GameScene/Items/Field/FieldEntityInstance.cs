@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using Code.GameScene.Inventory;
-using Code.GameScene.Items.Item;
 using DG.Tweening;
+using GameScene.Items.Item;
 using UnityEngine;
 
-namespace Code.GameScene.Items.Field
+namespace GameScene.Items.Field
 {
     public class FieldEntityInstance : MonoBehaviour
     {
@@ -15,15 +13,6 @@ namespace Code.GameScene.Items.Field
         private PlantData _entityData;
 
         private FieldSpotInstance _spot;
-
-        private FieldEntityStatus _status;
-
-        public enum FieldEntityStatus
-        {
-            ONE = 1,
-            TWO = 2,
-            THREE = 3
-        }
 
         public PlantType GetItemType()
         {
@@ -42,19 +31,6 @@ namespace Code.GameScene.Items.Field
 
         public void Evolve()
         {
-            switch (_status)
-            {
-                case FieldEntityStatus.ONE:
-                    _status = FieldEntityStatus.TWO;
-                    break;
-                case FieldEntityStatus.TWO:
-                    _status = FieldEntityStatus.THREE;
-                    break;
-                case FieldEntityStatus.THREE:
-                    _status = FieldEntityStatus.ONE;
-                    UpdateFieldEntity(null);
-                    break;
-            }
             UpdateSprite();
         }
 
@@ -64,42 +40,38 @@ namespace Code.GameScene.Items.Field
             return true;
         }
 
-        public Dictionary<PlantType, int> Harvest()
-        {
-            return new Dictionary<PlantType, int>()
-            {
-                { _entityData.plantType, (int) _status}
-            };
-        }
-
         public Tween BlendOut()
         {
+            Debug.Log("Blending out entity");
             _shown = false;
             return transform.DOScale(0, 0.3f).SetEase(Ease.InBack);
         }
 
         public Tween BlendIn()
         {
+            Debug.Log("Blending in entity");
             _shown = true;
             return transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
         }
 
         public void InstantBlendOut()
         {
+            Debug.Log("Instant Blending out entity");
             _shown = false;
             transform.localScale = Vector3.zero;
         }
 
         public void InstantBlendIn()
         {
+            Debug.Log("Instant Blending in entity");
             _shown = true;
             transform.localScale = Vector3.one;
         }
 
         public void UpdateFieldEntity(PlantData fieldData)
         {
+            Debug.Log("Updating with data");
             _entityData = fieldData;
-            _status = FieldEntityStatus.ONE;
 
             if (fieldData == null)
             {
@@ -116,7 +88,8 @@ namespace Code.GameScene.Items.Field
                 }
                 else
                 {
-                    spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
+                    Debug.Log("Blend in");
+                    spriteRenderer.sprite = GetCurrentSprite(_entityData);
                     BlendIn();
                 }
             }
@@ -125,7 +98,6 @@ namespace Code.GameScene.Items.Field
         public void InstantUpdateFieldEntity(PlantData fieldData)
         {
             _entityData = fieldData;
-            _status = FieldEntityStatus.ONE;
 
             InstantUpdateSprite();
 
@@ -144,7 +116,7 @@ namespace Code.GameScene.Items.Field
 
         private void InstantUpdateSprite()
         {
-            spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
+            spriteRenderer.sprite = GetCurrentSprite(_entityData);
         }
 
         private void UpdateSprite()
@@ -153,31 +125,21 @@ namespace Code.GameScene.Items.Field
             sequence.Append(transform.DOScale(0.75f, 0.1f).SetEase(Ease.InOutQuad));
             sequence.AppendCallback(() =>
             {
-                spriteRenderer.sprite = GetCurrentSprite(_entityData, _status);
+                spriteRenderer.sprite = GetCurrentSprite(_entityData);
             });
             sequence.Append(transform.DOScale(1f, 0.1f).SetEase(Ease.InOutQuad));
             sequence.Play();
         }
 
-        private Sprite GetCurrentSprite(PlantData entityData, FieldEntityStatus status)
+        private Sprite GetCurrentSprite(PlantData entityData)
         {
             if (entityData == null)
             {
                 return null;
             }
-
-            if (status == FieldEntityStatus.ONE)
-            {
-                return entityData.oneSprite;
-            }
-            
-            if (status == FieldEntityStatus.TWO)
-            {
-                return entityData.twoSprite;
-            }
             
             // _status == FieldEntityStatus.THREE
-            return entityData.threeSprite;
+            return entityData.sprite;
         }
     }
 }

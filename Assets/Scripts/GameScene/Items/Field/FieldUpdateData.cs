@@ -1,5 +1,5 @@
 using System.Reflection.Emit;
-using Code.GameScene.Items.Item;
+using GameScene.Items.Item;
 
 namespace Code.GameScene.Items.Field
 {

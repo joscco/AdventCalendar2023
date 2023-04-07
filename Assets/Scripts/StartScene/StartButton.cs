@@ -1,10 +1,8 @@
 using System;
+using Code;
 using Code.GameScene.UI;
-using DG.Tweening;
-using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Code
+namespace StartScene
 {
     public class StartButton : ScalingButton
     {

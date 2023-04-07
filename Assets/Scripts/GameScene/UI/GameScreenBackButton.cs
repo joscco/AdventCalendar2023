@@ -1,16 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using Code;
 using Code.GameScene.UI;
-using UnityEngine;
 
-public class GameScreenBackButton : ScalingButton
+namespace GameScene.UI
 {
-    public override void OnClick()
+    public class GameScreenBackButton : ScalingButton
     {
-        if (!SceneTransitionManager.Get().IsInTransition())
+        public override void OnClick()
         {
-            SceneTransitionManager.Get().TransitionTo("LevelChooserScene");
+            if (!SceneTransitionManager.Get().IsInTransition())
+            {
+                SceneTransitionManager.Get().TransitionTo("LevelChooserScene");
+            }
         }
     }
 }

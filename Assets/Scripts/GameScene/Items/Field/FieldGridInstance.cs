@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using Code.GameScene.Inventory;
-using Code.GameScene.Items.Item;
 using DG.Tweening;
-using GameScene;
+using GameScene.Items.Item;
 using UnityEngine;
 
-namespace Code.GameScene.Items.Field
+namespace GameScene.Items.Field
 {
     public class FieldGridInstance : MonoBehaviour
     {
@@ -13,6 +11,7 @@ namespace Code.GameScene.Items.Field
         public int Rows = 10;
 
         public FieldSpotWrapperInstance spotWrapperInstance;
+        public List<PlantType> randomTypes;
 
         private void Start()
         {
@@ -23,50 +22,28 @@ namespace Code.GameScene.Items.Field
         private void SubtractAction()
         {
             Level.Get().levelData.RemoveAction();
-            if (Level.Get().levelData.NewDayHasStarted())
-            {
-                spotWrapperInstance.EvolveField();
-            }
         }
 
-        public void OnSpotClick(int row, int column)
+        public void OnRectangleSelect(int fromRow, int toRow, int fromColumn, int toColumn)
         {
-            Debug.Log("Spot " + row + "/" + column + " was clicked.");
-            if (Level.Get().levelData.HasActionsLeft()
-                && !spotWrapperInstance.InEvolution()
-                && spotWrapperInstance.IsFreeAt(row, column)
-                && Level.Get().inventory.GetSelectedItem() != null)
+            for (int row = fromRow; row <= toRow; row++)
             {
-                var selectedItemData = Level.Get().inventory.GetSelectedItem();
+                for (int column = fromColumn; column <= toColumn; column++)
+                {
+                    OnSpotSelect(row, column);
+                }
+            }
+
+            SubtractAction();
+        }
+
+        private void OnSpotSelect(int row, int column)
+        {
+            if (Level.Get().levelData.HasActionsLeft() && !spotWrapperInstance.InEvolution())
+            {
+                var type = randomTypes[Random.Range(0, randomTypes.Count)];
+                var selectedItemData = Level.Get().plantWiki.GetPlantDataForPlant(type);
                 spotWrapperInstance.SetUpItemAt(row, column, selectedItemData);
-
-                Level.Get().inventory.RemoveInventoryItems(selectedItemData.plantType, 1);
-
-                if (Level.Get().inventory.GetSelectedSlot().GetCount() <= 0)
-                {
-                    Level.Get().inventory.SelectItemSlot(null);
-                }
-
-                SubtractAction();
-            }
-        }
-
-        public void OnFieldEntityClick(int row, int column)
-        {
-            Debug.Log("Field Entity " + row + "/" + column + " was clicked.");
-            if (Level.Get().levelData.HasActionsLeft()
-                && !spotWrapperInstance.InEvolution()
-                && spotWrapperInstance.CanHarvest(row, column))
-            {
-                Dictionary<PlantType, int> harvest = spotWrapperInstance.GetHarvest(row, column);
-                foreach (var harvestType in harvest.Keys)
-                {
-                    Level.Get().inventory.AddInventoryItems(harvestType, harvest[harvestType]);
-                }
-
-                spotWrapperInstance.SetUpItemAt(row, column, null);
-
-                SubtractAction();
             }
         }
 
@@ -76,6 +53,56 @@ namespace Code.GameScene.Items.Field
             sequence.AppendInterval(0.5f);
             sequence.AppendCallback(() => spotWrapperInstance.BlendInFieldGrid(Rows, Columns));
             sequence.Play();
+        }
+
+        public Vector2 GetPixelSize()
+        {
+            return new Vector2(
+                Columns * FieldSpotWrapperInstance.SpotWidth,
+                Rows * FieldSpotWrapperInstance.SpotHeight
+            );
+        }
+
+        public Vector2 GetBottomLeftPoint()
+        {
+            return -GetPixelSize() / 2;
+        }
+
+        public RectangleSelectorGridSelection GetGridSelectionResult(
+            Vector2 bottomLeftPosition,
+            Vector2 topRightPosition)
+        {
+            
+            // Für dimensionen <= 2 scheint dies ein Problem zu sein -> Debuggen
+            Vector2 bottomLeftDiff = bottomLeftPosition - GetBottomLeftPoint();
+            Vector2 topRightDiff = topRightPosition - GetBottomLeftPoint();
+
+            var result = new RectangleSelectorGridSelection();
+            int startIndexX = (int)(bottomLeftDiff.x / FieldSpotWrapperInstance.SpotWidth);
+            int startIndexY = (int)(bottomLeftDiff.y / FieldSpotWrapperInstance.SpotHeight);
+            int endIndexX = (int)(topRightDiff.x / FieldSpotWrapperInstance.SpotWidth);
+            int endIndexY = (int)(topRightDiff.y / FieldSpotWrapperInstance.SpotHeight);
+
+            Vector2 leftBottom = GetBottomLeftPoint()
+                                 + startIndexX * Vector2.right * FieldSpotWrapperInstance.SpotWidth
+                                 + startIndexY * Vector2.up * FieldSpotWrapperInstance.SpotHeight;
+            Vector2 topRight = GetBottomLeftPoint()
+                               + (endIndexX + 1) * Vector2.right * FieldSpotWrapperInstance.SpotWidth
+                               + (endIndexY + 1) * Vector2.up * FieldSpotWrapperInstance.SpotHeight;
+
+            result.bottomLeftIndex = new Vector2Int(startIndexX, startIndexY);
+            result.topRightIndex = new Vector2Int(endIndexX, endIndexY);
+            result.leftBottomPosition = leftBottom;
+            result.rightTopPosition = topRight;
+            return result;
+        }
+
+        public class RectangleSelectorGridSelection
+        {
+            public Vector2Int bottomLeftIndex;
+            public Vector2Int topRightIndex;
+            public Vector2 leftBottomPosition;
+            public Vector2 rightTopPosition;
         }
     }
 }

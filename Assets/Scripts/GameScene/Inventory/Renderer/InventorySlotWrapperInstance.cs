@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Code.GameScene.Inventory.Renderer
+namespace GameScene.Inventory.Renderer
 {
     public class InventorySlotWrapperInstance : MonoBehaviour
     {

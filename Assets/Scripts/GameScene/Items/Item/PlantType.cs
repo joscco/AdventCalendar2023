@@ -1,4 +1,4 @@
-namespace Code.GameScene.Items.Item
+namespace GameScene.Items.Item
 {
     public enum PlantType
     {

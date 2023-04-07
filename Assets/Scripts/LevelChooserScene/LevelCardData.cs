@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Code.LevelChooserScene
+namespace LevelChooserScene
 {
     [CreateAssetMenu(fileName = "New LevelCardData", menuName = "LevelCardData")]
     public class LevelCardData : ScriptableObject

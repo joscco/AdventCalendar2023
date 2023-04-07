@@ -1,11 +1,9 @@
-using System;
-using Code.GameScene.Inventory.Renderer;
-using Code.GameScene.Items.Item;
 using DG.Tweening;
-using GameScene;
+using GameScene.Inventory.Renderer;
+using GameScene.Items.Item;
 using UnityEngine;
 
-namespace Code.GameScene.Inventory
+namespace GameScene.Inventory
 {
     public class InventoryInstance : MonoBehaviour
     {

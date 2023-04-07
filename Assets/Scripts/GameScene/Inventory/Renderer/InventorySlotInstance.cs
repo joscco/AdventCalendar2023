@@ -1,10 +1,9 @@
-using Code.GameScene.Items.Item;
 using DG.Tweening;
-using GameScene;
+using GameScene.Items.Item;
 using TMPro;
 using UnityEngine;
 
-namespace Code.GameScene.Inventory.Renderer
+namespace GameScene.Inventory.Renderer
 {
     public class InventorySlotInstance : MonoBehaviour
     {
