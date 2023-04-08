@@ -26,11 +26,16 @@ namespace GameScene.Items.Field
 
         public void OnRectangleSelect(int fromRow, int toRow, int fromColumn, int toColumn)
         {
+            var sequence = DOTween.Sequence();
             for (int row = fromRow; row <= toRow; row++)
             {
                 for (int column = fromColumn; column <= toColumn; column++)
                 {
-                    OnSpotSelect(row, column);
+                    float delay = 0.1f * ((row - fromRow) + (column - fromColumn));
+                    int curRow = row;
+                    int curCol = column;
+                    sequence.InsertCallback(delay, () => OnSpotSelect(curRow, curCol));
+
                 }
             }
 
