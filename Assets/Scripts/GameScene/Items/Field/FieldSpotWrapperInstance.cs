@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using GameScene.Items.Item;
 using UnityEngine;
@@ -6,38 +7,48 @@ namespace GameScene.Items.Field
 {
     public class FieldSpotWrapperInstance : MonoBehaviour
     {
-        public const float SpotWidth = 120;
-        public const float SpotHeight = 90;
 
-        public FieldSpotInstance spotInstancePrefab;
+        public FieldSpot spotPrefab;
 
-        public FieldSpotInstance[] fieldSpotInstances;
-        public FieldSpotInstance[,] fieldSpotGrid;
-
-        private bool inEvolution;
+        public FieldSpot[] fieldSpotInstances;
+        public FieldSpot[,] fieldSpotGrid;
 
         public Sequence BlendInFieldGrid(int rows, int columns)
         {
             InstantBlendOutAllSpots();
 
-            fieldSpotGrid = new FieldSpotInstance[rows, columns];
+            fieldSpotGrid = new FieldSpot[rows, columns];
 
             var sequence = DOTween.Sequence();
             for (int row = 0; row < rows; row++)
             {
                 for (int column = 0; column < columns; column++)
                 {
-                    FieldSpotInstance fieldSpotInstance = fieldSpotInstances[columns * row + column];
+                    FieldSpot fieldSpot = fieldSpotInstances[columns * row + column];
 
                     var pos = GetSpotPosition(row, rows, column, columns);
-                    fieldSpotInstance.transform.position = pos;
-                    fieldSpotInstance.InstantUpdateFieldSpot(null);
-                    fieldSpotGrid[row, column] = fieldSpotInstance;
-                    sequence.Insert(0, fieldSpotInstance.BlendIn().SetDelay(0.5f + (row + column) * 0.05f));
+                    fieldSpot.transform.position = pos;
+                    fieldSpot.InstantUpdateFieldEntity(null);
+                    fieldSpotGrid[row, column] = fieldSpot;
+                    sequence.Insert(0, fieldSpot.BlendIn(0.5f + (row + column) * 0.05f));
                 }
             }
 
             return sequence;
+        }
+        
+        public void BlendInRandomItems(int rows, int columns, List<ItemData> randomData)
+        {
+            for (int row = 0; row < rows; row++)
+            {
+                for (int column = 0; column < columns; column++)
+                {
+                    FieldSpot fieldSpot = fieldSpotGrid[row, column];
+                    ItemData data = randomData[Random.Range(0, randomData.Count)];
+                    fieldSpot.UpdateFieldEntity(data, 0.5f + (row + column) * 0.05f);
+                }
+            }
+
         }
 
         private void InstantBlendOutAllSpots()
@@ -57,8 +68,8 @@ namespace GameScene.Items.Field
             {
                 for (int column = 0; column < columns; column++)
                 {
-                    FieldSpotInstance fieldSpotInstance = fieldSpotGrid[row, column];
-                    sequence.Insert(0, fieldSpotInstance.BlendOut().SetDelay(0.5f + (row + column) * 0.05f));
+                    FieldSpot fieldSpot = fieldSpotGrid[row, column];
+                    sequence.Insert(0, fieldSpot.BlendOut().SetDelay(0.5f + (row + column) * 0.05f));
                 }
             }
 
@@ -68,19 +79,19 @@ namespace GameScene.Items.Field
         private Vector3 GetSpotPosition(int row, int rows, int column, int columns)
         {
             Vector3 currentPosition = transform.position;
-            float positionY = currentPosition.y + row * SpotHeight;
-            float offsetY = -(SpotHeight * (rows - 1)) / 2;
-            float positionX = currentPosition.x + column * SpotWidth;
-            float offsetX = -(SpotWidth * (columns - 1)) / 2;
+            float positionY = currentPosition.y + row * FieldSpot.SpotHeight;
+            float offsetY = -(FieldSpot.SpotHeight * (rows - 1)) / 2;
+            float positionX = currentPosition.x + column * FieldSpot.SpotWidth;
+            float offsetX = -(FieldSpot.SpotWidth * (columns - 1)) / 2;
             return new Vector3(positionX + offsetX, positionY + offsetY, row);
         }
 
-        private FieldSpotInstance[] InitFieldSpotInstances(int numberOfRenderers)
+        private FieldSpot[] InitFieldSpotInstances(int numberOfRenderers)
         {
-            FieldSpotInstance[] result = new FieldSpotInstance[numberOfRenderers];
+            FieldSpot[] result = new FieldSpot[numberOfRenderers];
             for (int i = 0; i < numberOfRenderers; i++)
             {
-                result[i] = Instantiate(spotInstancePrefab, transform);
+                result[i] = Instantiate(spotPrefab, transform);
             }
 
             return result;
@@ -88,36 +99,17 @@ namespace GameScene.Items.Field
 
         public void SetGridInstance(FieldGridInstance fieldGridInstance)
         {
-            fieldSpotInstances = InitFieldSpotInstances(fieldGridInstance.Rows * fieldGridInstance.Columns);
-            foreach (var fieldSpotInstance in fieldSpotInstances)
-            {
-                fieldSpotInstance.SetGridInstance(fieldGridInstance);
-            }
+            fieldSpotInstances = InitFieldSpotInstances(fieldGridInstance.rows * fieldGridInstance.columns);
         }
 
-        public bool IsFreeAt(int row, int column)
+        public void SetUpItemAt(int row, int column, ItemData selectedItemData, float animationDelay)
         {
-            if (row < 0 || column < 0 || row >= fieldSpotGrid.GetLength(0) || column >= fieldSpotGrid.GetLength(1))
-            {
-                return false;
-            }
-
-            return fieldSpotGrid[row, column].IsFree();
-        }
-
-        public void SetUpItemAt(int row, int column, PlantData selectedItemData)
-        {
-            fieldSpotGrid[row, column].UpdateFieldSpot(selectedItemData);
+            fieldSpotGrid[row, column].UpdateFieldEntity(selectedItemData, animationDelay);
         }
 
         public bool CanHarvest(int row, int column)
         {
             return fieldSpotGrid[row, column].CanHarvest();
-        }
-
-        public bool InEvolution()
-        {
-            return inEvolution;
         }
     }
 }

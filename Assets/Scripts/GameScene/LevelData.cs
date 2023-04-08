@@ -1,3 +1,7 @@
+using System;
+using System.Linq;
+using GameScene.Items.Field;
+using GameScene.Items.Item;
 using GameScene.UI;
 using UnityEngine;
 
@@ -7,20 +11,43 @@ namespace GameScene
     {
         [SerializeField] private int startActions = 5;
         [SerializeField] private ActionsLabel actionsLabel;
+        [SerializeField] private ProgressBar progressBar;
+
+        private Func<FieldGridInstance, float> _percentageCalculator;
         private int _actionsLeft;
+        private float _percentageAchieved;
+        private float _percentageNeeded;
 
         private void Start()
         {
             _actionsLeft = startActions;
-        
             actionsLabel.SetActionsLeft(_actionsLeft);
-        }
-        
-        public void RemoveAction()
-        {
-            if (_actionsLeft >= 1)
+            progressBar.InstantSetPercentFinished(0);
+            
+            // Just for now
+            _percentageNeeded = 0.8f;
+            _percentageCalculator = grid =>
             {
-                RemoveActionAndUpdate();
+                var fieldSpots = grid.spotWrapperInstance.fieldSpotInstances;
+                return fieldSpots.Where(spot => spot.GetPlantData())
+                    .Select(data => data.GetPlantData().itemType)
+                    .Where(type => type == ItemType.Roses)
+                    .Count() * 1f / fieldSpots.Length ;
+            };
+
+            progressBar.SetStar(0.5f);
+            progressBar.SetStar(0.65f);
+            progressBar.SetStar(_percentageNeeded);
+        }
+
+        public void RecalculatePercentage(FieldGridInstance grid)
+        {
+            _percentageAchieved = _percentageCalculator.Invoke(grid);
+            progressBar.SetPercentFinished(_percentageAchieved);
+
+            if (_percentageAchieved >= _percentageNeeded)
+            {
+                Level.Get().winScreen.BlendIn();
             }
         }
 
@@ -29,15 +56,18 @@ namespace GameScene
             return _actionsLeft > 0;
         }
 
-        private void RemoveActionAndUpdate()
+        public void RemoveAction()
         {
-            if (_actionsLeft == 1)
+            if (_actionsLeft >= 1)
             {
-                Level.Get().winScreen.BlendIn();
+                if (_actionsLeft == 1)
+                {
+                    Level.Get().winScreen.BlendIn();
+                }
+
+                _actionsLeft--;
+                actionsLabel.SetActionsLeft(_actionsLeft);
             }
-            
-            _actionsLeft--;
-            actionsLabel.SetActionsLeft(_actionsLeft);
         }
     }
 }

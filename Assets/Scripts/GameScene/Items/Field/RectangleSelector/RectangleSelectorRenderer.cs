@@ -11,8 +11,8 @@ namespace GameScene.Items.Field.RectangleSelector
         [SerializeField] private Sprite activeGoodSelectionSprite;
         [SerializeField] private Sprite activeBadSelectionSprite;
         
-        private Vector2 currentBottomLeft;
-        private Vector2 currentTopRight;
+        private Vector2 _currentBottomLeft;
+        private Vector2 _currentTopRight;
 
         private enum RectangleSelectorState
         {
@@ -86,15 +86,14 @@ namespace GameScene.Items.Field.RectangleSelector
             }
 
 
-            if (bottomLeft != currentBottomLeft || topRight != currentTopRight)
+            if (bottomLeft != _currentBottomLeft || topRight != _currentTopRight)
             {
                 spriteRenderer.transform.DOMove(bottomLeft, 0.1f).SetEase(Ease.InOutQuad);
                 DoSize(topRight - bottomLeft, 0.1f);
                 
-                currentBottomLeft = bottomLeft;
-                currentTopRight = topRight;
+                _currentBottomLeft = bottomLeft;
+                _currentTopRight = topRight;
             }
-
         }
 
         private void DoSize(Vector2 newSize, float duration)

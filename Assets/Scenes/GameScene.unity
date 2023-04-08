@@ -339,8 +339,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc00c02ee28314f0bb7910a5a8bdd6e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startActions: 6
+  startActions: 15
   actionsLabel: {fileID: 932633436}
+  progressBar: {fileID: 2113730697}
 --- !u!1 &295334414
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,10 +388,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b14c4fa7abbf40028757a3faee51833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Columns: 4
-  Rows: 5
+  columns: 15
+  rows: 7
   spotWrapperInstance: {fileID: 295334417}
-  randomTypes: 000000000100000002000000
+  randomTypes: 020000000100000000000000
 --- !u!114 &295334417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -403,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a1da7d4caf64bfb8d2af990c109e3bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spotInstancePrefab: {fileID: 133259007731176576, guid: d92f815594601414d950d2d366590246, type: 3}
+  spotPrefab: {fileID: 133259007731176576, guid: d92f815594601414d950d2d366590246, type: 3}
   fieldSpotInstances: []
 --- !u!1 &525910646
 GameObject:
@@ -5315,9 +5316,9 @@ GameObject:
   m_Component:
   - component: {fileID: 578248105}
   - component: {fileID: 578248107}
-  - component: {fileID: 578248106}
+  - component: {fileID: 578248108}
   m_Layer: 0
-  m_Name: InventorySlotWrapper
+  m_Name: SamplingItemsWrapper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5338,19 +5339,6 @@ Transform:
   m_Father: {fileID: 1062047662}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &578248106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 578248104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c063090fa2842d2bb7b017f3847c5f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotInstancePrefab: {fileID: 8254797429847209638, guid: 103c665fe1b9144b8a2678be02254fea, type: 3}
 --- !u!212 &578248107
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5403,6 +5391,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &578248108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578248104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059787c08cee9409abea7d69c3c7c6d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slotPrefab: {fileID: 8254797429847209638, guid: 103c665fe1b9144b8a2678be02254fea, type: 3}
 --- !u!1 &932633433
 GameObject:
   m_ObjectHideFlags: 0
@@ -5513,12 +5514,12 @@ GameObject:
   - component: {fileID: 1062047662}
   - component: {fileID: 1796312326189337145}
   m_Layer: 0
-  m_Name: Inventory
+  m_Name: Sampling
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1062047662
 Transform:
   m_ObjectHideFlags: 0
@@ -5584,8 +5585,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelData: {fileID: 160914845}
-  inventory: {fileID: 1796312326189337145}
-  plantWiki: {fileID: 8757324543970609556}
+  sampleTypes: {fileID: 1796312326189337145}
+  itemWiki: {fileID: 8757324543970609556}
   winScreen: {fileID: 1633249617}
 --- !u!1 &1142052190
 GameObject:
@@ -6326,14 +6327,14 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -754585895
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: acff0589991914cdfa178de0f06b8895, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 1
+  m_DrawMode: 2
   m_Size: {x: 246, y: 186}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
@@ -6366,6 +6367,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1799260058}
   - component: {fileID: 1799260059}
+  - component: {fileID: 1799260060}
+  - component: {fileID: 1799260061}
   m_Layer: 0
   m_Name: NextButton
   m_TagString: Untagged
@@ -6440,6 +6443,45 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &1799260060
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799260057}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 266, y: 136}
+    newSize: {x: 266, y: 136}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 266, y: 136}
+  m_EdgeRadius: 0
+--- !u!114 &1799260061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799260057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49be38630b8d4889828b5df68ddbbbd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxScale: 1.2
 --- !u!1 &1838488155
 GameObject:
   m_ObjectHideFlags: 0
@@ -6609,6 +6651,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2071708404}
   - component: {fileID: 2071708405}
+  - component: {fileID: 2071708406}
+  - component: {fileID: 2071708407}
   m_Layer: 0
   m_Name: LevelsButton
   m_TagString: Untagged
@@ -6683,6 +6727,45 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &2071708406
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071708403}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 266, y: 136}
+    newSize: {x: 266, y: 136}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 266, y: 136}
+  m_EdgeRadius: 0
+--- !u!114 &2071708407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071708403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d43a7f37de24a1ca5e2dbd4cc07d187, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxScale: 1.2
 --- !u!1 &2113730695
 GameObject:
   m_ObjectHideFlags: 0
@@ -6730,6 +6813,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fillBar: {fileID: 1242924626}
+  starPrefab: {fileID: 4062011681899616457, guid: a77213779f265459b96d82b18eaf135d, type: 3}
 --- !u!1 &2143776261
 GameObject:
   m_ObjectHideFlags: 0
@@ -6777,7 +6861,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6647def4a6e584f41a620f757e1d8c3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotWrapperInstance: {fileID: 578248106}
+  slotWrapper: {fileID: 578248108}
 --- !u!1 &8212508480432626306
 GameObject:
   m_ObjectHideFlags: 0
@@ -6789,7 +6873,7 @@ GameObject:
   - component: {fileID: 8757324543970609555}
   - component: {fileID: 8757324543970609556}
   m_Layer: 0
-  m_Name: IconWiki
+  m_Name: ItemWiki
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

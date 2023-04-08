@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d63a76d261349b9aa44213c0b108761, type: 3}
   m_Name: Roses
   m_EditorClassIdentifier: 
-  plantType: 2
-  inventoryIconSprite: {fileID: 21300000, guid: 706bb3ca853f343108d2ad40a2b3ecc9, type: 3}
+  itemType: 2
+  samplesIconSprite: {fileID: 21300000, guid: a1b97095830a8455cbb0f06b9327db9a, type: 3}
   sprite: {fileID: 21300000, guid: f0f136578f469404287d2af65aac55f0, type: 3}

@@ -4914,10 +4914,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9061789563856333772}
-  - component: {fileID: 1698671657711652089}
   - component: {fileID: 2137051214490149726}
   m_Layer: 0
-  m_Name: FieldInstance
+  m_Name: ItemRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4938,19 +4937,6 @@ Transform:
   m_Father: {fileID: 6832139941729436037}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1698671657711652089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4469949898130736390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b09fb8726484c16a3af63a3477094bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 2137051214490149726}
 --- !u!212 &2137051214490149726
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5013,7 +4999,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6832139941729436037}
   - component: {fileID: 133259007731176576}
-  - component: {fileID: 8506085916957803920}
   m_Layer: 0
   m_Name: FieldSpotPrefab
   m_TagString: Untagged
@@ -5051,30 +5036,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d4890c30f7a483fa4d730ffdadf1f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldEntityInstance: {fileID: 1698671657711652089}
---- !u!61 &8506085916957803920
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6832139941729436036}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.023231506, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 102.68237, y: 72.98355}
-  m_EdgeRadius: 0
+  itemSpriteHolder: {fileID: 4469949898130736390}
+  itemSpriteRenderer: {fileID: 2137051214490149726}

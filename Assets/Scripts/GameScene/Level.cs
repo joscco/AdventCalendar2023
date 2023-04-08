@@ -1,6 +1,7 @@
 using GameScene.Inventory;
 using GameScene.Items.Item;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameScene
 {
@@ -9,8 +10,8 @@ namespace GameScene
         private static Level _instance;
 
         public LevelData levelData;
-        public InventoryInstance inventory;
-        public PlantWiki plantWiki;
+        public SampleList sampleTypes;
+        [FormerlySerializedAs("plantWiki")] public ItemWiki itemWiki;
         public WinScreen.WinScreen winScreen;
 
         public static Level Get()

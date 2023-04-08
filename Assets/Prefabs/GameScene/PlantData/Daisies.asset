@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d63a76d261349b9aa44213c0b108761, type: 3}
   m_Name: Daisies
   m_EditorClassIdentifier: 
-  plantType: 0
-  inventoryIconSprite: {fileID: 21300000, guid: c97ee40b1a7bd4330b4cdeda7d571997, type: 3}
+  itemType: 0
+  samplesIconSprite: {fileID: 21300000, guid: 21d40577a59864e3c864287b9b169b64, type: 3}
   sprite: {fileID: 21300000, guid: 7e54fbd46aa7246b68805abedf726a53, type: 3}

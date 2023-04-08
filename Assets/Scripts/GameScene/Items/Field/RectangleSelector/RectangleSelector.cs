@@ -12,8 +12,8 @@ namespace GameScene.Items.Field.RectangleSelector
         [SerializeField] private BoxCollider2D boxCollider;
         [SerializeField] private RectangleSelectorRenderer selectionBoxRenderer;
 
-        private bool _dragging;
-        private bool _showingSelection;
+        private bool _isDragging;
+        private bool _isInsideField;
 
         private Vector2 _startSelectionMousePos;
 
@@ -32,26 +32,51 @@ namespace GameScene.Items.Field.RectangleSelector
 
         private void OnMouseEnter()
         {
-            if (!_dragging)
-            {
-                _showingSelection = true;
-                UpdateSelectionRenderer();
-            }
+            _isInsideField = true;
+            UpdateRawBox(GetMousePos());
+            UpdateSelectionRenderer();
         }
 
         private void OnMouseExit()
         {
-            if (!_dragging)
-            {
-                _showingSelection = false;
-                UpdateSelectionRenderer();
-            }
+            _isInsideField = false;
+            UpdateRawBox(GetMousePos());
+            UpdateSelectionRenderer();
         }
 
         private void OnMouseDown()
         {
-            _dragging = true;
+            _isDragging = true;
             _startSelectionMousePos = GetMousePos();
+            UpdateRawBox(GetMousePos());
+            UpdateSelectionRenderer();
+        }
+
+        private void OnMouseUp()
+        {
+            if ((_isInsideField || _isDragging) && _gridResult != null)
+            {
+                Vector2Int bottomLeft = _gridResult.BottomLeftIndex;
+                Vector2Int topRight = _gridResult.TopRightIndex;
+
+                gridInstance.OnRectangleSelect(bottomLeft, topRight);
+            }
+
+            _isDragging = false;
+            UpdateRawBox(GetMousePos());
+            UpdateSelectionRenderer();
+        }
+
+        private void OnMouseDrag()
+        {
+            UpdateRawBox(GetMousePos());
+            UpdateSelectionRenderer();
+        }
+
+        private void OnMouseOver()
+        {
+            UpdateRawBox(GetMousePos());
+            UpdateSelectionRenderer();
         }
 
         private Vector2 GetMousePos()
@@ -68,37 +93,9 @@ namespace GameScene.Items.Field.RectangleSelector
             return Vector2.zero;
         }
 
-        private void OnMouseUp()
-        {
-            UpdateRawBox(GetMousePos());
-            UpdateSelectionRenderer();
-
-            if (_showingSelection && _gridResult != null)
-            {
-                Vector2Int bottomLeft = _gridResult.bottomLeftIndex;
-                Vector2Int topRight = _gridResult.topRightIndex;
-                gridInstance.OnRectangleSelect(
-                    bottomLeft.y,
-                    topRight.y,
-                    bottomLeft.x,
-                    topRight.x
-                );
-            }
-
-            _rawDownLeftOfSelectionBox = GetMousePos();
-            _rawTopRightSelectionBox = GetMousePos();
-            _dragging = false;
-        }
-
-        private void OnMouseOver()
-        {
-            UpdateRawBox(GetMousePos());
-            UpdateSelectionRenderer();
-        }
-
         private void UpdateRawBox(Vector2 currentMousePos)
         {
-            if (_dragging)
+            if (_isDragging)
             {
                 float minX = Math.Min(currentMousePos.x, _startSelectionMousePos.x);
                 float minY = Math.Min(currentMousePos.y, _startSelectionMousePos.y);
@@ -113,33 +110,37 @@ namespace GameScene.Items.Field.RectangleSelector
                 _rawDownLeftOfSelectionBox = currentMousePos;
                 _rawTopRightSelectionBox = currentMousePos;
             }
+
+            _gridResult = gridInstance.GetGridSelectionResult(
+                _rawDownLeftOfSelectionBox,
+                _rawTopRightSelectionBox
+            );
         }
 
         private void UpdateSelectionRenderer()
         {
-            _gridResult = gridInstance.GetGridSelectionResult(_rawDownLeftOfSelectionBox, _rawTopRightSelectionBox);
             if (selectionBoxRenderer != null)
             {
-                if (_showingSelection)
+                if (_isDragging)
                 {
-                    if (_dragging)
+                    selectionBoxRenderer.ShowActiveEnabledAt(
+                        _gridResult.BottomLeftPosition,
+                        _gridResult.TopRightPosition
+                    );
+                }
+                else
+                {
+                    if (_isInsideField)
                     {
-                        selectionBoxRenderer.ShowActiveEnabledAt(
-                            _gridResult.leftBottomPosition,
-                            _gridResult.rightTopPosition
+                        selectionBoxRenderer.ShowInactiveAt(
+                            _gridResult.BottomLeftPosition,
+                            _gridResult.TopRightPosition
                         );
                     }
                     else
                     {
-                        selectionBoxRenderer.ShowInactiveAt(
-                            _gridResult.leftBottomPosition,
-                            _gridResult.rightTopPosition
-                        );
+                        selectionBoxRenderer.BlendOut();
                     }
-                }
-                else
-                {
-                    selectionBoxRenderer.BlendOut();
                 }
             }
         }
