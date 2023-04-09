@@ -13,6 +13,7 @@ namespace GameScene
         public SampleList sampleTypes;
         public ItemWiki itemWiki;
         public WinScreen.WinScreen winScreen;
+        public LevelInputManager inputManager;
 
         public static Level Get()
         {
