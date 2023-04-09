@@ -11,8 +11,9 @@ namespace GameScene
 
         public LevelData levelData;
         public SampleList sampleTypes;
-        [FormerlySerializedAs("plantWiki")] public ItemWiki itemWiki;
+        public ItemWiki itemWiki;
         public WinScreen.WinScreen winScreen;
+        public LevelInputManager inputManager;
 
         public static Level Get()
         {

@@ -75,8 +75,11 @@ namespace GameScene.Items.Field.RectangleSelector
 
         private void OnMouseOver()
         {
-            UpdateRawBox(GetMousePos());
-            UpdateSelectionRenderer();
+            if (!_isDragging)
+            {
+                UpdateRawBox(GetMousePos());
+                UpdateSelectionRenderer();
+            }
         }
 
         private Vector2 GetMousePos()
@@ -130,7 +133,7 @@ namespace GameScene.Items.Field.RectangleSelector
                 }
                 else
                 {
-                    if (_isInsideField)
+                    if (_isInsideField && !Level.Get().inputManager.IsTouch())
                     {
                         selectionBoxRenderer.ShowInactiveAt(
                             _gridResult.BottomLeftPosition,
