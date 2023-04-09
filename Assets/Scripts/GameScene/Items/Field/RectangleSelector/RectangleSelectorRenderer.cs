@@ -29,6 +29,23 @@ namespace GameScene.Items.Field.RectangleSelector
             _state = RectangleSelectorState.Hidden;
             spriteRenderer.size = Vector2.zero;
             spriteRenderer.color = new Color(1, 1, 1, 0);
+            
+            var sequence = DOTween.Sequence();
+            sequence.AppendInterval(2f);
+            sequence.AppendCallback(() => SetEnabled());
+            sequence.Play();
+        }
+        
+        private bool _wasEnabled;
+
+        public void SetEnabled()
+        {
+            _wasEnabled = true;
+        }
+
+        public bool WasEnabled()
+        {
+            return _wasEnabled;
         }
 
         public void BlendOut()
