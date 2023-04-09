@@ -15,6 +15,8 @@ namespace GameScene.Items.Field.RectangleSelector
         private bool _isDragging;
         private bool _isInsideField;
 
+        private bool hasBeenNotDragMoved;
+
         private Vector2 _startSelectionMousePos;
 
         private Vector2 _rawDownLeftOfSelectionBox;
@@ -79,6 +81,9 @@ namespace GameScene.Items.Field.RectangleSelector
             {
                 UpdateRawBox(GetMousePos());
                 UpdateSelectionRenderer();
+
+                // This is never achieved if device uses touchscreen
+                hasBeenNotDragMoved = true;
             }
         }
 
@@ -122,7 +127,7 @@ namespace GameScene.Items.Field.RectangleSelector
 
         private void UpdateSelectionRenderer()
         {
-            if (selectionBoxRenderer != null)
+            if (selectionBoxRenderer != null && selectionBoxRenderer.WasEnabled())
             {
                 if (_isDragging)
                 {
@@ -133,7 +138,7 @@ namespace GameScene.Items.Field.RectangleSelector
                 }
                 else
                 {
-                    if (_isInsideField && !Level.Get().inputManager.IsTouch())
+                    if (_isInsideField && hasBeenNotDragMoved)
                     {
                         selectionBoxRenderer.ShowInactiveAt(
                             _gridResult.BottomLeftPosition,
