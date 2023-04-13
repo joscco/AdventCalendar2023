@@ -101,7 +101,7 @@ namespace GameScene.Items.Field.RectangleSelector
                     // Shorten path
                     _indexPath = _indexPath.GetRange(0, pathLength - 1);
                 }
-                else if (AbsDiff(newIndex, _indexPath[pathLength - 1]) == 1)
+                else if (AbsDiff(newIndex, _indexPath[pathLength - 1]) == 1 && !_indexPath.Contains(newIndex))
                 {
                     // Prolong path
                     _indexPath.Add(newIndex);
@@ -124,13 +124,13 @@ namespace GameScene.Items.Field.RectangleSelector
         {
             if (_isDragging)
             {
-                grid.ShowEnabledPath(_indexPath);
+                grid.ShowDraggedPath(_indexPath, true);
             }
             else
             {
                 if (_isInsideField && !Level.Get().inputManager.IsTouch())
                 {
-                    grid.ShowEnabledPath(_indexPath);
+                    grid.ShowDraggedPath(_indexPath, false);
                 }
                 else
                 {

@@ -1,4 +1,6 @@
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using GameScene.Items.Item;
 using UnityEngine;
 
@@ -12,9 +14,12 @@ namespace GameScene.Items.Field
 
         private bool _shown;
         private bool _itemShown;
+        private bool _itemShaking;
         private bool _selectionShown;
         private Tween _selectionFadeTween;
         private Tween _selectionScaleTween;
+        private Tween _itemScaleTween;
+        private Tween _shakeTween;
 
         private ItemData _entityData;
 
@@ -23,17 +28,6 @@ namespace GameScene.Items.Field
             InstantBlendOut();
             InstantBlendOutItem();
             InstantBlendOutSelection();
-        }
-
-        public void Evolve()
-        {
-            UpdateSprite();
-        }
-
-        public bool CanHarvest()
-        {
-            // Only true for plants!
-            return true;
         }
 
         public void UpdateFieldEntity(ItemData fieldData, float animationDelay)
@@ -149,12 +143,6 @@ namespace GameScene.Items.Field
             itemSpriteHolder.transform.localScale = Vector3.zero;
         }
 
-        public void InstantBlendInItem()
-        {
-            _itemShown = true;
-            itemSpriteHolder.transform.localScale = Vector3.one;
-        }
-
         private void InstantBlendOutSelection()
         {
             _selectionShown = false;
@@ -162,27 +150,14 @@ namespace GameScene.Items.Field
             selectionSpriteRenderer.color = new Color(1, 1, 1, 0);
         }
 
-        private void InstantBlendInSelection()
-        {
-            _selectionShown = true;
-            selectionSpriteRenderer.transform.localScale = Vector3.one;
-        }
-        
         public void Select()
         {
             if (!_selectionShown)
             {
                 _selectionShown = true;
-                _selectionFadeTween.Kill();
-                _selectionFadeTween = selectionSpriteRenderer
-                    .DOFade(1f, 0.1f)
-                    .SetEase(Ease.OutQuad);
-                
-                _selectionScaleTween.Kill();
-                _selectionScaleTween = selectionSpriteRenderer
-                    .transform
-                    .DOScale(1f, 0.1f)
-                    .SetEase(Ease.OutQuad);
+                FadeSelectionBoxTo(1f, 0.1f);
+                ScaleSelectionBoxTo(1f, 0.1f);
+                ScaleItemTo(1.3f, 0.1f);
             }
         }
 
@@ -191,16 +166,57 @@ namespace GameScene.Items.Field
             if (_selectionShown)
             {
                 _selectionShown = false;
-                _selectionFadeTween.Kill();
-                _selectionFadeTween = selectionSpriteRenderer
-                    .DOFade(0f, 0.1f)
-                    .SetEase(Ease.OutQuad);
-                
-                _selectionScaleTween.Kill();
-                _selectionScaleTween = selectionSpriteRenderer
-                    .transform
-                    .DOScale(0.8f, 0.1f)
-                    .SetEase(Ease.OutQuad);
+                FadeSelectionBoxTo(0f, 0.1f);
+                ScaleSelectionBoxTo(0.8f, 0.1f);
+                ScaleItemTo(1f, 0.1f);
+            }
+        }
+
+        private void ScaleItemTo(float scale, float duration)
+        {
+            _itemScaleTween.Kill();
+            _itemScaleTween = itemSpriteRenderer
+                .transform
+                .DOScale(scale, duration)
+                .SetEase(Ease.OutQuad);
+        }
+
+        private void FadeSelectionBoxTo(float alpha, float duration)
+        {
+            _selectionFadeTween.Kill();
+            _selectionFadeTween = selectionSpriteRenderer
+                .DOFade(alpha, duration)
+                .SetEase(Ease.OutQuad);
+        }
+
+        private void ScaleSelectionBoxTo(float scale, float duration)
+        {
+            _selectionScaleTween.Kill();
+            _selectionScaleTween = selectionSpriteRenderer
+                .transform
+                .DOScale(scale, duration)
+                .SetEase(Ease.OutQuad);
+        }
+
+        public void BeginShakingItem()
+        {
+            if (!_itemShaking)
+            {
+                _itemShaking = true;
+                _shakeTween = DOTween.Sequence()
+                    .Append(itemSpriteRenderer.transform.DOLocalMoveX(3, 0.1f))
+                    .Append(itemSpriteRenderer.transform.DOLocalMoveX(-3, 0.1f))
+                    .SetLoops(-1);
+            }
+        }
+
+        public void StopShakingItem()
+        {
+            if (_itemShaking)
+            {
+                _itemShaking = false;
+                _shakeTween.Kill(true);
+                itemSpriteRenderer.transform.DOLocalMoveX(0, 0.1f);
             }
         }
     }

@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using GameScene.Items.Field;
-using GameScene.Items.Item;
 using GameScene.UI;
 using UnityEngine;
 
@@ -9,7 +7,7 @@ namespace GameScene
 {
     public class LevelData : MonoBehaviour
     {
-        [SerializeField] private int startActions = 5;
+        [SerializeField] private int startActions = 10;
         [SerializeField] private ActionsLabel actionsLabel;
         [SerializeField] private ProgressBar progressBar;
 
@@ -25,24 +23,16 @@ namespace GameScene
             progressBar.InstantSetPercentFinished(0);
             
             // Just for now
-            _percentageNeeded = 0.8f;
-            _percentageCalculator = grid =>
-            {
-                var fieldSpots = grid.GetFieldSpots();
-                return fieldSpots
-                    .Where(spot => spot.GetPlantData())
-                    .Select(data => data.GetPlantData().itemType)
-                    .Count(type => type == ItemType.Roses) * 1f / fieldSpots.Length ;
-            };
+            _percentageNeeded = 0.9f;
 
             progressBar.SetStar(0.5f);
-            progressBar.SetStar(0.65f);
+            progressBar.SetStar(0.75f);
             progressBar.SetStar(_percentageNeeded);
         }
 
-        public void RecalculatePercentage(FieldGrid grid)
+        public void UpdatePercentage(float percentageAchieved)
         {
-            _percentageAchieved = _percentageCalculator.Invoke(grid);
+            _percentageAchieved = percentageAchieved;
             progressBar.SetPercentFinished(_percentageAchieved);
 
             if (_percentageAchieved >= _percentageNeeded)

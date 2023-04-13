@@ -18,14 +18,15 @@ namespace GameScene.Items.Field
         public List<ItemType> randomTypes;
         public FieldSpot spotPrefab;
 
-        private FieldSpot[] fielsSpots;
+        private FieldSpot[] fieldSpots;
         private FieldSpot[,] fieldSpotGrid;
         private List<Vector2Int> _shownPath;
+        private bool _draggingPath;
 
         private void Start()
         {
             InitFieldSpots();
-            InitFieldGrid(fielsSpots);
+            InitFieldGrid(fieldSpots);
 
             var sequence = DOTween.Sequence();
             sequence.AppendInterval(0.5f);
@@ -38,14 +39,22 @@ namespace GameScene.Items.Field
             sequence.Play();
         }
 
+        private float CalculatePercentage()
+        {
+            return fieldSpots
+                .Where(spot => spot.GetPlantData())
+                .Select(data => data.GetPlantData().itemType)
+                .Count(type => type == ItemType.Roses) * 1f / fieldSpots.Length;
+        }
+
         private void InitFieldSpots()
         {
             int numberOfRenderers = Rows * Columns;
-            fielsSpots = new FieldSpot[numberOfRenderers];
+            fieldSpots = new FieldSpot[numberOfRenderers];
 
             for (int i = 0; i < numberOfRenderers; i++)
             {
-                fielsSpots[i] = Instantiate(spotPrefab, transform);
+                fieldSpots[i] = Instantiate(spotPrefab, transform);
             }
         }
 
@@ -82,7 +91,7 @@ namespace GameScene.Items.Field
 
             sequence.InsertCallback(
                 0.5f + (Rows + Columns) * 0.05f,
-                () => Level.Get().levelData.RecalculatePercentage(this)
+                () => Level.Get().levelData.UpdatePercentage(CalculatePercentage())
             );
 
             sequence.Play();
@@ -103,7 +112,7 @@ namespace GameScene.Items.Field
 
         private void InstantBlendOutAllSpots()
         {
-            foreach (var fieldSpotRenderer in fielsSpots)
+            foreach (var fieldSpotRenderer in fieldSpots)
             {
                 fieldSpotRenderer.InstantBlendOut();
             }
@@ -136,17 +145,28 @@ namespace GameScene.Items.Field
             fieldSpotGrid[index.y, index.x].Select();
         }
 
-        public void SelectPath(List<Vector2Int> indexPath)
+        public void SelectPath(List<Vector2Int> indexPath, bool dragging)
         {
             foreach (var index in indexPath)
             {
                 fieldSpotGrid[index.y, index.x].Select();
+                
+                if (dragging)
+                {
+                    fieldSpotGrid[index.y, index.x].BeginShakingItem();
+                }
             }
         }
 
-        private void Deselect(Vector2Int index)
+        private void DeselectAndStopShaking(Vector2Int index)
         {
             fieldSpotGrid[index.y, index.x].Deselect();
+            fieldSpotGrid[index.y, index.x].StopShakingItem();
+        }
+        
+        private void StopShaking(Vector2Int index)
+        {
+            fieldSpotGrid[index.y, index.x].StopShakingItem();
         }
 
         public void OnPathSelect(List<Vector2Int> path)
@@ -161,7 +181,7 @@ namespace GameScene.Items.Field
                 }
 
                 Level.Get().levelData.RemoveAction();
-                Level.Get().levelData.RecalculatePercentage(this);
+                Level.Get().levelData.UpdatePercentage(CalculatePercentage());
             }
         }
 
@@ -224,18 +244,22 @@ namespace GameScene.Items.Field
             return new Vector3(positionX + offsetX, positionY + offsetY, row);
         }
 
-        public void ShowEnabledPath(List<Vector2Int> newPath)
+        public void ShowDraggedPath(List<Vector2Int> newPath, bool dragging)
         {
-            if (_shownPath == null || _shownPath.Count != newPath.Count || _shownPath[^1] != newPath[^1])
+            if (_shownPath == null 
+                || _shownPath.Count != newPath.Count 
+                || _shownPath[^1] != newPath[^1] 
+                || dragging != _draggingPath)
             {
-                DeselectAllFields(newPath);
-                SelectPath(newPath);
+                DeselectAllFields(newPath, dragging);
+                SelectPath(newPath, dragging);
                 // Use a copy here!
                 _shownPath = new List<Vector2Int>(newPath);
+                _draggingPath = dragging;
             }
         }
 
-        public void DeselectAllFields(List<Vector2Int> newPath = null)
+        public void DeselectAllFields(List<Vector2Int> newPath = null, bool dragging = false)
         {
             if (_shownPath != null)
             {
@@ -244,26 +268,33 @@ namespace GameScene.Items.Field
                     List<Vector2Int> incommonFields = _shownPath
                         .Where(index => !newPath.Contains(index))
                         .ToList();
+                    List<Vector2Int> commonFields = _shownPath
+                        .Where(index => newPath.Contains(index))
+                        .ToList();
+                    
                     foreach (var index in incommonFields)
                     {
-                        Deselect(index);
+                        DeselectAndStopShaking(index);
+                    }
+
+                    if (!dragging && _draggingPath)
+                    {
+                        foreach (var index in commonFields)
+                        {
+                            StopShaking(index);
+                        }
                     }
                 }
                 else
                 {
                     foreach (var index in _shownPath)
                     {
-                        Deselect(index);
+                        DeselectAndStopShaking(index);
                     }
                 }
 
                 _shownPath = newPath;
             }
-        }
-
-        public FieldSpot[] GetFieldSpots()
-        {
-            return fielsSpots;
         }
     }
 }
