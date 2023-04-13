@@ -13,7 +13,7 @@ namespace GameScene
         [SerializeField] private ActionsLabel actionsLabel;
         [SerializeField] private ProgressBar progressBar;
 
-        private Func<FieldGridInstance, float> _percentageCalculator;
+        private Func<FieldGrid, float> _percentageCalculator;
         private int _actionsLeft;
         private float _percentageAchieved;
         private float _percentageNeeded;
@@ -28,11 +28,11 @@ namespace GameScene
             _percentageNeeded = 0.8f;
             _percentageCalculator = grid =>
             {
-                var fieldSpots = grid.spotWrapperInstance.fieldSpotInstances;
-                return fieldSpots.Where(spot => spot.GetPlantData())
+                var fieldSpots = grid.GetFieldSpots();
+                return fieldSpots
+                    .Where(spot => spot.GetPlantData())
                     .Select(data => data.GetPlantData().itemType)
-                    .Where(type => type == ItemType.Roses)
-                    .Count() * 1f / fieldSpots.Length ;
+                    .Count(type => type == ItemType.Roses) * 1f / fieldSpots.Length ;
             };
 
             progressBar.SetStar(0.5f);
@@ -40,7 +40,7 @@ namespace GameScene
             progressBar.SetStar(_percentageNeeded);
         }
 
-        public void RecalculatePercentage(FieldGridInstance grid)
+        public void RecalculatePercentage(FieldGrid grid)
         {
             _percentageAchieved = _percentageCalculator.Invoke(grid);
             progressBar.SetPercentFinished(_percentageAchieved);

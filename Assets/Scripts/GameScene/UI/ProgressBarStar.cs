@@ -35,27 +35,43 @@ namespace GameScene.UI
             {
                 if (_state != StarState.ACHIEVED)
                 {
-                    ScaleUpAndDown();
+                    ScaleUpDownAndGoUp();
                 }
-                spriteRenderer.sprite = fullStarSprite;
                 _state = StarState.ACHIEVED;
             }
             else
             {
                 if (_state != StarState.NOT_ACHIEVED)
                 {
-                    ScaleUpAndDown();
+                    ScaleUpDownAndGoDown();
                 }
-                spriteRenderer.sprite = emptyStarSprite;
                 _state = StarState.NOT_ACHIEVED;
             }
         }
 
-        private void ScaleUpAndDown()
+        private void ScaleUpDownAndGoUp()
         {
             var sequence = DOTween.Sequence();
-            sequence.Insert(0, spriteRenderer.transform.DOScale(1.05f, 0.2f).SetEase(Ease.OutQuad));
-            sequence.Insert(0.2f,spriteRenderer.transform.DOScale(1f, 0.2f).SetEase(Ease.OutQuad));
+            sequence.Insert(0, spriteRenderer.transform.DOScale(0.5f, 0.2f).SetEase(Ease.InOutQuad));
+            sequence.InsertCallback(0.2f, () =>
+            {
+                spriteRenderer.sprite = fullStarSprite;
+            });
+            sequence.Insert(0.2f,spriteRenderer.transform.DOScale(1f, 0.2f).SetEase(Ease.InOutQuad));
+            sequence.Insert(0.4f,spriteRenderer.transform.DOLocalMoveY(35f, 0.2f).SetEase(Ease.InOutQuad));
+            sequence.Play();
+        }
+        
+        private void ScaleUpDownAndGoDown()
+        {
+            var sequence = DOTween.Sequence();
+            sequence.Insert(0, spriteRenderer.transform.DOScale(0.5f, 0.2f).SetEase(Ease.InOutQuad));
+            sequence.InsertCallback(0.2f, () =>
+            {
+                spriteRenderer.sprite = emptyStarSprite;
+            });
+            sequence.Insert(0.2f,spriteRenderer.transform.DOScale(1f, 0.2f).SetEase(Ease.InOutQuad));
+            sequence.Insert(0.4f,spriteRenderer.transform.DOLocalMoveY(0f, 0.2f).SetEase(Ease.InOutQuad));
             sequence.Play();
         }
     }

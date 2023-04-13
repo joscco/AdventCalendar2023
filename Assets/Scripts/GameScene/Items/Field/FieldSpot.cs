@@ -1,20 +1,20 @@
 using DG.Tweening;
 using GameScene.Items.Item;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameScene.Items.Field
 {
     public class FieldSpot : MonoBehaviour
     {
-        public const float SpotWidth = 90;
-        public const float SpotHeight = 75;
-        
         [SerializeField] private GameObject itemSpriteHolder;
         [SerializeField] private SpriteRenderer itemSpriteRenderer;
+        [SerializeField] private SpriteRenderer selectionSpriteRenderer;
 
         private bool _shown;
         private bool _itemShown;
+        private bool _selectionShown;
+        private Tween _selectionFadeTween;
+        private Tween _selectionScaleTween;
 
         private ItemData _entityData;
 
@@ -22,6 +22,7 @@ namespace GameScene.Items.Field
         {
             InstantBlendOut();
             InstantBlendOutItem();
+            InstantBlendOutSelection();
         }
 
         public void Evolve()
@@ -90,10 +91,7 @@ namespace GameScene.Items.Field
             var sequence = DOTween.Sequence();
             sequence.AppendInterval(animationDelay);
             sequence.Append(itemSpriteHolder.transform.DOScale(0.75f, 0.1f).SetEase(Ease.InOutQuad));
-            sequence.AppendCallback(() =>
-            {
-                itemSpriteRenderer.sprite = GetCurrentSprite(_entityData);
-            });
+            sequence.AppendCallback(() => { itemSpriteRenderer.sprite = GetCurrentSprite(_entityData); });
             sequence.Append(itemSpriteHolder.transform.DOScale(1f, 0.1f).SetEase(Ease.InOutQuad));
             sequence.Play();
         }
@@ -102,17 +100,17 @@ namespace GameScene.Items.Field
         {
             return _entityData;
         }
-        
+
         private Sprite GetCurrentSprite(ItemData entityData)
         {
             if (entityData == null)
             {
                 return null;
             }
-            
+
             return entityData.sprite;
         }
-        
+
         public Tween BlendOut()
         {
             return transform.DOScale(0, 0.3f).SetEase(Ease.InBack);
@@ -132,17 +130,17 @@ namespace GameScene.Items.Field
         {
             transform.localScale = Vector3.one;
         }
-        
+
         public Tween BlendOutItem()
         {
             _itemShown = false;
             return itemSpriteHolder.transform.DOScale(0, 0.3f).SetEase(Ease.InBack);
         }
 
-        public Tween BlendInItem(float animationDelay)
+        public void BlendInItem(float animationDelay)
         {
             _itemShown = true;
-            return itemSpriteHolder.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack).SetDelay(animationDelay);
+            itemSpriteHolder.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack).SetDelay(animationDelay);
         }
 
         public void InstantBlendOutItem()
@@ -155,6 +153,55 @@ namespace GameScene.Items.Field
         {
             _itemShown = true;
             itemSpriteHolder.transform.localScale = Vector3.one;
+        }
+
+        private void InstantBlendOutSelection()
+        {
+            _selectionShown = false;
+            selectionSpriteRenderer.transform.localScale = 0.8f * Vector3.one;
+            selectionSpriteRenderer.color = new Color(1, 1, 1, 0);
+        }
+
+        private void InstantBlendInSelection()
+        {
+            _selectionShown = true;
+            selectionSpriteRenderer.transform.localScale = Vector3.one;
+        }
+        
+        public void Select()
+        {
+            if (!_selectionShown)
+            {
+                _selectionShown = true;
+                _selectionFadeTween.Kill();
+                _selectionFadeTween = selectionSpriteRenderer
+                    .DOFade(1f, 0.1f)
+                    .SetEase(Ease.OutQuad);
+                
+                _selectionScaleTween.Kill();
+                _selectionScaleTween = selectionSpriteRenderer
+                    .transform
+                    .DOScale(1f, 0.1f)
+                    .SetEase(Ease.OutQuad);
+            }
+        }
+
+        public void Deselect()
+        {
+            if (_selectionShown)
+            {
+                _selectionShown = false;
+                _selectionFadeTween.Kill();
+                _selectionFadeTween = selectionSpriteRenderer
+                    .DOFade(0f, 0.1f)
+                    .SetEase(Ease.OutQuad);
+                
+                _selectionScaleTween.Kill();
+                _selectionScaleTween = selectionSpriteRenderer
+                    .transform
+                    .DOScale(0.8f, 0.1f)
+                    .SetEase(Ease.OutQuad);
+            }
         }
     }
 }
