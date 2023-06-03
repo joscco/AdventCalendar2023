@@ -1,16 +1,21 @@
 using System;
 using Code;
 using Code.GameScene.UI;
+using General;
+using SceneManagement;
 
 namespace StartScene
 {
     public class StartButton : ScalingButton
     {
-        public String levelChooserSceneName = "LevelChooserScene";
-        
         public override void OnClick()
         {
-            SceneTransitionManager.Get().TransitionTo(levelChooserSceneName);
+            SceneTransitionManager.Get().TransitionToScene(SceneReference.MENU_LEVEL);
+        }
+
+        public override bool IsEnabled()
+        {
+            return true;
         }
     }
 }

@@ -1,5 +1,7 @@
 using Code;
 using Code.GameScene.UI;
+using General;
+using SceneManagement;
 
 namespace GameScene.WinScreen
 {
@@ -9,8 +11,12 @@ namespace GameScene.WinScreen
         {
             if (!SceneTransitionManager.Get().IsInTransition())
             {
-                SceneTransitionManager.Get().TransitionTo("GameScene");
+                SceneTransitionManager.Get().TransitionToNextLevel();
             }
+        }
+        public override bool IsEnabled()
+        {
+            return true;
         }
     }
 }

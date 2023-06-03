@@ -150,7 +150,7 @@ namespace GameScene.Items.Field
             foreach (var index in indexPath)
             {
                 fieldSpotGrid[index.y, index.x].Select();
-                
+
                 if (dragging)
                 {
                     fieldSpotGrid[index.y, index.x].BeginShakingItem();
@@ -163,7 +163,7 @@ namespace GameScene.Items.Field
             fieldSpotGrid[index.y, index.x].Deselect();
             fieldSpotGrid[index.y, index.x].StopShakingItem();
         }
-        
+
         private void StopShaking(Vector2Int index)
         {
             fieldSpotGrid[index.y, index.x].StopShakingItem();
@@ -234,6 +234,14 @@ namespace GameScene.Items.Field
             return new Vector2Int(indexX, indexY);
         }
 
+        public Vector2 GetPositionForGridIndex(Vector2Int index)
+        {
+            float diffX = (Math.Clamp(index.x, 0, Columns - 1) + 0.5f) * SpotWidth;
+            float diffY = (Math.Clamp(index.y, 0, Rows - 1) + 0.5f) * SpotHeight;
+
+            return GetBottomLeftGridPoint() + new Vector2(diffX, diffY);
+        }
+
         private Vector3 GetSpotPosition(int row, int rows, int column, int columns)
         {
             Vector3 currentPosition = transform.position;
@@ -246,9 +254,9 @@ namespace GameScene.Items.Field
 
         public void ShowDraggedPath(List<Vector2Int> newPath, bool dragging)
         {
-            if (_shownPath == null 
-                || _shownPath.Count != newPath.Count 
-                || _shownPath[^1] != newPath[^1] 
+            if (_shownPath == null
+                || _shownPath.Count != newPath.Count
+                || _shownPath[^1] != newPath[^1]
                 || dragging != _draggingPath)
             {
                 DeselectAllFields(newPath, dragging);
@@ -271,7 +279,7 @@ namespace GameScene.Items.Field
                     List<Vector2Int> commonFields = _shownPath
                         .Where(index => newPath.Contains(index))
                         .ToList();
-                    
+
                     foreach (var index in incommonFields)
                     {
                         DeselectAndStopShaking(index);

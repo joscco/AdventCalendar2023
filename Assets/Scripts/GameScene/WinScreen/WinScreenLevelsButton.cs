@@ -1,5 +1,7 @@
 using Code;
 using Code.GameScene.UI;
+using General;
+using SceneManagement;
 
 namespace GameScene.WinScreen
 {
@@ -9,8 +11,13 @@ namespace GameScene.WinScreen
         {
             if (!SceneTransitionManager.Get().IsInTransition())
             {
-                SceneTransitionManager.Get().TransitionTo("LevelChooserScene");
+                SceneTransitionManager.Get().TransitionToScene(SceneReference.MENU_LEVEL);
             }
+        }
+
+        public override bool IsEnabled()
+        {
+            return true;
         }
     }
 }

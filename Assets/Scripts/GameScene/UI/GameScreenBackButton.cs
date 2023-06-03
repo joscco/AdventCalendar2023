@@ -1,5 +1,6 @@
-using Code;
 using Code.GameScene.UI;
+using General;
+using SceneManagement;
 
 namespace GameScene.UI
 {
@@ -9,8 +10,13 @@ namespace GameScene.UI
         {
             if (!SceneTransitionManager.Get().IsInTransition())
             {
-                SceneTransitionManager.Get().TransitionTo("LevelChooserScene");
+                SceneTransitionManager.Get().TransitionToScene(SceneReference.MENU_LEVEL);
             }
+        }
+
+        public override bool IsEnabled()
+        {
+            return true;
         }
     }
 }

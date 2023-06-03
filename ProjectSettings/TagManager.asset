@@ -56,3 +56,6 @@ TagManager:
   - name: UI_Button_Decoration
     uniqueID: 3235656141
     locked: 0
+  - name: SceneTransitionOverlay
+    uniqueID: 3754110743
+    locked: 0
