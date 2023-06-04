@@ -94,5 +94,10 @@ namespace SceneManagement
             
             TransitionToScene(_currentScene.GetNextLevel());
         }
+
+        public void ReloadCurrentScene()
+        {
+            TransitionToScene(_currentScene);
+        }
     }
 }

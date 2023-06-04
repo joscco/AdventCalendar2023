@@ -1,7 +1,4 @@
-using System;
-using Code;
 using Code.GameScene.UI;
-using General;
 using SceneManagement;
 
 namespace StartScene

@@ -40,9 +40,9 @@ namespace SceneManagement
 
         public static readonly SceneReference FOCUS = new("FocusScene", false);
         public static readonly SceneReference START = new("StartScene", false);
-        public static readonly SceneReference MENU_LEVEL = new("LevelChoosingScene", false);
+        public static readonly SceneReference MENU_LEVEL = new("LevelChooserScene", false);
         public static readonly SceneReference LEVEL_SHEEP = new("LevelSheepScene", false);
 
-        private static List<SceneReference> LEVEL_ORDER = new List<SceneReference>{ LEVEL_SHEEP };
+        private static List<SceneReference> LEVEL_ORDER = new() { LEVEL_SHEEP };
     }
 }

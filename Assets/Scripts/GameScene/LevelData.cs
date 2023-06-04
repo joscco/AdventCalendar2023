@@ -1,6 +1,5 @@
-using System;
-using GameScene.Items.Field;
 using GameScene.UI;
+using SceneManagement;
 using UnityEngine;
 
 namespace GameScene
@@ -11,7 +10,6 @@ namespace GameScene
         [SerializeField] private ActionsLabel actionsLabel;
         [SerializeField] private ProgressBar progressBar;
 
-        private Func<FieldGrid, float> _percentageCalculator;
         private int _actionsLeft;
         private float _percentageAchieved;
         private float _percentageNeeded;
@@ -37,7 +35,7 @@ namespace GameScene
 
             if (_percentageAchieved >= _percentageNeeded)
             {
-                Level.Get().winScreen.BlendIn();
+                GameSceneHeart.Get().BlendInWinScreen();
             }
         }
 
@@ -52,7 +50,7 @@ namespace GameScene
             {
                 if (_actionsLeft == 1)
                 {
-                    Level.Get().winScreen.BlendIn();
+                    GameSceneHeart.Get().BlendInWinScreen();
                 }
 
                 _actionsLeft--;

@@ -1,40 +1,39 @@
+using System;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Code.GameScene.UI
 {
+    [RequireComponent(typeof(Collider2D))]
     public abstract class ScalingButton : MonoBehaviour
     {
         private const float ScaleTimeInSeconds = 0.3f;
         private const float ClickScaleTimeInSeconds = 0.15f;
-        private const float HoverScale = 1.15f;
+        private const float ScaleWhenSelected = 1.15f;
         private const float ClickScale = 1.3f;
 
-        private bool _hovering;
+        private Tween _scaleTween;
+        private bool _selected;
 
-        public virtual void Start()
+        private void OnDestroy()
         {
-            if (!GetComponent<Collider2D>())
-            {
-                Debug.LogError("No collider present!");
-            }
+            _scaleTween?.Kill();
         }
 
         private void OnMouseEnter()
         {
-            _hovering = true;
             if (IsEnabled())
             {
-                ScaleUp();
+                Select();
             }
         }
 
         private void OnMouseExit()
         {
-            _hovering = false;
             if (IsEnabled())
             {
-                ScaleDown();
+                Deselect();
             }
         }
 
@@ -46,31 +45,55 @@ namespace Code.GameScene.UI
             }
         }
 
-        protected Tween ScaleUpOnClick()
+        protected void ScaleUpOnClick()
         {
-            return transform.DOScale(ClickScale, ClickScaleTimeInSeconds).SetEase(Ease.OutBack);
+            _scaleTween?.Kill();
+            _scaleTween = transform.DOScale(ClickScale, ClickScaleTimeInSeconds).SetEase(Ease.OutBack);
         }
 
-        protected Tween ScaleDownAfterClick()
+        protected void ScaleDownAfterClick()
         {
-            return transform.DOScale(_hovering ? HoverScale : 1f, ClickScaleTimeInSeconds).SetEase(Ease.OutBack);
+            _scaleTween?.Kill();
+            _scaleTween = transform.DOScale(_selected ? ScaleWhenSelected : 1f, ClickScaleTimeInSeconds).SetEase(Ease.OutBack);
         }
 
-        private Tween ScaleUp()
+        private void ScaleUp()
         {
-            return transform.DOScale(HoverScale, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+            _scaleTween?.Kill();
+            if (null != transform)
+            {
+                _scaleTween = transform.DOScale(ScaleWhenSelected, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+            }
         }
 
-        private Tween ScaleDown()
+        private void ScaleDown()
         {
-            return transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+            _scaleTween?.Kill();
+            if (null != transform)
+            {
+                _scaleTween = transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+            }
+        }
+        
+        /*** Scale Up and Down periodically until the Button is Selected */
+        public void StartWobbling()
+        {
+            _scaleTween?.Kill();
+            if (null != transform)
+            {
+                _scaleTween = DOTween.Sequence()
+                    .Append(transform.DOScale(1.05f, 0.5f).SetEase(Ease.OutQuad))
+                    .Append(transform.DOScale(1f, 0.5f).SetEase(Ease.InQuad))
+                    .SetLoops(-1)
+                    .Play();
+            }
         }
 
         public abstract void OnClick();
 
         public abstract bool IsEnabled();
 
-        public void Trigger()
+        public void Activate()
         {
             if (IsEnabled())
             {
@@ -78,15 +101,16 @@ namespace Code.GameScene.UI
             }
         }
 
-        public void OnSetActive()
+        public void Select()
         {
+            _selected = true;
             ScaleUp();
         }
 
-        public void OnSetDeactive()
+        public void Deselect()
         {
+            _selected = false;
             ScaleDown();
         }
-
     }
 }
