@@ -12,7 +12,7 @@ namespace Levels.SheepLevel
         [SerializeField] private TilemapManager groundMap;
         [SerializeField] private TilemapManager obstacleMap;
         [SerializeField] private TilemapManager aimMap;
-        
+
         [SerializeField] private GridAdapter grid;
         [SerializeField] private SheepManager sheepManager;
         [SerializeField] private MovableGridEntity player;
@@ -22,10 +22,12 @@ namespace Levels.SheepLevel
         [SerializeField] private List<Vector2Int> sheepPositions;
 
         private bool _setup;
+        private SheepMoveCalculator _sheepMoveCalculator;
 
         private void Start()
         {
             SetupLevel();
+            _sheepMoveCalculator = new SheepMoveCalculator();
         }
 
         public void SetupLevel()
@@ -67,42 +69,32 @@ namespace Levels.SheepLevel
         {
             var currentIndex = player.GetIndex();
             var nextIndex = currentIndex + move;
-            if (groundMap.HasTileAt(nextIndex) && !obstacleMap.HasTileAt(nextIndex))
+
+            var possibleIndices = groundMap.GetIndices()
+                .Where(index => !obstacleMap.HasTileAt(index))
+                .ToList();
+
+            if (!possibleIndices.Contains(nextIndex))
             {
-                var neighboringIndices = groundMap.GetNeighboringIndices(nextIndex);
-                var neighboringSheep = neighboringIndices
-                    .Where(index => sheepManager.HasAt(index))
-                    .Select(index => sheepManager.GetAt(index));
+                // Moving is not possible
+                return;
+            }
 
-                var potentialNextIndex = new Dictionary<MovableGridEntity, Vector2Int>();
+            var moveResult = _sheepMoveCalculator.CalculateNewPositions(
+                currentIndex,
+                nextIndex,
+                possibleIndices,
+                sheepManager.GetEntities()
+            );
 
-                foreach (var sheep in neighboringSheep)
+            if (moveResult.movingPossible)
+            {
+                // Move all sheep
+                foreach (var sheepPair in moveResult.newSheepPositions)
                 {
-                    var sheepNeighbors = groundMap.GetHVNeighboringIndices(sheep.GetIndex());
-                    Debug.Log(sheepNeighbors.Count);
-                    var bestNeighbor = sheepNeighbors
-                        .Where(index => !potentialNextIndex.Values.Contains(index))
-                        .Where(index => index != currentIndex)
-                        .Where(index => index != nextIndex)
-                        .Where(index => !obstacleMap.HasTileAt(index))
-                        .OrderByDescending(index => (nextIndex - index).magnitude)
-                        .First();
-
-                    if (null == bestNeighbor)
-                    {
-                        // We cannot move this way then
-                        return;
-                    }
-                    
-                    potentialNextIndex.Add(sheep, bestNeighbor);
-                }
-                
-                // Move
-
-                foreach (var sheep in neighboringSheep)
-                {
-                    var nextSheepIndex = potentialNextIndex[sheep];
-                    sheep.UpdatePosition(nextSheepIndex, grid.GetPositionForIndex(nextSheepIndex));
+                    var sheep = sheepPair.Key;
+                    var newIndex = sheepPair.Value;
+                    sheep.UpdatePosition(newIndex, grid.GetPositionForIndex(newIndex));
                 }
 
                 player.UpdatePosition(nextIndex, grid.GetPositionForIndex(nextIndex));

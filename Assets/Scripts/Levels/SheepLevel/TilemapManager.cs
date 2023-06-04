@@ -7,6 +7,9 @@ namespace Levels.SheepLevel
 {
     public class TilemapManager : MonoBehaviour
     {
+        private Vector2Int _tileBoundsMin = new(-10, -10);
+        private Vector2Int _tileBoundsMax = new(10, 10);
+        
         [SerializeField] private Tilemap tilemap;
 
         public bool HasTileAt(Vector2Int index)
@@ -47,6 +50,23 @@ namespace Levels.SheepLevel
             };
 
             return rawList.Where(entry => HasTileAt(entry)).ToList();
+        }
+
+        public List<Vector2Int> GetIndices()
+        {
+            List<Vector2Int> result = new List<Vector2Int>();
+
+            for (int x = _tileBoundsMin.x; x <= _tileBoundsMax.x; x++) {
+                for (int y = _tileBoundsMin.y; y <= _tileBoundsMax.y; y++)
+                {
+                    var index = new Vector2Int(x, y);
+                    if (HasTileAt(index)) {
+                        result.Add(index);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }
