@@ -26,7 +26,7 @@ namespace General.LoseScreen
 
         public void HandleUpdate()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

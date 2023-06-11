@@ -22,6 +22,8 @@ namespace Levels.SheepLevel
         [SerializeField] private List<Vector2Int> sheepPositions;
 
         private bool _setup;
+        private bool _hasWon;
+        private bool _hasLost;
         private SheepMoveCalculator _sheepMoveCalculator;
 
         private void Start()
@@ -45,12 +47,14 @@ namespace Levels.SheepLevel
                 var sheep = Instantiate(sheepPrefab, sheepManager.transform);
                 Debug.Log(sheepIndex);
                 sheepManager.AddAt(sheep, sheepIndex);
+                sheep.StartShaking();
             }
         }
 
         private void InitPlayer()
         {
             player.InstantUpdatePosition(playerStartPosition, grid.GetPositionForIndex(playerStartPosition));
+            player.StartShaking();
         }
 
         public override void HandleUpdate()
@@ -63,6 +67,16 @@ namespace Levels.SheepLevel
                     HandlePlayerMove(move);
                 }
             }
+        }
+
+        public override bool HasWon()
+        {
+            return _hasWon;
+        }
+
+        public override bool HasLost()
+        {
+            return _hasLost;
         }
 
         private void HandlePlayerMove(Vector2Int move)

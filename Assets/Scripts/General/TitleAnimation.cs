@@ -17,7 +17,6 @@ namespace General
         {
             _initialPositions = new List<Vector3>(letters.Select(letter => letter.transform.localPosition));
             Hide();
-            DOVirtual.DelayedCall(2, () => FadeIn());
         }
 
         public void Hide()
@@ -43,7 +42,8 @@ namespace General
             {
                 seq.Insert(
                     i * secondOffsetLetterAnimations,
-                    letters[i].transform.DOLocalMoveY(_initialPositions[i].y,
+                    letters[i].transform.DOLocalMoveY(
+                            _initialPositions[i].y,
                             secondDurationLetterAnimation)
                         .SetEase(Ease.InOutBack)
                 );

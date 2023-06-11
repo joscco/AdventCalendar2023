@@ -11,6 +11,7 @@ namespace SceneManagement
             this.level = level;
         }
 
+        private SceneReference enumValue;
         private String name;
         private bool level;
 
@@ -41,8 +42,24 @@ namespace SceneManagement
         public static readonly SceneReference FOCUS = new("FocusScene", false);
         public static readonly SceneReference START = new("StartScene", false);
         public static readonly SceneReference MENU_LEVEL = new("LevelChooserScene", false);
-        public static readonly SceneReference LEVEL_SHEEP = new("LevelSheepScene", false);
+        public static readonly SceneReference LEVEL_SHEEP = new("SheepLevel", true);
+        public static readonly SceneReference LEVEL_FROG = new("FrogLevel", true);
+        public static readonly SceneReference LEVEL_WIZARD = new("WizardLevel", true);
 
         private static List<SceneReference> LEVEL_ORDER = new() { LEVEL_SHEEP };
+        
+        public static SceneReference GetReferenceForLevel(LevelReference reference) {
+            switch (reference) 
+            {
+                case LevelReference.FROG_LEVEL:
+                    return LEVEL_FROG;
+                case LevelReference.SHEEP_LEVEL:
+                    return LEVEL_SHEEP;
+                case LevelReference.WIZARD_LEVEL:
+                    return LEVEL_WIZARD;
+            }
+
+            return LEVEL_SHEEP;
+        }
     }
 }

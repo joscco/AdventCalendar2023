@@ -14,7 +14,7 @@ namespace Code.GameScene.UI
         private const float ClickScale = 1.3f;
 
         private Tween _scaleTween;
-        private bool _selected;
+        protected bool _selected;
 
         private void OnDestroy()
         {
@@ -101,13 +101,13 @@ namespace Code.GameScene.UI
             }
         }
 
-        public void Select()
+        public virtual void Select()
         {
             _selected = true;
             ScaleUp();
         }
 
-        public void Deselect()
+        public virtual void Deselect()
         {
             _selected = false;
             ScaleDown();

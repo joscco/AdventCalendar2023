@@ -10,20 +10,15 @@ namespace GameScene.PlayerControl
         private Tween _moveTween;
         private Tween _scaleTween;
 
-        private void Start()
-        {
-            StartShaking();
-        }
-
         private void OnDestroy()
         {
             _moveTween?.Kill();
             _scaleTween?.Kill();
         }
 
-        private void StartShaking()
+        public void StartShaking()
         {
-            _scaleTween = spriteRenderer.transform.DOScale(new Vector3(0.9f, 1.03f, 0.8f), 0.5f)
+            _scaleTween = transform.DOScale(new Vector2(0.95f, 1.05f), 0.5f)
                 .SetEase(Ease.InOutQuad)
                 .SetLoops(-1, LoopType.Yoyo);
         }
@@ -39,11 +34,11 @@ namespace GameScene.PlayerControl
         {
             if (newIndex.x < currentIndex.x)
             {
-                spriteRenderer.flipX = true;
+                spriteRenderer.transform.localScale = new Vector3(-1, 1, 1);
             }
             else if (newIndex.x > currentIndex.x)
             {
-                spriteRenderer.flipX = false;
+                spriteRenderer.transform.localScale= new Vector3(1, 1, 1);
             }
             currentIndex = newIndex;
             _moveTween?.Kill();
@@ -54,6 +49,29 @@ namespace GameScene.PlayerControl
         public Vector2Int GetIndex()
         {
             return currentIndex;
+        }
+        
+        public void BlendOutInstantly()
+        {
+            transform.localScale = Vector3.zero;
+        }
+        
+        public Tween BlendOut()
+        {
+            _scaleTween?.Kill();
+            var blendOutTween = transform.DOScale(0f, 0.4f)
+                .SetEase(Ease.InBack);
+            _scaleTween = blendOutTween;
+            return blendOutTween;
+        }
+        
+        public Tween BlendIn()
+        {
+            _scaleTween?.Kill();
+            var blendInTween = transform.DOScale(1f, 0.4f)
+                .SetEase(Ease.OutBack);
+            _scaleTween = blendInTween;
+            return blendInTween;
         }
     }
 }

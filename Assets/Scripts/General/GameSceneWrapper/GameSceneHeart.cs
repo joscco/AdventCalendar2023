@@ -52,6 +52,17 @@ namespace SceneManagement
             switch (_state)
             {
                 case GameSceneState.UNPAUSED:
+                    if (_levelManager.HasWon())
+                    {
+                        BlendInWinScreen();
+                        break;
+                    }
+                    
+                    if (_levelManager.HasLost())
+                    {
+                        BlendInLoseScreen();;
+                        break;
+                    }
                     _levelManager.HandleUpdate();
                     break;
                 case GameSceneState.SHOWING_WIN_SCREEN:

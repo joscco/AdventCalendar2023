@@ -6,6 +6,7 @@ namespace General.WinScreen
     public class WinScreen : MonoBehaviour
     {
         [SerializeField] private int offsetDownStart = -900;
+        [SerializeField] private TitleAnimation titleAnimation;
 
         private void Start()
         {
@@ -16,7 +17,10 @@ namespace General.WinScreen
 
         public void BlendIn()
         {
-            transform.DOMoveY(0, 0.5f).SetEase(Ease.InOutQuad);
+            Debug.Log("Blend in Win Screen");
+            transform.DOMoveY(0, 0.5f)
+                .SetEase(Ease.InOutQuad);
+            titleAnimation.FadeIn();
         }
     
         public void BlendOut()
@@ -26,7 +30,7 @@ namespace General.WinScreen
 
         public void HandleUpdate()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }
