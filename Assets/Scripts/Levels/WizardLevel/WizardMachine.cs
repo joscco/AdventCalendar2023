@@ -7,18 +7,11 @@ namespace Levels.WizardLevel
     public class WizardMachine : MovableGridEntity
     {
         [SerializeField] private WizardMachineDirection _direction;
-        [SerializeField] private WizardMachineLaser leftLaser;
-        [SerializeField] private WizardMachineLaser rightLaser;
-        [SerializeField] private WizardMachineLaser topLaser;
-        [SerializeField] private WizardMachineLaser downLaser;
+        [SerializeField] private GameObject mirrorLayer;
 
         public void Start()
         {
-            leftLaser.BlendOutInstantly();
-            rightLaser.BlendOutInstantly();
-            topLaser.BlendOutInstantly();
-            downLaser.BlendOutInstantly();
-            UpdateLasers();
+            UpdateMirrorLayer();
         }
 
         public void ToggleDirection()
@@ -36,24 +29,20 @@ namespace Levels.WizardLevel
         public void SetDirection(WizardMachineDirection newDirection)
         {
             _direction = newDirection;
-            UpdateLasers();
+            UpdateMirrorLayer();
         }
 
-        private void UpdateLasers()
+        private void UpdateMirrorLayer()
         {
             if (_direction == WizardMachineDirection.Horizontal)
             {
-                leftLaser.BlendIn();
-                rightLaser.BlendIn();
-                topLaser.BlendOut();
-                downLaser.BlendOut();
+                mirrorLayer.transform.DORotate(new Vector3(0, 0, 0), 0.3f)
+                    .SetEase(Ease.InOutQuad);
             }
             else
             {
-                leftLaser.BlendOut();
-                rightLaser.BlendOut();
-                topLaser.BlendIn();
-                downLaser.BlendIn();
+                mirrorLayer.transform.DORotate(new Vector3(0, 0, 90), 0.3f)
+                    .SetEase(Ease.InOutQuad);
             }
         }
 

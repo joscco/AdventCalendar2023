@@ -79,13 +79,13 @@ namespace SceneManagement
 
         public void BlendInWinScreen()
         {
-            winScreen.BlendIn();
+            winScreen.BlendIn(2f);
             _state = GameSceneState.SHOWING_WIN_SCREEN;
         }
 
         public void BlendInLoseScreen()
         {
-            loseScreen.BlendIn();
+            loseScreen.BlendIn(2f);
             _state = GameSceneState.SHOWING_LOSE_SCREEN;
         }
 

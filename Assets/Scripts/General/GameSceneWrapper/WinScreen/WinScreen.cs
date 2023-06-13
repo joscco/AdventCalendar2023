@@ -15,10 +15,11 @@ namespace General.WinScreen
             transform.position = pos;
         }
 
-        public void BlendIn()
+        public void BlendIn(float delay)
         {
             Debug.Log("Blend in Win Screen");
             transform.DOMoveY(0, 0.5f)
+                .SetDelay(delay)
                 .SetEase(Ease.InOutQuad);
             titleAnimation.FadeIn();
         }

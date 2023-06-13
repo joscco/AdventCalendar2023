@@ -59,7 +59,7 @@ namespace GameScene.PlayerControl
         public Tween BlendOut()
         {
             _scaleTween?.Kill();
-            var blendOutTween = transform.DOScale(0f, 0.4f)
+            var blendOutTween = transform.DOScale(0f, 0.2f)
                 .SetEase(Ease.InBack);
             _scaleTween = blendOutTween;
             return blendOutTween;
@@ -68,7 +68,7 @@ namespace GameScene.PlayerControl
         public Tween BlendIn()
         {
             _scaleTween?.Kill();
-            var blendInTween = transform.DOScale(1f, 0.4f)
+            var blendInTween = transform.DOScale(1f, 0.2f)
                 .SetEase(Ease.OutBack);
             _scaleTween = blendInTween;
             return blendInTween;

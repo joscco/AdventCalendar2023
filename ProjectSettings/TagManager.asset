@@ -11,9 +11,9 @@ TagManager:
   - 
   - Water
   - UI
-  - StopGround
-  - SlideGround
-  - Obstacles
+  - Mirrorable
+  - 
+  - 
   - 
   - 
   - 
@@ -59,6 +59,9 @@ TagManager:
   - name: FloorTiles
     uniqueID: 3181996547
     locked: 0
+  - name: FloorTilesTop
+    uniqueID: 3447904771
+    locked: 0
   - name: Doors
     uniqueID: 3418603705
     locked: 0
@@ -67,6 +70,9 @@ TagManager:
     locked: 0
   - name: WinLoseScreenBackground
     uniqueID: 955767427
+    locked: 0
+  - name: WinLoseScreenLetters
+    uniqueID: 3451086447
     locked: 0
   - name: WinLoseScreenButtons
     uniqueID: 3787380727
@@ -79,4 +85,7 @@ TagManager:
     locked: 0
   - name: SceneTransitionOverlay
     uniqueID: 3754110743
+    locked: 0
+  - name: Effects
+    uniqueID: 1266039773
     locked: 0

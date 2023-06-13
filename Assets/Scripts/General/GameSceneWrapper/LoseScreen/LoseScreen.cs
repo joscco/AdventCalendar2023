@@ -14,9 +14,11 @@ namespace General.LoseScreen
             transform.position = pos;
         }
 
-        public void BlendIn()
+        public void BlendIn(float delay)
         {
-            transform.DOMoveY(0, 0.5f).SetEase(Ease.InOutQuad);
+            transform.DOMoveY(0, 0.5f)
+                .SetDelay(delay)
+                .SetEase(Ease.InOutQuad);
         }
     
         public void BlendOut()

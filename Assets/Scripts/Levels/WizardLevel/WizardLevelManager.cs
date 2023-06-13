@@ -6,6 +6,7 @@ using Levels.SheepLevel;
 using Levels.WizardLevel;
 using SceneManagement;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class WizardLevelManager : LevelManager
 {
@@ -14,14 +15,14 @@ public class WizardLevelManager : LevelManager
     [SerializeField] private GridAdapter grid;
     [SerializeField] private WizardMachineManager machineManager;
     [SerializeField] private WizardVortexManager vortexManager;
-    [SerializeField] private WizardRealTileManager realTileManager;
-    [SerializeField] private WizardMirrorTileManager mirrorTileManager;
+    [SerializeField] private WizardVioletTileManager violetTileManager;
+    [SerializeField] private WizardYellowTileManager yellowTileManager;
     
     [SerializeField] private MovableGridEntity player;
     
     [SerializeField] private WizardMachine machinePrefab;
-    [SerializeField] private WizardRealTile realTilePrefab;
-    [SerializeField] private WizardMirrorTile mirrorTilePrefab;
+    [SerializeField] private WizardVioletTile violetTilePrefab;
+    [SerializeField] private WizardYellowTile yellowTilePrefab;
     [SerializeField] private Vortex vortexPrefab;
     
     [SerializeField] private Vector2Int playerStartPosition;
@@ -37,13 +38,25 @@ public class WizardLevelManager : LevelManager
     private void Start()
     {
         SetupLevel();
-        CalculatePossibleIndices();
+        CalculateGameStatus();
     }
 
-    private void CalculatePossibleIndices()
+    private void CalculateGameStatus()
     {
         possibleIndices = groundMap.GetIndices();
-        possibleIndices.AddRange(mirrorTileManager.GetActiveIndices());
+        possibleIndices.AddRange(yellowTileManager.GetActiveIndices());
+        
+        if (!possibleIndices.Contains(player.GetIndex()))
+        {
+            // Player is on unfeasible position! 
+            player.BlendOut();
+            _hasLost = true;
+        }
+        if (vortexManager.HasAt(player.GetIndex()))
+        {
+            player.BlendOut();
+            _hasWon = true;
+        }
     }
 
     public void SetupLevel()
@@ -79,27 +92,27 @@ public class WizardLevelManager : LevelManager
             machineManager.AddAt(machine, machineIndex);
         }
     }
+
+    private void ExchangeTileMapWithRealTiles()
+    {
+        groundMap.gameObject.SetActive(false);
+        groundMap.GetIndices().ForEach(index =>
+        {
+            var tile = Instantiate(violetTilePrefab, violetTileManager.transform);
+            tile.SetSortOrder(-index.y);
+            violetTileManager.AddAt(tile, index);
+        });
+    }
     
     private void InitMirrorTiles()
     {
         var numberOfTiles = groundMap.GetIndices().Count;
         for (int i = 0; i < numberOfTiles; i++)
         {
-            var mirrorTile = Instantiate(mirrorTilePrefab, mirrorTileManager.transform);
+            var mirrorTile = Instantiate(yellowTilePrefab, yellowTileManager.transform);
             mirrorTile.BlendOutInstantly();
-            mirrorTileManager.AddAt(mirrorTile, new Vector2Int(0, 0));
+            yellowTileManager.AddAt(mirrorTile, new Vector2Int(0, 0));
         }
-    }
-    
-    private void ExchangeTileMapWithRealTiles()
-    {
-        groundMap.gameObject.SetActive(false);
-        groundMap.GetIndices().ForEach(index =>
-        {
-            var tile = Instantiate(realTilePrefab, realTileManager.transform);
-            tile.SetSortOrder(-index.y);
-            realTileManager.AddAt(tile, index);
-        });
     }
 
     private void UpdateMirrorTiles()
@@ -112,19 +125,26 @@ public class WizardLevelManager : LevelManager
             {
                 if (wizardMachine.GetDirection() == WizardMachine.WizardMachineDirection.Horizontal)
                 {
-                    var mirroredIndex = new Vector2Int(
-                        groundIndex.x,
-                        machineIndex.y - (groundIndex.y - machineIndex.y)
-                    );
-                    indicesForMirrorTiles.Add(mirroredIndex);
+                    if ((groundIndex.y - machineIndex.y) >= 0)
+                    {
+                        var mirroredIndex = new Vector2Int(
+                            groundIndex.x,
+                            machineIndex.y - (groundIndex.y - machineIndex.y)
+                        );
+                        indicesForMirrorTiles.Add(mirroredIndex);
+                    }
+                    
                 }
                 else
                 {
-                    var mirroredIndex = new Vector2Int(
-                        machineIndex.x - (groundIndex.x - machineIndex.x),
-                        groundIndex.y
-                    );
-                    indicesForMirrorTiles.Add(mirroredIndex);
+                    if ((groundIndex.x - machineIndex.x) <= 0)
+                    {
+                        var mirroredIndex = new Vector2Int(
+                            machineIndex.x - (groundIndex.x - machineIndex.x),
+                            groundIndex.y
+                        );
+                        indicesForMirrorTiles.Add(mirroredIndex);
+                    }
                 }
             }
         }
@@ -132,32 +152,20 @@ public class WizardLevelManager : LevelManager
         // Remove all indices which have a regular tile already:
         indicesForMirrorTiles.RemoveWhere(index => groundMap.GetIndices().Contains(index));
 
-        mirrorTileManager.UpdateMirrorTileIndices(indicesForMirrorTiles);
+        yellowTileManager.UpdateMirrorTileIndices(indicesForMirrorTiles);
+        
     }
 
     public override void HandleUpdate()
     {
         if (_setup)
         {
-            if (!possibleIndices.Contains(player.GetIndex()))
-            {
-                // Player is on unfeasible position! 
-                player.BlendOut();
-                _hasLost = true;
-            }
-
-            if (vortexManager.HasAt(player.GetIndex()))
-            {
-                player.BlendOut();
-                _hasWon = true;
-            }
-            
             var move = InputManager.instance.GetMoveDirection();
             
             if (move != Vector2Int.zero)
             {
                 HandlePlayerMove(move);
-                CalculatePossibleIndices();
+                CalculateGameStatus();
             }
 
             if (Input.GetKeyDown(KeyCode.E) &&
@@ -165,6 +173,7 @@ public class WizardLevelManager : LevelManager
             {
                 machineManager.GetEntities()[0].ToggleDirection();
                 UpdateMirrorTiles();
+                CalculateGameStatus();
             }
         }
     }
