@@ -20,6 +20,7 @@ namespace GameScene.PlayerControl
         public void InstantUpdatePosition(Vector2Int newIndex, Vector2 newPos)
         {
             StopMoving();
+            currentMainIndex = newIndex;
             transform.position = newPos;
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameScene.PlayerControl;
@@ -8,15 +7,11 @@ using General.Grid;
 using Levels.SheepLevel;
 using SceneManagement;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameScene
 {
     public class ElfLevelManager : LevelManager
     {
-        // Level Configuration
-        [SerializeField] private Vector2Int playerStartPosition;
-
         // Infrastructure
         [SerializeField] private GridAdapter grid;
         [SerializeField] private TilemapManager groundMap;
@@ -29,20 +24,16 @@ namespace GameScene
         [SerializeField] private PickPointManager pickPointsManager;
 
         [SerializeField] private List<PickPoint> pickPointsToListenTo;
-
         [SerializeField] private GridEntityPicker player;
-
-        // Prefabs
 
         // Game State
         private bool _setup;
         private bool _hasWon;
         private bool _hasLost;
 
-        private List<Vector2Int> feasibleIndices;
-
         // Free Indices is a subset of all feasible indices consisting of all that are not blocked
-        private List<Vector2Int> freeIndices;
+        private List<Vector2Int> _feasibleIndices;
+        private List<Vector2Int> _freeIndices;
 
         private void Start()
         {
@@ -52,13 +43,13 @@ namespace GameScene
 
         private void CalculateGameStatus()
         {
-            feasibleIndices = GetFreeIndicesForMoving();
-            freeIndices = feasibleIndices.Where(index => !collidersMap.HasTileAt(index))
+            _feasibleIndices = GetFreeIndicesForMoving();
+            _freeIndices = _feasibleIndices.Where(index => !collidersMap.HasTileAt(index))
                 .Where(index => !pushablesManager.HasAt(index))
                 .Where(index => !pickPointsManager.HasAt(index))
                 .ToList();
 
-            if (!feasibleIndices.Contains(player.GetMainIndex()))
+            if (!_feasibleIndices.Contains(player.GetMainIndex()))
             {
                 // Player is on unfeasible position! 
                 player.PlayDeathAnimation();
@@ -85,8 +76,6 @@ namespace GameScene
 
         public void SetupLevel()
         {
-            InitGroundTiles();
-            InitSlidingTiles();
             InitToggleableTiles();
             InitToggleableTileSwitches();
             InitPlayer();
@@ -97,17 +86,10 @@ namespace GameScene
             _setup = true;
         }
 
-        private void InitGroundTiles()
-        {
-        }
-
-        private void InitSlidingTiles()
-        {
-        }
-
         private void InitPlayer()
         {
-            player.InstantUpdatePosition(playerStartPosition, grid.GetPositionForIndex(playerStartPosition));
+            var index = grid.FindNearestIndexForPosition(player.transform.position);
+            player.InstantUpdatePosition(index, grid.GetPositionForIndex(index));
             player.StartShaking();
         }
 
@@ -191,7 +173,7 @@ namespace GameScene
             }
 
             // Moving Stuff, tiles must be feasible to move there
-            if (!feasibleIndices.Contains(nextIndex))
+            if (!_feasibleIndices.Contains(nextIndex))
             {
                 // Player cannot move here -> Stop
                 return;
@@ -201,7 +183,7 @@ namespace GameScene
             if (pushablesManager.HasAt(nextIndex))
             {
                 var overNextIndex = nextIndex + direction;
-                if (!feasibleIndices.Contains(overNextIndex))
+                if (!_feasibleIndices.Contains(overNextIndex))
                 {
                     // Pushable cannot be moved
                     return;
@@ -223,7 +205,7 @@ namespace GameScene
 
                 // Normal push
                 var nextMainIndexForPushable = overNextIndex + offset;
-                var feasibleIndicesPlusSelf = feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
+                var feasibleIndicesPlusSelf = _feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
                 var allIndicesAfterPushAreFree = pushableToMove.GetCoveredIndicesWhenMainIndexWas(
                     nextMainIndexForPushable).All(index => feasibleIndicesPlusSelf.Contains(index));
                 if (allIndicesAfterPushAreFree)
@@ -247,7 +229,7 @@ namespace GameScene
             }
 
             // Last case, simple movement
-            if (freeIndices.Contains(nextIndex))
+            if (_freeIndices.Contains(nextIndex))
             {
                 player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
             }
@@ -256,15 +238,9 @@ namespace GameScene
         private Vector2Int FindNextFreeNonSlidingTileInDirection(Vector2Int nextIndex, Vector2Int direction)
         {
             var result = nextIndex;
-            while (slidingGroundMap.HasTileAt(result))
+            while (slidingGroundMap.HasTileAt(result) && _freeIndices.Contains(result + direction))
             {
                 result += direction;
-            }
-
-            while (!freeIndices.Contains(result))
-            {
-                // Go Backwarts until not blocked
-                result -= direction;
             }
 
             return result;
