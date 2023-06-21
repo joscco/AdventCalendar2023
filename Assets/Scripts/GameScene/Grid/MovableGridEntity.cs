@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using General.Grid;
 using Unity.VisualScripting;
@@ -7,6 +8,7 @@ namespace GameScene.PlayerControl
 {
     public class MovableGridEntity : GridEntity
     {
+        [SerializeField] private bool flipInMovingDirection;
         private Tween _moveTween;
 
         protected void OnDestroy()
@@ -32,7 +34,10 @@ namespace GameScene.PlayerControl
             currentMainIndex = newIndex;
             spriteRenderers.ForEach(rend => rend.sortingOrder = -newIndex.y);
 
-            SwapFaceDirectionIfNecessary(oldIndex.x, newIndex.x);
+            if (flipInMovingDirection)
+            {
+                SwapFaceDirectionIfNecessary(oldIndex.x, newIndex.x);
+            }
 
             return moveVariant == MoveVariant.Global
                 ? TweenGlobalMovePosition(newPos)

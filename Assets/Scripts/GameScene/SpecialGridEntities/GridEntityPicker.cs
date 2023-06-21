@@ -1,3 +1,5 @@
+using System;
+using DG.Tweening;
 using General.Grid;
 using Levels.WizardLevel;
 using UnityEngine;
@@ -9,6 +11,7 @@ namespace GameScene.PlayerControl
         [SerializeField] private Transform itemPositionWhenPickedUp;
         
         private PickableItem pickedItem;
+
 
         public bool HasItemToGive()
         {
@@ -28,16 +31,12 @@ namespace GameScene.PlayerControl
         public void GiveItem(PickableItem item)
         {
             pickedItem = item;
+            item.AttachToPickupPoint(itemPositionWhenPickedUp);
         }
         
         public void RemoveItem(PickableItem item)
         {
             pickedItem = null;
-        }
-
-        public Transform GetPickupPoint()
-        {
-            return itemPositionWhenPickedUp;
         }
 
         public void PlayDeathAnimation()

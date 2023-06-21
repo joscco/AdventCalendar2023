@@ -10,7 +10,7 @@ namespace GameScene.SpecialGridEntities.PickPoints
     {
         [SerializeField] private List<PickableItemHolder> pickableHolders;
 
-        public override bool CanTakeItem(PickableItem getItem)
+        public override bool CanTakeItem(PickableItem item)
         {
             return pickableHolders.Any(holder => !holder.HasItem());
         }
@@ -36,6 +36,11 @@ namespace GameScene.SpecialGridEntities.PickPoints
         {
             var holder = pickableHolders.First(holder => holder.GetItem() == item);
             holder.SetItem(null);
+        }
+
+        public override bool IsComplete()
+        {
+            return false;
         }
     }
 }

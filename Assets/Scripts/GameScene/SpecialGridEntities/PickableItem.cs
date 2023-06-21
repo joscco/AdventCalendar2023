@@ -1,24 +1,28 @@
-using System;
 using DG.Tweening;
-using GameScene.PlayerControl;
-using Levels.WizardLevel;
+using GameScene.SpecialGridEntities.PickPoints;
 using UnityEngine;
 
 namespace General.Grid
 {
     public class PickableItem : MonoBehaviour
     {
+        [SerializeField] private PickableItemType type;
         private Tween _moveTween;
-
-        private void SetParent(Transform newParent)
-        {
-            transform.parent = newParent;
-        }
 
         public void AttachToPickupPoint(Transform newParent)
         {
             SetParent(newParent);
             LocalMoveTo(Vector2.zero);
+        }
+
+        public PickableItemType GetType()
+        {
+            return type;
+        }
+
+        private void SetParent(Transform newParent)
+        {
+            transform.parent = newParent;
         }
 
         private void StopMoving()

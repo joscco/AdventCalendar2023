@@ -5,7 +5,7 @@ namespace GameScene.SpecialGridEntities
     public abstract class PickPoint: GridEntity
     {
 
-        public abstract bool CanTakeItem(PickableItem getItem);
+        public abstract bool CanTakeItem(PickableItem item);
 
         public abstract PickableItem GetItem();
         
@@ -14,5 +14,7 @@ namespace GameScene.SpecialGridEntities
         public abstract bool HasItemToGive();
 
         public abstract void RemoveItem(PickableItem item);
+
+        public abstract bool IsComplete();
     }
 }

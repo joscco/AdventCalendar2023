@@ -28,8 +28,9 @@ namespace GameScene
         [SerializeField] private PushablesManager pushablesManager;
         [SerializeField] private PickPointManager pickPointsManager;
 
+        [SerializeField] private List<PickPoint> pickPointsToListenTo;
+
         [SerializeField] private GridEntityPicker player;
-        [SerializeField] private BuildingSite buildingSite;
 
         // Prefabs
 
@@ -54,6 +55,7 @@ namespace GameScene
             feasibleIndices = GetFreeIndicesForMoving();
             freeIndices = feasibleIndices.Where(index => !collidersMap.HasTileAt(index))
                 .Where(index => !pushablesManager.HasAt(index))
+                .Where(index => !pickPointsManager.HasAt(index))
                 .ToList();
 
             if (!feasibleIndices.Contains(player.GetMainIndex()))
@@ -63,7 +65,7 @@ namespace GameScene
                 _hasLost = true;
             }
 
-            if (buildingSite.IsComplete())
+            if (pickPointsToListenTo.Count != 0 && pickPointsToListenTo.All(pickPoint => pickPoint.IsComplete()))
             {
                 player.PlayWinAnimation();
                 _hasWon = true;
@@ -90,7 +92,6 @@ namespace GameScene
             InitPlayer();
             InitPortals();
             InitPickupPoints();
-            InitPickableToyParts();
             InitPushableToyParts();
 
             _setup = true;
@@ -98,7 +99,6 @@ namespace GameScene
 
         private void InitGroundTiles()
         {
-            
         }
 
         private void InitSlidingTiles()
@@ -110,15 +110,15 @@ namespace GameScene
             player.InstantUpdatePosition(playerStartPosition, grid.GetPositionForIndex(playerStartPosition));
             player.StartShaking();
         }
-        
+
         private void InitToggleableTiles()
         {
         }
-        
+
         private void InitToggleableTileSwitches()
         {
         }
-        
+
         private void InitPushableToyParts()
         {
             var pushables = pushablesManager.GetComponentsInChildren<PushableGridEntity>();
@@ -131,17 +131,16 @@ namespace GameScene
 
         public void InitPortals()
         {
-            
         }
 
         public void InitPickupPoints()
         {
-            
-        }
-
-        public void InitPickableToyParts()
-        {
-            
+            var pickpoints = pickPointsManager.GetComponentsInChildren<PickPoint>();
+            foreach (var pickpoint in pickpoints)
+            {
+                var index = grid.FindNearestIndexForPosition(pickpoint.transform.position);
+                pickPointsManager.AddAt(pickpoint, index);
+            }
         }
 
         public override void HandleUpdate()
@@ -172,9 +171,8 @@ namespace GameScene
                     var item = player.GetItem();
                     player.RemoveItem(item);
                     pickPoint.GiveItem(item);
-                    
                 }
-                else if (pickPoint.HasItemToGive() && player.CanTakeItem(player.GetItem()))
+                else if (pickPoint.HasItemToGive() && player.CanTakeItem(pickPoint.GetItem()))
                 {
                     var item = pickPoint.GetItem();
                     pickPoint.RemoveItem(item);
@@ -198,7 +196,7 @@ namespace GameScene
                 // Player cannot move here -> Stop
                 return;
             }
-            
+
             // Pushing over sliding
             if (pushablesManager.HasAt(nextIndex))
             {
@@ -208,19 +206,35 @@ namespace GameScene
                     // Pushable cannot be moved
                     return;
                 }
-                
+
                 var pushableToMove = pushablesManager.GetAt(nextIndex);
+                var offset = pushableToMove.GetMainIndex() - nextIndex;
+
                 if (slidingGroundMap.HasTileAt(overNextIndex))
-                { 
+                {
                     var nextSlidingIndexForItem = FindNextFreeNonSlidingTileInDirection(overNextIndex, direction);
-                    pushableToMove.MoveTo(nextSlidingIndexForItem, grid.GetPositionForIndex(nextSlidingIndexForItem));
+                    pushableToMove.MoveTo(
+                        nextSlidingIndexForItem + offset,
+                        grid.GetPositionForIndex(nextSlidingIndexForItem + offset)
+                    );
                     player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
                     return;
                 }
 
                 // Normal push
-                pushableToMove.MoveTo(overNextIndex, grid.GetPositionForIndex(overNextIndex));
-                player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
+                var nextMainIndexForPushable = overNextIndex + offset;
+                var feasibleIndicesPlusSelf = feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
+                var allIndicesAfterPushAreFree = pushableToMove.GetCoveredIndicesWhenMainIndexWas(
+                    nextMainIndexForPushable).All(index => feasibleIndicesPlusSelf.Contains(index));
+                if (allIndicesAfterPushAreFree)
+                {
+                    pushableToMove.MoveTo(
+                        overNextIndex + offset,
+                        grid.GetPositionForIndex(overNextIndex + offset)
+                    );
+                    player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
+                }
+
                 return;
             }
 

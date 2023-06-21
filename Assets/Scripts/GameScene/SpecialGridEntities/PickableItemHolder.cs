@@ -3,9 +3,8 @@ using UnityEngine;
 
 namespace Levels.WizardLevel
 {
-    public class PickableItemHolder: GridEntity
+    public class PickableItemHolder: MonoBehaviour
     {
-        [SerializeField] private Transform pickFromPoint;
         [SerializeField] private PickableItem pickItem;
 
         public bool HasItem()
@@ -30,7 +29,7 @@ namespace Levels.WizardLevel
 
         public Transform GetPickupPoint()
         {
-            return pickFromPoint;
+            return transform;
         }
     }
 }
