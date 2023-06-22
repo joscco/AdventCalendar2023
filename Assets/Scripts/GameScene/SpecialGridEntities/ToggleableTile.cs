@@ -1,3 +1,4 @@
+using GameScene.Grid.Entities.Shared;
 using GameScene.PlayerControl;
 using General.Grid;
 using UnityEngine;
@@ -25,11 +26,6 @@ namespace Levels.WizardLevel
         public bool IsActive()
         {
             return _active;
-        }
-
-        public void SetSortOrder(int order)
-        {
-            spriteRenderers.ForEach(rend => rend.sortingOrder = order);
         }
     }
 }

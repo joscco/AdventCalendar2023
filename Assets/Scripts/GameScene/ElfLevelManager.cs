@@ -90,7 +90,6 @@ namespace GameScene
         {
             var index = grid.FindNearestIndexForPosition(player.transform.position);
             player.InstantUpdatePosition(index, grid.GetPositionForIndex(index));
-            player.StartShaking();
         }
 
         private void InitToggleableTiles()
@@ -208,6 +207,7 @@ namespace GameScene
                 var feasibleIndicesPlusSelf = _feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
                 var allIndicesAfterPushAreFree = pushableToMove.GetCoveredIndicesWhenMainIndexWas(
                     nextMainIndexForPushable).All(index => feasibleIndicesPlusSelf.Contains(index));
+                
                 if (allIndicesAfterPushAreFree)
                 {
                     pushableToMove.MoveTo(
@@ -254,19 +254,6 @@ namespace GameScene
         public override bool HasLost()
         {
             return _hasLost;
-        }
-
-        public List<Vector2Int> GetHVNeighboringIndices(Vector2Int index)
-        {
-            List<Vector2Int> rawList = new List<Vector2Int>
-            {
-                new(index.x, index.y - 1),
-                new(index.x - 1, index.y),
-                new(index.x + 1, index.y),
-                new(index.x, index.y + 1),
-            };
-
-            return rawList;
         }
     }
 }

@@ -1,3 +1,4 @@
+using GameScene.Grid.Entities.Shared;
 using General.Grid;
 
 namespace GameScene.SpecialGridEntities

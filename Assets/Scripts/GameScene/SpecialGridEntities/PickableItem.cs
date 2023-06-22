@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using DG.Tweening;
+using GameScene.Grid.Entities.Shared;
 using GameScene.SpecialGridEntities.PickPoints;
 using UnityEngine;
 
@@ -7,6 +9,7 @@ namespace General.Grid
     public class PickableItem : MonoBehaviour
     {
         [SerializeField] private PickableItemType type;
+        [SerializeField] private EntityRenderer pickableRenderer;
         private Tween _moveTween;
 
         public void AttachToPickupPoint(Transform newParent)
@@ -15,7 +18,7 @@ namespace General.Grid
             LocalMoveTo(Vector2.zero);
         }
 
-        public PickableItemType GetType()
+        public PickableItemType GetItemType()
         {
             return type;
         }
@@ -36,6 +39,11 @@ namespace General.Grid
             _moveTween = transform.DOLocalMove(position, 0.15f)
                 .SetEase(Ease.InOutCirc);
             return _moveTween;
+        }
+
+        public void SetSortingOrder(int mainOrder)
+        {
+            pickableRenderer.SetSortingOrder(mainOrder);
         }
     }
 }

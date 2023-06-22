@@ -65,7 +65,7 @@ TagManager:
   - name: Doors
     uniqueID: 3418603705
     locked: 0
-  - name: Characters
+  - name: GridEntities
     uniqueID: 2335903911
     locked: 0
   - name: WinLoseScreenBackground

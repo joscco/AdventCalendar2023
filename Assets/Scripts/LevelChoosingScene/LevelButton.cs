@@ -2,12 +2,13 @@ using Code.GameScene.UI;
 using DG.Tweening;
 using SceneManagement;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LevelButton : ScalingButton
 {
     [SerializeField] private Sprite frontSprite;
     [SerializeField] private Sprite backSprite;
-    [SerializeField] private LevelButtonRenderer renderer;
+    [SerializeField] private LevelButtonRenderer buttonRenderer;
 
     private Sequence _turnTween;
     private bool turnedToFront;
@@ -16,17 +17,17 @@ public class LevelButton : ScalingButton
     public void SetFrontSprite(Sprite sprite)
     {
         frontSprite = sprite;
-        renderer.UpdateSpriteRenderer(turnedToFront ? frontSprite : backSprite);
+        buttonRenderer.UpdateSpriteRenderer(turnedToFront ? frontSprite : backSprite);
     }
 
     public void TurnOn()
     {
-        renderer.TurnTo(frontSprite);
+        buttonRenderer.TurnTo(frontSprite);
     }
 
     public void TurnOff()
     {
-        renderer.TurnTo(backSprite);
+        buttonRenderer.TurnTo(backSprite);
     }
     
     public override void OnClick()
