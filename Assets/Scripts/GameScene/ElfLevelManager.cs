@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
+using GameScene.Grid.Entities.Shared;
 using GameScene.PlayerControl;
 using GameScene.SpecialGridEntities;
 using GameScene.SpecialGridEntities.EntityManagers;
@@ -112,6 +114,12 @@ namespace GameScene
 
         public void InitPortals()
         {
+            var portals = portalManager.GetComponentsInChildren<Portal>();
+            foreach (var portal in portals)
+            {
+                var index = grid.FindNearestIndexForPosition(portal.transform.position);
+                portalManager.AddAt(portal, index);
+            }
         }
 
         public void InitPickupPoints()
@@ -130,7 +138,7 @@ namespace GameScene
             {
                 var move = InputManager.instance.GetMoveDirection();
 
-                if (move != Vector2Int.zero)
+                if (move != Vector2Int.zero && !player.IsPortaling())
                 {
                     HandlePlayerMove(move);
                     CalculateGameStatus();
@@ -207,7 +215,7 @@ namespace GameScene
                 var feasibleIndicesPlusSelf = _feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
                 var allIndicesAfterPushAreFree = pushableToMove.GetCoveredIndicesWhenMainIndexWas(
                     nextMainIndexForPushable).All(index => feasibleIndicesPlusSelf.Contains(index));
-                
+
                 if (allIndicesAfterPushAreFree)
                 {
                     pushableToMove.MoveTo(
@@ -224,15 +232,52 @@ namespace GameScene
             if (slidingGroundMap.HasTileAt(nextIndex))
             {
                 var nextSlidingIndex = FindNextFreeNonSlidingTileInDirection(nextIndex, direction);
-                player.MoveTo(nextSlidingIndex, grid.GetPositionForIndex(nextSlidingIndex));
+                if (portalManager.HasAt(nextSlidingIndex))
+                {
+                    UsePortal(player, nextSlidingIndex);
+                }
+                else
+                {
+                    MoveTo(player, nextSlidingIndex);
+                }
                 return;
             }
 
             // Last case, simple movement
             if (_freeIndices.Contains(nextIndex))
             {
-                player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
+                if (portalManager.HasAt(nextIndex))
+                {
+                    UsePortal(player, nextIndex);
+                }
+                else
+                {
+                    MoveTo(player, nextIndex);
+                }
             }
+        }
+
+        private void UsePortal(MovableGridEntity entity, Vector2Int index)
+        {
+            var nextIndex = portalManager.FindNextPortalIndexFor(index);
+            entity.SetPortaling(true);
+
+            var sequence = DOTween.Sequence();
+            sequence.Append(MoveTo(entity, index))
+                .Append(entity.BlendOut())
+                .AppendCallback(() => InstantMoveTo(entity, nextIndex))
+                .Append(entity.BlendIn())
+                .AppendCallback(() => entity.SetPortaling(false));
+        }
+
+        private void InstantMoveTo(MovableGridEntity entity, Vector2Int index)
+        {
+            entity.InstantUpdatePosition(index, grid.GetPositionForIndex(index));
+        }
+
+        private Tween MoveTo(MovableGridEntity entity, Vector2Int index)
+        {
+            return entity.MoveTo(index, grid.GetPositionForIndex(index));
         }
 
         private Vector2Int FindNextFreeNonSlidingTileInDirection(Vector2Int nextIndex, Vector2Int direction)

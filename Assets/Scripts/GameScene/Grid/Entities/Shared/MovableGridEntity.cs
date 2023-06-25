@@ -7,6 +7,7 @@ namespace GameScene.PlayerControl
     public class MovableGridEntity : GridEntity
     {
         [SerializeField] private bool flipInMovingDirection;
+        private bool _portaling;
         private Tween _moveTween;
 
         protected void OnDestroy()
@@ -85,6 +86,16 @@ namespace GameScene.PlayerControl
         {
             Global,
             Local
+        }
+
+        public bool IsPortaling()
+        {
+            return _portaling;
+        }
+
+        public void SetPortaling(bool value)
+        {
+            this._portaling = value;
         }
     }
 }

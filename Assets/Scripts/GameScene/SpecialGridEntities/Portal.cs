@@ -1,19 +1,9 @@
-using DG.Tweening;
-using GameScene.PlayerControl;
-using UnityEngine;
+using GameScene.Grid.Entities.Shared;
 
-public class Portal : MovableGridEntity
+namespace GameScene.SpecialGridEntities
 {
-    private Tween moveTween;
-    private Tween rotateTween;
-    
-    void Start()
+    public class Portal : GridEntity
     {
-        moveTween = transform.DOLocalMoveY(-20, 2)
-            .SetEase(Ease.InOutQuad)
-            .SetLoops(-1, LoopType.Yoyo);
-        rotateTween = transform.DOLocalRotate(new Vector3(0, 0, -360), 12, RotateMode.FastBeyond360)
-            .SetEase(Ease.Linear)
-            .SetLoops(-1, LoopType.Restart);
+        
     }
 }

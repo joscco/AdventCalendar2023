@@ -44,6 +44,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: FloorTiles
+    uniqueID: 3181996547
+    locked: 0
+  - name: FloorTilesTop
+    uniqueID: 3447904771
+    locked: 0
+  - name: Portals
+    uniqueID: 3418603705
+    locked: 0
+  - name: GridEntities
+    uniqueID: 2335903911
+    locked: 0
   - name: UI_Backgrounds
     uniqueID: 2087901693
     locked: 0
@@ -55,18 +67,6 @@ TagManager:
     locked: 0
   - name: UI_Button_Decoration
     uniqueID: 3235656141
-    locked: 0
-  - name: FloorTiles
-    uniqueID: 3181996547
-    locked: 0
-  - name: FloorTilesTop
-    uniqueID: 3447904771
-    locked: 0
-  - name: Doors
-    uniqueID: 3418603705
-    locked: 0
-  - name: GridEntities
-    uniqueID: 2335903911
     locked: 0
   - name: WinLoseScreenBackground
     uniqueID: 955767427
