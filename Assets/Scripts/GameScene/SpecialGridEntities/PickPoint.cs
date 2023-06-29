@@ -1,9 +1,10 @@
+using GameScene.Grid.Entities;
 using GameScene.Grid.Entities.Shared;
 using General.Grid;
 
 namespace GameScene.SpecialGridEntities
 {
-    public abstract class PickPoint: GridEntity
+    public abstract class PickPoint: GridEntity, ItemBearer
     {
 
         public abstract bool CanTakeItem(PickableItem item);

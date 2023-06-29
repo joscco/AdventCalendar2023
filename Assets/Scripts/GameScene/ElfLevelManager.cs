@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using GameScene.Grid.Entities;
 using GameScene.Grid.Entities.Shared;
 using GameScene.PlayerControl;
 using GameScene.SpecialGridEntities;
 using GameScene.SpecialGridEntities.EntityManagers;
 using General.Grid;
 using Levels.SheepLevel;
+using Levels.WizardLevel;
 using SceneManagement;
 using UnityEngine;
 
@@ -26,7 +28,7 @@ namespace GameScene
         [SerializeField] private PickPointManager pickPointsManager;
 
         [SerializeField] private List<PickPoint> pickPointsToListenTo;
-        [SerializeField] private GridEntityPicker player;
+        [SerializeField] private Player player;
 
         // Game State
         private bool _setup;
@@ -73,6 +75,7 @@ namespace GameScene
             result.AddRange(toggleableTilesManager.GetActiveTileIndices());
 
             collidersMap.GetIndices().ForEach(index => result.Remove(index));
+            toggleableTileSwitchManager.GetMainIndices().ForEach(index => result.Remove(index));
             return result;
         }
 
@@ -91,20 +94,32 @@ namespace GameScene
         private void InitPlayer()
         {
             var index = grid.FindNearestIndexForPosition(player.transform.position);
-            player.InstantUpdatePosition(index, grid.GetPositionForIndex(index));
+            player.SetIndicesAndPosition(index, grid.GetPositionForIndex(index));
         }
 
         private void InitToggleableTiles()
         {
+            var toggleTile = FindObjectsOfType<ToggleableTile>();
+            foreach (var tile in toggleTile)
+            {
+                var index = grid.FindNearestIndexForPosition(tile.transform.position);
+                toggleableTilesManager.AddAt(tile, index);
+            }
         }
 
         private void InitToggleableTileSwitches()
         {
+            var switches = FindObjectsOfType<ToggleableTileSwitch>();
+            foreach (var switchy in switches)
+            {
+                var index = grid.FindNearestIndexForPosition(switchy.transform.position);
+                toggleableTileSwitchManager.AddAt(switchy, index);
+            }
         }
 
         private void InitPushableToyParts()
         {
-            var pushables = pushablesManager.GetComponentsInChildren<PushableGridEntity>();
+            var pushables = FindObjectsOfType<PushableGridEntity>();
             foreach (var pushable in pushables)
             {
                 var index = grid.FindNearestIndexForPosition(pushable.transform.position);
@@ -114,7 +129,7 @@ namespace GameScene
 
         public void InitPortals()
         {
-            var portals = portalManager.GetComponentsInChildren<Portal>();
+            var portals = FindObjectsOfType<Portal>();
             foreach (var portal in portals)
             {
                 var index = grid.FindNearestIndexForPosition(portal.transform.position);
@@ -124,7 +139,7 @@ namespace GameScene
 
         public void InitPickupPoints()
         {
-            var pickpoints = pickPointsManager.GetComponentsInChildren<PickPoint>();
+            var pickpoints = FindObjectsOfType<PickPoint>();
             foreach (var pickpoint in pickpoints)
             {
                 var index = grid.FindNearestIndexForPosition(pickpoint.transform.position);
@@ -141,7 +156,6 @@ namespace GameScene
                 if (move != Vector2Int.zero && !player.IsPortaling())
                 {
                     HandlePlayerMove(move);
-                    CalculateGameStatus();
                 }
             }
         }
@@ -155,19 +169,7 @@ namespace GameScene
             if (pickPointsManager.HasAt(nextIndex))
             {
                 var pickPoint = pickPointsManager.GetAt(nextIndex);
-                if (player.HasItemToGive() && pickPoint.CanTakeItem(player.GetItem()))
-                {
-                    var item = player.GetItem();
-                    player.RemoveItem(item);
-                    pickPoint.GiveItem(item);
-                }
-                else if (pickPoint.HasItemToGive() && player.CanTakeItem(pickPoint.GetItem()))
-                {
-                    var item = pickPoint.GetItem();
-                    pickPoint.RemoveItem(item);
-                    player.GiveItem(item);
-                }
-
+                ExchangeItem(player, pickPoint);
                 return;
             }
 
@@ -175,7 +177,7 @@ namespace GameScene
             if (toggleableTileSwitchManager.HasAt(nextIndex))
             {
                 var toggleSwitch = toggleableTileSwitchManager.GetAt(nextIndex);
-                toggleSwitch.Toggle();
+                Toggle(toggleSwitch);
                 return;
             }
 
@@ -190,7 +192,7 @@ namespace GameScene
             if (pushablesManager.HasAt(nextIndex))
             {
                 var overNextIndex = nextIndex + direction;
-                if (!_feasibleIndices.Contains(overNextIndex))
+                if (!_feasibleIndices.Contains(overNextIndex) || player.HasItemToGive())
                 {
                     // Pushable cannot be moved
                     return;
@@ -202,27 +204,22 @@ namespace GameScene
                 if (slidingGroundMap.HasTileAt(overNextIndex))
                 {
                     var nextSlidingIndexForItem = FindNextFreeNonSlidingTileInDirection(overNextIndex, direction);
-                    pushableToMove.MoveTo(
-                        nextSlidingIndexForItem + offset,
-                        grid.GetPositionForIndex(nextSlidingIndexForItem + offset)
-                    );
-                    player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
+                    MoveTo(pushableToMove, nextSlidingIndexForItem + offset);
+                    MoveTo(player, nextIndex);
                     return;
                 }
 
                 // Normal push
                 var nextMainIndexForPushable = overNextIndex + offset;
-                var feasibleIndicesPlusSelf = _feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
-                var allIndicesAfterPushAreFree = pushableToMove.GetCoveredIndicesWhenMainIndexWas(
-                    nextMainIndexForPushable).All(index => feasibleIndicesPlusSelf.Contains(index));
+                var nextCoveredIndicesAfterPush =
+                    pushableToMove.GetCoveredIndicesIfMainIndexWas(nextMainIndexForPushable);
+                var feasibleIndicesAndOwnIndices = _feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
+                var allIndicesAfterPushAreFree = nextCoveredIndicesAfterPush.All(feasibleIndicesAndOwnIndices.Contains);
 
                 if (allIndicesAfterPushAreFree)
                 {
-                    pushableToMove.MoveTo(
-                        overNextIndex + offset,
-                        grid.GetPositionForIndex(overNextIndex + offset)
-                    );
-                    player.MoveTo(nextIndex, grid.GetPositionForIndex(nextIndex));
+                    MoveTo(pushableToMove, overNextIndex + offset);
+                    MoveTo(player, nextIndex);
                 }
 
                 return;
@@ -232,52 +229,72 @@ namespace GameScene
             if (slidingGroundMap.HasTileAt(nextIndex))
             {
                 var nextSlidingIndex = FindNextFreeNonSlidingTileInDirection(nextIndex, direction);
-                if (portalManager.HasAt(nextSlidingIndex))
-                {
-                    UsePortal(player, nextSlidingIndex);
-                }
-                else
-                {
-                    MoveTo(player, nextSlidingIndex);
-                }
+                MoveTo(player, nextSlidingIndex);
                 return;
             }
 
             // Last case, simple movement
             if (_freeIndices.Contains(nextIndex))
             {
-                if (portalManager.HasAt(nextIndex))
-                {
-                    UsePortal(player, nextIndex);
-                }
-                else
-                {
-                    MoveTo(player, nextIndex);
-                }
+                MoveTo(player, nextIndex);
             }
         }
 
-        private void UsePortal(MovableGridEntity entity, Vector2Int index)
-        {
-            var nextIndex = portalManager.FindNextPortalIndexFor(index);
-            entity.SetPortaling(true);
-
-            var sequence = DOTween.Sequence();
-            sequence.Append(MoveTo(entity, index))
-                .Append(entity.BlendOut())
-                .AppendCallback(() => InstantMoveTo(entity, nextIndex))
-                .Append(entity.BlendIn())
-                .AppendCallback(() => entity.SetPortaling(false));
-        }
 
         private void InstantMoveTo(MovableGridEntity entity, Vector2Int index)
         {
             entity.InstantUpdatePosition(index, grid.GetPositionForIndex(index));
         }
 
-        private Tween MoveTo(MovableGridEntity entity, Vector2Int index)
+        private void ExchangeItem(ItemBearer bearerA, ItemBearer bearerB)
         {
-            return entity.MoveTo(index, grid.GetPositionForIndex(index));
+            if (bearerA.HasItemToGive() && bearerB.CanTakeItem(bearerA.GetItem()))
+            {
+                var item = bearerA.GetItem();
+                bearerA.RemoveItem(item);
+                bearerB.GiveItem(item);
+            }
+            else if (bearerB.HasItemToGive() && bearerA.CanTakeItem(bearerB.GetItem()))
+            {
+                var item = bearerB.GetItem();
+                bearerB.RemoveItem(item);
+                bearerA.GiveItem(item);
+            }
+            CalculateGameStatus();
+        }
+
+        private void Toggle(ToggleableTileSwitch switchy)
+        {
+            switchy.Toggle();
+            CalculateGameStatus();
+        }
+
+        private void MoveTo(MovableGridEntity entity, Vector2Int index)
+        {
+            entity.MoveTo(index, grid.GetPositionForIndex(index));
+            if (entity.IsSingleIndex() && portalManager.HasAt(index))
+            {
+                UsePortal(entity, index);
+            }
+            
+            CalculateGameStatus();
+        }
+
+        private void UsePortal(MovableGridEntity entity, Vector2Int index)
+        {
+            var nextIndex = portalManager.FindNextPortalIndexFor(index);
+
+            // Only move if exit is fre
+            if (_freeIndices.Contains(nextIndex))
+            {
+                entity.SetPortaling(true);
+
+                var sequence = DOTween.Sequence();
+                sequence.Insert(0, entity.BlendOut())
+                    .InsertCallback(0.4f, () => InstantMoveTo(entity, nextIndex))
+                    .Insert(0.6f, entity.BlendIn())
+                    .InsertCallback(1f, () => entity.SetPortaling(false));
+            }
         }
 
         private Vector2Int FindNextFreeNonSlidingTileInDirection(Vector2Int nextIndex, Vector2Int direction)

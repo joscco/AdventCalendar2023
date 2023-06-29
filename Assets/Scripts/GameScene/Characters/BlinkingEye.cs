@@ -64,9 +64,4 @@ public class BlinkingEye : MonoBehaviour
             _spriteRenderer.sprite = blinking ? closedEye : openEye;
         }
     }
-
-    public void UpdateSortOrder(int order)
-    {
-        _spriteRenderer.sortingOrder = order;
-    }
 }

@@ -29,5 +29,10 @@ namespace SceneManagement
         {
             return _entities;
         }
+        
+        public List<Vector2Int> GetMainIndices()
+        {
+            return _entities.Select(entity => entity.GetMainIndex()).ToList();
+        }
     }
 }

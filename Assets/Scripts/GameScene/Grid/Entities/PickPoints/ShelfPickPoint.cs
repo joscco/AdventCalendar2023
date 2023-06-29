@@ -25,7 +25,6 @@ namespace GameScene.SpecialGridEntities.PickPoints
             var firstFreeHolder = pickableHolders.First(holder => !holder.HasItem());
             firstFreeHolder.SetItem(item);
             item.AttachToPickupPoint(firstFreeHolder.GetPickupPoint());
-            item.SetSortingOrder(-currentMainIndex.y);
         }
 
         public override bool HasItemToGive()
@@ -42,12 +41,6 @@ namespace GameScene.SpecialGridEntities.PickPoints
         public override bool IsComplete()
         {
             return false;
-        }
-
-        protected override void UpdateSortingOrder(int newOrder)
-        {
-            entityRenderer.SetSortingOrder(newOrder);
-            pickableHolders.ForEach(holder => holder.GetItem()?.SetSortingOrder(newOrder));
         }
     }
 }

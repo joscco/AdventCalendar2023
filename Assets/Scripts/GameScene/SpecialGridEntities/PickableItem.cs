@@ -9,7 +9,6 @@ namespace General.Grid
     public class PickableItem : MonoBehaviour
     {
         [SerializeField] private PickableItemType type;
-        [SerializeField] private EntityRenderer pickableRenderer;
         private Tween _moveTween;
 
         public void AttachToPickupPoint(Transform newParent)
@@ -39,11 +38,6 @@ namespace General.Grid
             _moveTween = transform.DOLocalMove(position, 0.15f)
                 .SetEase(Ease.InOutCirc);
             return _moveTween;
-        }
-
-        public void SetSortingOrder(int mainOrder)
-        {
-            pickableRenderer.SetSortingOrder(mainOrder);
         }
     }
 }
