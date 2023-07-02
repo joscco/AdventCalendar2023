@@ -61,6 +61,9 @@ TagManager:
   - name: GridEntities
     uniqueID: 2335903911
     locked: 0
+  - name: Dialog
+    uniqueID: 898379685
+    locked: 0
   - name: UI_Backgrounds
     uniqueID: 2087901693
     locked: 0
