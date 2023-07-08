@@ -7,10 +7,12 @@ namespace GameScene.PlayerControl
     public class MovableGridEntity : GridEntity
     {
         [SerializeField] private bool flipInMovingDirection;
+        [SerializeField] private Transform flippable;
+        
         private bool _portaling;
         private Tween _moveTween;
 
-        protected void OnDestroy()
+        protected override void OnDestroy()
         {
             _moveTween?.Kill();
         }
@@ -32,7 +34,7 @@ namespace GameScene.PlayerControl
             var oldIndex = currentMainIndex;
             currentMainIndex = newIndex;
 
-            if (flipInMovingDirection)
+            if (flippable && flipInMovingDirection)
             {
                 SwapFaceDirectionIfNecessary(oldIndex.x, newIndex.x);
             }
@@ -47,11 +49,11 @@ namespace GameScene.PlayerControl
 
             if (shouldFaceLeft)
             {
-                transform.localScale = new Vector3(-1, 1, 1);
+                flippable.transform.localScale = new Vector3(-1, 1, 1);
             }
             else if (shouldFaceRight)
             {
-                transform.localScale = new Vector3(1, 1, 1);
+                flippable.transform.localScale = new Vector3(1, 1, 1);
             }
         }
 

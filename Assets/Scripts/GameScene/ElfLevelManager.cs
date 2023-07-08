@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using GameScene.Dialog.Background;
 using GameScene.Grid.Entities;
 using GameScene.Grid.Entities.Shared;
 using GameScene.PlayerControl;
@@ -17,6 +18,8 @@ namespace GameScene
     public class ElfLevelManager : LevelManager
     {
         // Infrastructure
+        [SerializeField] private DialogManager dialogManager;
+        
         [SerializeField] private GridAdapter grid;
         [SerializeField] private TilemapManager groundMap;
         [SerializeField] private TilemapManager slidingGroundMap;
@@ -36,8 +39,8 @@ namespace GameScene
         private bool _hasLost;
 
         // Free Indices is a subset of all feasible indices consisting of all that are not blocked
-        private List<Vector2Int> _feasibleIndices;
-        private List<Vector2Int> _freeIndices;
+        private List<Vector2Int> _potentialFreeFields;
+        private List<Vector2Int> _currentFreeFields;
 
         private void Start()
         {
@@ -47,13 +50,12 @@ namespace GameScene
 
         private void CalculateGameStatus()
         {
-            _feasibleIndices = GetFreeIndicesForMoving();
-            _freeIndices = _feasibleIndices.Where(index => !collidersMap.HasTileAt(index))
-                .Where(index => !pushablesManager.HasAt(index))
+            _potentialFreeFields = GetFieldsThePlayerCouldMoveToSometime();
+            _currentFreeFields = _potentialFreeFields.Where(index => !pushablesManager.HasAt(index))
                 .Where(index => !pickPointsManager.HasAt(index))
                 .ToList();
 
-            if (!_feasibleIndices.Contains(player.GetMainIndex()))
+            if (!_potentialFreeFields.Contains(player.GetMainIndex()))
             {
                 // Player is on unfeasible position! 
                 player.PlayDeathAnimation();
@@ -67,7 +69,7 @@ namespace GameScene
             }
         }
 
-        private List<Vector2Int> GetFreeIndicesForMoving()
+        private List<Vector2Int> GetFieldsThePlayerCouldMoveToSometime()
         {
             List<Vector2Int> result = new();
             result.AddRange(groundMap.GetIndices());
@@ -157,6 +159,11 @@ namespace GameScene
                 {
                     HandlePlayerMove(move);
                 }
+
+                if (InputManager.instance.GetE() && dialogManager.HasCurrentDialog())
+                {
+                    dialogManager.ContinueDialog();
+                }
             }
         }
 
@@ -182,7 +189,7 @@ namespace GameScene
             }
 
             // Moving Stuff, tiles must be feasible to move there
-            if (!_feasibleIndices.Contains(nextIndex))
+            if (!_potentialFreeFields.Contains(nextIndex))
             {
                 // Player cannot move here -> Stop
                 return;
@@ -192,7 +199,7 @@ namespace GameScene
             if (pushablesManager.HasAt(nextIndex))
             {
                 var overNextIndex = nextIndex + direction;
-                if (!_feasibleIndices.Contains(overNextIndex) || player.HasItemToGive())
+                if (!_potentialFreeFields.Contains(overNextIndex) || player.HasItemToGive())
                 {
                     // Pushable cannot be moved
                     return;
@@ -213,8 +220,8 @@ namespace GameScene
                 var nextMainIndexForPushable = overNextIndex + offset;
                 var nextCoveredIndicesAfterPush =
                     pushableToMove.GetCoveredIndicesIfMainIndexWas(nextMainIndexForPushable);
-                var feasibleIndicesAndOwnIndices = _feasibleIndices.Concat(pushableToMove.GetCoveredIndices()).ToList();
-                var allIndicesAfterPushAreFree = nextCoveredIndicesAfterPush.All(feasibleIndicesAndOwnIndices.Contains);
+                var currentFreeFieldsOrOwnFields = _currentFreeFields.Concat(pushableToMove.GetCoveredIndices()).ToList();
+                var allIndicesAfterPushAreFree = nextCoveredIndicesAfterPush.All(currentFreeFieldsOrOwnFields.Contains);
 
                 if (allIndicesAfterPushAreFree)
                 {
@@ -234,7 +241,7 @@ namespace GameScene
             }
 
             // Last case, simple movement
-            if (_freeIndices.Contains(nextIndex))
+            if (_currentFreeFields.Contains(nextIndex))
             {
                 MoveTo(player, nextIndex);
             }
@@ -285,7 +292,7 @@ namespace GameScene
             var nextIndex = portalManager.FindNextPortalIndexFor(index);
 
             // Only move if exit is fre
-            if (_freeIndices.Contains(nextIndex))
+            if (_currentFreeFields.Contains(nextIndex))
             {
                 entity.SetPortaling(true);
 
@@ -300,7 +307,7 @@ namespace GameScene
         private Vector2Int FindNextFreeNonSlidingTileInDirection(Vector2Int nextIndex, Vector2Int direction)
         {
             var result = nextIndex;
-            while (slidingGroundMap.HasTileAt(result) && _freeIndices.Contains(result + direction))
+            while (slidingGroundMap.HasTileAt(result) && _currentFreeFields.Contains(result + direction))
             {
                 result += direction;
             }

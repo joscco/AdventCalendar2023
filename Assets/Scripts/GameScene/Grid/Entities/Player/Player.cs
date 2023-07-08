@@ -1,7 +1,7 @@
 using GameScene.Grid.Entities;
-using GameScene.Grid.Entities.Player;
 using General.Grid;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameScene.PlayerControl
 {
@@ -9,19 +9,19 @@ namespace GameScene.PlayerControl
     {
         [SerializeField] private Transform itemPositionWhenPickedUp;
         [SerializeField] private PickableItem pickedItem;
-        [SerializeField] private SpriteRenderer spriteRenderer;
+
+        [SerializeField] private SpriteRenderer bodySpriteRenderer;
         [SerializeField] private Sprite spriteWhenCarrying;
         [SerializeField] private Sprite spriteWhenNormal;
-
         
         public void ShowCarrying()
         {
-            spriteRenderer.sprite = spriteWhenCarrying;
+            bodySpriteRenderer.sprite = spriteWhenCarrying;
         }
     
         public void ShowIdle()
         {
-            spriteRenderer.sprite = spriteWhenNormal;
+            bodySpriteRenderer.sprite = spriteWhenNormal;
         }
 
         public bool HasItemToGive()

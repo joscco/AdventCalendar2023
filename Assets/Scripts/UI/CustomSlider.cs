@@ -8,7 +8,6 @@ namespace Code.GameScene.UI
     {
         public SpriteRenderer background;
         public SpriteRenderer knob;
-        public Camera camera;
 
         private Tween knobTween;
         private float value;
@@ -29,7 +28,7 @@ namespace Code.GameScene.UI
 
         private void UpdateFromMouse()
         {
-            var globalPos = camera.ScreenToWorldPoint(Input.mousePosition);
+            var globalPos = GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
             var localPos = globalPos - background.transform.position;
             AdaptValue(localPos.x);
         }

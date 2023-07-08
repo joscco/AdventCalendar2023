@@ -11,6 +11,11 @@ public class InputManager : MonoBehaviour
        instance = this;
    }
 
+   public bool GetE()
+   {
+       return Input.GetKeyDown(KeyCode.E);
+   }
+
    public bool GetEnterOrSpace()
    {
        return Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) ;

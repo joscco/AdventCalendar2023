@@ -1,26 +1,32 @@
+using DG.Tweening;
 using GameScene.Grid.Entities.Shared;
 using GameScene.PlayerControl;
 using General.Grid;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Levels.WizardLevel
 {
     public class ToggleableTile : GridEntity
     {
         [SerializeField] private bool _active;
-        [SerializeField] private SpriteRenderer _spriteRenderer;
-        [SerializeField] private Sprite _activeSprite;
-        [SerializeField] private Sprite _inactiveSprite;
+        [SerializeField] private SpriteRenderer _innerSpriteRenderer;
 
         public void Toggle()
         {
             SetActive(!_active);
         }
 
-        public void SetActive(bool val)
+        public void SetActive(bool active)
         {
-            _active = val;
-            _spriteRenderer.sprite = val ? _activeSprite : _inactiveSprite;
+            _active = active;
+            BlendInnerTile(active ? 1f : 0f);
+        }
+
+        private void BlendInnerTile(float value)
+        {
+            _innerSpriteRenderer.DOFade(value, 0.3f)
+                .SetEase(Ease.InOutQuad);
         }
 
         public bool IsActive()

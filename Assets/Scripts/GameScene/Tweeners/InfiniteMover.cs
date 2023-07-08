@@ -10,8 +10,8 @@ public class InfiniteMover : MonoBehaviour
 
     void Start()
     {
-        var currentY = transform.position.y;
-        moveTween = transform.DOMoveY(currentY + offsetY, duration)
+        var currentY = transform.localPosition.y;
+        moveTween = transform.DOLocalMoveY(currentY + offsetY, duration)
             .SetEase(Ease.InOutQuad)
             .SetLoops(-1, LoopType.Yoyo);
     }

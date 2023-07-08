@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace GameScene.Grid.Entities.Shared
 {
@@ -12,6 +10,11 @@ namespace GameScene.Grid.Entities.Shared
         [SerializeField] protected Vector2Int currentMainIndex;
         [SerializeField] private List<Vector2Int> relativeIndicesIncluded = new() { Vector2Int.zero };
         private Tween _scaleTween;
+
+        protected virtual void OnDestroy()
+        {
+            _scaleTween?.Kill();
+        }
 
         public void SetIndicesAndPosition(Vector2Int newMainIndex, Vector3 newPosition)
         {
@@ -39,33 +42,21 @@ namespace GameScene.Grid.Entities.Shared
             return relativeIndicesIncluded.Count == 1;
         }
 
-        protected Tween scaleTween;
-
-        protected void OnDestroy()
-        {
-            scaleTween?.Kill();
-        }
-
         public Tween BlendIn()
         {
-            scaleTween?.Kill();
+            _scaleTween?.Kill();
             var blendInTween = transform.transform.DOScale(1f, 0.4f)
                 .SetEase(Ease.OutBack);
-            scaleTween = blendInTween;
+            _scaleTween = blendInTween;
             return blendInTween;
-        }
-
-        public void BlendOutInstantly()
-        {
-            transform.localScale = Vector3.zero;
         }
 
         public Tween BlendOut()
         {
-            scaleTween?.Kill();
+            _scaleTween?.Kill();
             var blendOutTween = transform.transform.DOScale(0f, 0.4f)
                 .SetEase(Ease.InBack);
-            scaleTween = blendOutTween;
+            _scaleTween = blendOutTween;
             return blendOutTween;
         }
     }
