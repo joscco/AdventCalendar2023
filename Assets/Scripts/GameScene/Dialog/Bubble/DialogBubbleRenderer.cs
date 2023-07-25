@@ -22,7 +22,7 @@ namespace GameScene.Dialog.Bubble
             InstantResizeBubble("");
             textObject.text = "";
             textObject.maxVisibleCharacters = 0;
-            transform.localScale = new Vector3(1, 0, 1);
+            transform.localScale = new Vector3(0, 0, 1);
         }
 
         public Sequence BlendOutBubble()
@@ -44,7 +44,7 @@ namespace GameScene.Dialog.Bubble
             return DOTween.Sequence()
                 .Append(ResizeBubble(newText))
                 .AppendCallback(() => { textObject.text = newText; })
-                .Append(DoVisibleCharacters(textObject, newText.Length, newText.Length * 0.01f));
+                .Join(DoVisibleCharacters(textObject, newText.Length, newText.Length * 0.01f));
         }
 
         public Tween Detype()
@@ -82,7 +82,7 @@ namespace GameScene.Dialog.Bubble
 
         private Tween RescaleAll(float scale)
         {
-            return transform.DOScale(scale, 0.1f)
+            return transform.DOScale(scale, 0.2f)
                 .SetEase(Ease.InOutQuad);
         }
 

@@ -1,47 +1,47 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
+using GameScene.Dialog.Background;
 using GameScene.Dialog.Bubble;
 using GameScene.Dialog.Data;
 using UnityEngine;
 
-namespace GameScene.Dialog.Background
+namespace GameScene.Dialog
 {
     public class DialogManager : MonoBehaviour
     {
         [SerializeField] private List<DialogBubble> speakerList;
         [SerializeField] private List<Data.Dialog> dialogList;
+        
+        private Data.Dialog _currentDialog;
+        private int _currentNodeIndex;
 
-        private Data.Dialog dialogWaitingInLine;
-
-        private Data.Dialog currentDialog;
-        private int currentNodeIndex;
-
-        private Dictionary<string, Data.Dialog> dialogs = new();
-        private Dictionary<DialogFactId, int> facts = new();
-        private Dictionary<DialogSpeaker, DialogBubble> speakerBubbles = new();
+        private readonly Dictionary<string, Data.Dialog> _dialogs = new();
+        private readonly Dictionary<DialogFactId, int> _facts = new();
+        private readonly Dictionary<DialogSpeaker, DialogBubble> _speakerBubbles = new();
 
         private void Start()
         {
             foreach (var speakerBubble in speakerList)
             {
-                speakerBubbles[speakerBubble.speaker] = speakerBubble;
+                _speakerBubbles[speakerBubble.speaker] = speakerBubble;
             }
 
             foreach (var dialog in dialogList)
             {
-                dialogs[dialog.id] = dialog;
+                _dialogs[dialog.id] = dialog;
             }
 
             UpdateDialogs();
         }
 
-        public void PublishFacts(List<DialogFact> newFacts)
+        private void PublishFacts(List<DialogFact> newFacts)
         {
-            if (null != newFacts || newFacts.Count > 0)
+            if (null != newFacts && newFacts.Count > 0)
             {
                 foreach (var fact in newFacts)
                 {
-                    facts[fact.id] = fact.value;
+                    _facts[fact.id] = fact.value;
                 }
 
                 UpdateDialogs();
@@ -55,25 +55,32 @@ namespace GameScene.Dialog.Background
 
         public bool HasCurrentDialog()
         {
-            return null != currentDialog;
+            return null != _currentDialog;
         }
 
         public void ContinueDialog()
         {
-            if (null != currentDialog)
+            if (null != _currentDialog)
             {
-                HideCurrentSpeaker();
-                currentNodeIndex++;
-
-                if (currentDialog.nodes.Count < currentNodeIndex + 1)
+                if (_currentNodeIndex + 1 < _currentDialog.nodes.Count)
                 {
-                    // Reset Index to hide last speech bubble
-                    currentNodeIndex--;
-                    EndCurrentDialog();
+                    // We can continue
+                    var currentSpeaker = _currentDialog.nodes[_currentNodeIndex].speaker;
+                    _currentNodeIndex++;
+                    var nextSpeaker = _currentDialog.nodes[_currentNodeIndex].speaker;
+
+                    var seq = DOTween.Sequence();
+                    if (currentSpeaker != nextSpeaker)
+                    {
+                        seq.Append(HideSpeaker(currentSpeaker));
+                    }
+                    
+                    seq.Append(ShowSpeaker(_currentDialog.nodes[_currentNodeIndex]));
                 }
                 else
                 {
-                    ShowSpeaker(currentDialog.nodes[currentNodeIndex]);
+                    // Dialog has Reached its end
+                    EndCurrentDialog();
                 }
             }
         }
@@ -87,77 +94,80 @@ namespace GameScene.Dialog.Background
 
         private void CancelCurrentDialogIfNecessary()
         {
-            if (null != currentDialog && ConditionsAreMet(currentDialog.cancelConditions))
+            if (null != _currentDialog && ConditionsAreMet(_currentDialog.cancelConditions))
             {
                 CancelCurrentDialog();
             }
         }
 
-        private void CancelCurrentDialog()
+        private Sequence CancelCurrentDialog()
         {
-            HideCurrentSpeaker();
+            var hideSeq = HideCurrentSpeaker();
 
-            var factsToPublish = currentDialog.factPublishedOnCancel;
+            var factsToPublish = _currentDialog.factPublishedOnCancel;
 
             // Set current Dialog to null before publishing new facts.
             // Otherwise we have an infinite loop of canceling the current dialog
-            currentDialog = null;
+            _currentDialog = null;
 
             PublishFacts(factsToPublish);
+            
+            return hideSeq;
         }
 
         private void EndCurrentDialog()
         {
             HideLastSpeaker();
 
-            var factsToPublish = currentDialog.factPublishedOnEnd;
+            var factsToPublish = _currentDialog.factPublishedOnEnd;
 
-            currentDialog = null;
+            _currentDialog = null;
 
             PublishFacts(factsToPublish);
         }
         
         private void StartDialog(Data.Dialog dialog)
         {
-            if (null == currentDialog || currentDialog.id != dialog.id)
+            if (null == _currentDialog || _currentDialog.id != dialog.id)
             {
-                if (currentDialog)
+                var seq = DOTween.Sequence();
+                if (_currentDialog)
                 {
-                    CancelCurrentDialog();
+                    seq.Append(CancelCurrentDialog());
                 }
 
-                dialog.GetInvolvedSpeakers().ForEach(HideSpeaker);
+                dialog.GetInvolvedSpeakers().ForEach(speaker => seq.Join(HideSpeaker(speaker)));
 
-                currentDialog = dialog;
-                currentNodeIndex = 0;
+                _currentDialog = dialog;
+                _currentNodeIndex = 0;
 
-                if (null != currentDialog)
+                if (null != _currentDialog)
                 {
                     // Dialog Exists so take first speaker and show it
-                    ShowSpeaker(currentDialog.nodes[currentNodeIndex]);
+                    seq.Append(ShowSpeaker(_currentDialog.nodes[_currentNodeIndex]));
                     PublishFacts(dialog.factPublishedOnStart);
                 }
             }
         }
 
-        private void HideCurrentSpeaker()
+        private Sequence HideCurrentSpeaker()
         {
-            HideSpeaker(currentDialog.nodes[currentNodeIndex].speaker);
+            return HideSpeaker(_currentDialog.nodes[_currentNodeIndex].speaker);
         }
         
-        private void HideLastSpeaker()
+        private Sequence HideLastSpeaker()
         {
-            HideSpeaker(currentDialog.nodes[^1].speaker);
+            return HideSpeaker(_currentDialog.nodes[^1].speaker);
         }
         
-        private void HideSpeaker(DialogSpeaker speaker)
+        private Sequence HideSpeaker(DialogSpeaker speaker)
         {
-            speakerBubbles[speaker].Hide();
+            return _speakerBubbles[speaker].Hide();
         }
 
         private void ShowHintsForDialogsIfNecessary()
         {
-            foreach (var dialog in dialogs.Values)
+            foreach (var dialog in _dialogs.Values)
             {
                 if (ConditionsAreMet(dialog.hintConditions))
                 {
@@ -168,7 +178,7 @@ namespace GameScene.Dialog.Background
 
         private void StartDialogIfNecessary()
         {
-            foreach (var dialog in dialogs.Values)
+            foreach (var dialog in _dialogs.Values)
             {
                 if (ConditionsAreMet(dialog.startConditions))
                 {
@@ -178,16 +188,16 @@ namespace GameScene.Dialog.Background
             }
         }
 
-        private void ShowSpeaker(DialogNode node)
+        private Sequence ShowSpeaker(DialogNode node)
         {
-            speakerBubbles[node.speaker].Show(node.text);
+            return _speakerBubbles[node.speaker].Show(node.text);
         }
 
         private void ShowHint(DialogSpeaker speaker)
         {
-            if (null == currentDialog || !currentDialog.ContainsSpeaker(speaker))
+            if (null == _currentDialog || !_currentDialog.ContainsSpeaker(speaker))
             {
-                speakerBubbles[speaker].ShowDotHint();
+                _speakerBubbles[speaker].ShowDotHint();
             }
         }
 
@@ -200,7 +210,7 @@ namespace GameScene.Dialog.Background
 
         private bool ConditionIsMet(DialogFactCondition condition)
         {
-            int currentValue = facts.ContainsKey(condition.id) ? facts[condition.id] : 0;
+            int currentValue = _facts.ContainsKey(condition.id) ? _facts[condition.id] : 0;
 
             switch (condition.op)
             {

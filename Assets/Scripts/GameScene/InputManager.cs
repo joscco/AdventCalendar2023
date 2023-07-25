@@ -1,56 +1,58 @@
 using System;
-using GameScene.UI;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+namespace GameScene
 {
-   public static InputManager instance;
-
-   private void Start()
-   {
-       instance = this;
-   }
-
-   public bool GetE()
-   {
-       return Input.GetKeyDown(KeyCode.E);
-   }
-
-   public bool GetEnterOrSpace()
-   {
-       return Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) ;
-   }
-    
-    public Vector2Int GetMoveDirection()
+    public class InputManager : MonoBehaviour
     {
-        int horizontalMove = 0;
-        int verticalMove = 0;
+        public static InputManager instance;
 
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        private void Start()
         {
-            horizontalMove++;
+            instance = this;
         }
 
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        public bool GetE()
         {
-            horizontalMove--;
+            return Input.GetKeyDown(KeyCode.E);
         }
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        public bool GetHoldingSpace()
         {
-            verticalMove++;
+            return Input.GetKey(KeyCode.Space);
         }
 
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        public Vector2Int GetMoveDirection()
         {
-            verticalMove--;
-        }
-            
-        if (Math.Abs(horizontalMove) == 1)
-        {
-            return new Vector2Int(horizontalMove, 0);
-        }
+            int horizontalMove = 0;
+            int verticalMove = 0;
 
-        return new Vector2Int(0, verticalMove);
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                horizontalMove++;
+            }
+
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                horizontalMove--;
+            }
+
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                verticalMove++;
+            }
+
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                verticalMove--;
+            }
+
+            if (Math.Abs(horizontalMove) == 1)
+            {
+                return new Vector2Int(horizontalMove, 0);
+            }
+
+            return new Vector2Int(0, verticalMove);
+        }
     }
 }

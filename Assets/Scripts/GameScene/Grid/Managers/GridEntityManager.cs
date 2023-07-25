@@ -1,38 +1,50 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameScene.Grid.Entities.Shared;
+using SceneManagement;
 using UnityEngine;
 
-namespace SceneManagement
+namespace GameScene.Grid.Managers
 {
     public class GridEntityManager<T> : GridAdapter where T : GridEntity
     {
-        protected List<T> _entities = new();
+        protected readonly List<T> entities = new();
 
         public void AddAt(T entity, Vector2Int index)
         {
+            entity.transform.SetParent(transform);
             entity.SetIndicesAndPosition(index, GetPositionForIndex(index));
-            _entities.Add(entity);
+            entities.Add(entity);
         }
 
         public bool HasAt(Vector2Int index)
         {
-            return _entities.Any(entity => entity.GetCoveredIndices().Contains(index));
+            return entities.Any(entity => entity.GetCoveredIndices().Contains(index));
         }
 
         public T GetAt(Vector2Int index)
         {
-            return _entities.First(entity => entity.GetCoveredIndices().Contains(index));
+            return entities.First(entity => entity.GetCoveredIndices().Contains(index));
+        }
+
+        public void Release(T item)
+        {
+            entities.Remove(item);
         }
 
         public List<T> GetEntities()
         {
-            return _entities;
+            return entities;
         }
         
         public List<Vector2Int> GetMainIndices()
         {
-            return _entities.Select(entity => entity.GetMainIndex()).ToList();
+            return entities.Select(entity => entity.GetMainIndex()).ToList();
+        }
+        
+        public HashSet<Vector2Int> GetCoveredIndices()
+        {
+            return entities.SelectMany(entity => entity.GetCoveredIndices()).ToHashSet();
         }
     }
 }

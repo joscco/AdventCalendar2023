@@ -27,7 +27,7 @@ namespace GameScene.Dialog.Bubble
 
             _bubbleSequence.Append(bubbleRenderer.Detype());
             _bubbleSequence.Append(bubbleRenderer.Type(newText));
-            _bubbleSequence.Append(showHint ? bubbleRenderer.BlendInHint() : bubbleRenderer.BlendOutHint());
+            _bubbleSequence.Join(showHint ? bubbleRenderer.BlendInHint() : bubbleRenderer.BlendOutHint());
 
             return _bubbleSequence;
         }
@@ -45,7 +45,7 @@ namespace GameScene.Dialog.Bubble
 
 
             _bubbleSequence.Append(bubbleRenderer.BlendOutHint());
-            _bubbleSequence.Append(bubbleRenderer.Detype());
+            _bubbleSequence.Join(bubbleRenderer.Detype());
 
             if (_showingBubble)
             {

@@ -41,6 +41,12 @@ namespace GameScene.PlayerControl
 
             return TweenGlobalMovePosition(newPos);
         }
+        
+        public Tween LocalMoveTo(Vector3 newPos)
+        {
+            currentMainIndex = Vector2Int.zero;
+            return TweenLocalMovePosition(newPos);
+        }
 
         private void SwapFaceDirectionIfNecessary(int oldX, int newX)
         {
@@ -62,6 +68,14 @@ namespace GameScene.PlayerControl
             StopMoving();
             var distance = (transform.position - new Vector3(newGlobalPosition.x, newGlobalPosition.y, transform.position.z)).magnitude;
             _moveTween = transform.DOMove(newGlobalPosition, 0.1f + distance * 0.0005f)
+                .SetEase(Ease.OutSine);
+            return _moveTween;
+        }
+        
+        private Tween TweenLocalMovePosition(Vector3 newLocalPosition)
+        {
+            StopMoving();
+            _moveTween = transform.DOLocalMove(newLocalPosition, 0.12f)
                 .SetEase(Ease.OutSine);
             return _moveTween;
         }

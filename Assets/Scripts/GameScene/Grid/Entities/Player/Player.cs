@@ -1,14 +1,12 @@
-using GameScene.Grid.Entities;
-using General.Grid;
+using GameScene.Grid.Entities.ItemInteraction;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameScene.PlayerControl
 {
-    public class Player : MovableGridEntity, ItemBearer
+    public class Player : MovableGridEntity, IInteractableItemBearer
     {
         [SerializeField] private Transform itemPositionWhenPickedUp;
-        [SerializeField] private PickableItem pickedItem;
+        [SerializeField] private InteractableItem pickedItem;
 
         [SerializeField] private SpriteRenderer bodySpriteRenderer;
         [SerializeField] private Sprite spriteWhenCarrying;
@@ -24,29 +22,29 @@ namespace GameScene.PlayerControl
             bodySpriteRenderer.sprite = spriteWhenNormal;
         }
 
-        public bool HasItemToGive()
+        public bool IsBearingItem()
         {
             return pickedItem != null;
         }
 
-        public bool CanTakeItem(PickableItem item)
+        public bool CanBeToppedWithItem(InteractableItem item)
         {
-            return !HasItemToGive();
+            return !IsBearingItem();
         }
 
-        public PickableItem GetItem()
+        public InteractableItem GetItem()
         {
             return pickedItem;
         }
 
-        public void GiveItem(PickableItem item)
+        public void TopWithItem(InteractableItem item)
         {
             pickedItem = item;
             ShowCarrying();
             item.AttachToPickupPoint(itemPositionWhenPickedUp);
         }
 
-        public void RemoveItem(PickableItem item)
+        public void RemoveItem(InteractableItem item)
         {
             pickedItem = null;
             ShowIdle();
