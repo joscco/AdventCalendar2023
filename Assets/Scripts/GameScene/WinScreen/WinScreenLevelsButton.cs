@@ -1,16 +1,16 @@
 using Code.GameScene.UI;
 using SceneManagement;
 
-namespace General.WinScreen
+namespace GameScene.WinScreen
 {
     public class WinScreenLevelsButton : ScalingButton
     {
-        public override void OnClick()
+        protected override void OnClick()
         {
-            SceneTransitionManager.Get().TransitionToScene(SceneReference.MENU_LEVEL);
+            SceneTransitionManager.Get().TransitionToNonLevelScene("LevelChoosingScene");
         }
 
-        public override bool IsEnabled()
+        protected override bool IsEnabled()
         {
             return true;
         }

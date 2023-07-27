@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c621a3128841608ba3adc17433e8b7, type: 3}
+  m_Name: TrainBearStartDialog
+  m_EditorClassIdentifier: 
+  id: train_bear_start_dialog
+  nodes:
+  - speaker: {fileID: 11400000, guid: deb03f6131e384c479851a8051b27086, type: 2}
+    text: Hey!
+  - speaker: {fileID: 11400000, guid: a4a92f6d44ad7480c8ad041f6b023f5e, type: 2}
+    text: Hi.
+  - speaker: {fileID: 11400000, guid: deb03f6131e384c479851a8051b27086, type: 2}
+    text: Could you move that train for me?
+  - speaker: {fileID: 11400000, guid: a4a92f6d44ad7480c8ad041f6b023f5e, type: 2}
+    text: No.
+  - speaker: {fileID: 11400000, guid: deb03f6131e384c479851a8051b27086, type: 2}
+    text: Oh. Okay.
+  hintSpeaker: {fileID: 11400000, guid: a4a92f6d44ad7480c8ad041f6b023f5e, type: 2}
+  cancelConditions:
+  - id: {fileID: 11400000, guid: 8e5f306a9d4ad48dfaa264ddc6e7ac87, type: 2}
+    op: 0
+    value: 0
+  startConditions:
+  - id: {fileID: 11400000, guid: 8e5f306a9d4ad48dfaa264ddc6e7ac87, type: 2}
+    op: 0
+    value: 1
+  - id: {fileID: 11400000, guid: 5366851933cff4ec7b8fee56391bb022, type: 2}
+    op: 0
+    value: 0
+  hintConditions:
+  - id: {fileID: 11400000, guid: 8e5f306a9d4ad48dfaa264ddc6e7ac87, type: 2}
+    op: 0
+    value: 0
+  - id: {fileID: 11400000, guid: 5366851933cff4ec7b8fee56391bb022, type: 2}
+    op: 0
+    value: 0
+  factPublishedOnCancel: []
+  factPublishedOnEnd:
+  - id: {fileID: 11400000, guid: 5366851933cff4ec7b8fee56391bb022, type: 2}
+    value: 1
+  factPublishedOnStart: []

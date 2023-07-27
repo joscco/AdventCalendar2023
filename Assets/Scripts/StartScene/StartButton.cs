@@ -5,12 +5,12 @@ namespace StartScene
 {
     public class StartButton : ScalingButton
     {
-        public override void OnClick()
+        protected override void OnClick()
         {
-            SceneTransitionManager.Get().TransitionToScene(SceneReference.MENU_LEVEL);
+            SceneTransitionManager.Get().TransitionToNonLevelScene("LevelChoosingScene");
         }
 
-        public override bool IsEnabled()
+        protected override bool IsEnabled()
         {
             return true;
         }

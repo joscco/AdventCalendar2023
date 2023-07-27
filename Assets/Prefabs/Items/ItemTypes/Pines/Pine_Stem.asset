@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3863d512e74980bff208c95303fb50, type: 3}
   m_Name: Pine_Stem
   m_EditorClassIdentifier: 
+  category: {fileID: 11400000, guid: 745b08b52186a49d2802386f6112b25b, type: 2}

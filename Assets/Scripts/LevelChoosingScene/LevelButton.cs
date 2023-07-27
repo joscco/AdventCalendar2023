@@ -1,62 +1,60 @@
 using Code.GameScene.UI;
-using DG.Tweening;
 using SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
 public class LevelButton : ScalingButton
 {
-    [SerializeField] private Sprite frontSprite;
-    [SerializeField] private Sprite backSprite;
-    [SerializeField] private LevelButtonRenderer buttonRenderer;
-
-    private Sequence _turnTween;
-    private bool turnedToFront;
-    private SceneReference _levelName;
+    [SerializeField] private Sprite activeSprite;
+    [SerializeField] private Sprite inactiveSprite;
+    [SerializeField] private SortingGroup sortingGroup;
+    [SerializeField] private SpriteRenderer boxRenderer;
+    [SerializeField] private SpriteRenderer numberRenderer;
+    [SerializeField] private int level;
+    [SerializeField] private bool _active;
 
     public void SetFrontSprite(Sprite sprite)
     {
-        frontSprite = sprite;
-        buttonRenderer.UpdateSpriteRenderer(turnedToFront ? frontSprite : backSprite);
+        activeSprite = sprite;
+        if (_active)
+        {
+            TurnOn();
+        }
+        else
+        {
+            TurnOff();
+        }
     }
 
     public void TurnOn()
     {
-        buttonRenderer.TurnTo(frontSprite);
+        sortingGroup.sortingOrder = (level - 1) % 4 + 1;
+        numberRenderer.color = new Color(1, 1, 1, 1);
+        boxRenderer.color = new Color(1, 1, 1, 1);
+        boxRenderer.sprite = activeSprite;
     }
 
     public void TurnOff()
     {
-        buttonRenderer.TurnTo(backSprite);
-    }
-    
-    public override void OnClick()
-    {
-        if (null != _levelName)
-        {
-            SceneTransitionManager.Get().TransitionToScene(_levelName);
-        }
+        sortingGroup.sortingOrder = 0;
+        numberRenderer.color = new Color(1, 1, 1, 0.4f);
+        boxRenderer.color = new Color(1, 1, 1, 0.5f);
+        boxRenderer.sprite = inactiveSprite;
     }
 
-    public override bool IsEnabled()
+    protected override void OnClick()
+    {
+        SceneTransitionManager.Get().TransitionToLevel(level);
+    }
+
+    protected override bool IsEnabled()
     {
         return true;
     }
-    
-    public override void Select()
-    {
-        _selected = true;
-        TurnOn();
-    }
 
-    public override void Deselect()
+    public int GetLevel()
     {
-        _selected = false;
-        TurnOff();
-    }
-
-    public void SetLevelName(SceneReference levelSceneName)
-    {
-        _levelName = levelSceneName;
+        return level;
     }
 }

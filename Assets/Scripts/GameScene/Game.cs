@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -5,13 +6,13 @@ public class Game : MonoBehaviour
     const string KEY_UNLOCKED_LEVELS = "unlockedLevels";
     
     public static Game instance;
-    private int unlockedLevels = 0;
-    public const int AVAILABLE_LEVELS = 13;
+    private int unlockedLevels = 1;
+    public const int AVAILABLE_LEVELS = 24;
     
     void Start()
     {
         instance = this;
-        unlockedLevels = PlayerPrefs.GetInt(KEY_UNLOCKED_LEVELS, 0);
+        unlockedLevels = PlayerPrefs.GetInt(KEY_UNLOCKED_LEVELS, 1);
     }
 
     // Update is called once per frame
@@ -19,12 +20,12 @@ public class Game : MonoBehaviour
     {
         if (newLevel > unlockedLevels)
         {
-            unlockedLevels = newLevel;
+            unlockedLevels = Math.Max(newLevel, AVAILABLE_LEVELS);
             PlayerPrefs.SetInt(KEY_UNLOCKED_LEVELS, unlockedLevels);
         }
     }
 
-    public int GetUnlockedLevel()
+    public int GetHighestUnlockedLevel()
     {
         return unlockedLevels;
     }

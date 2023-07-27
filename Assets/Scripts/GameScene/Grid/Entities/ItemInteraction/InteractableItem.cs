@@ -1,4 +1,4 @@
-using GameScene.PlayerControl;
+using GameScene.Grid.Entities.Shared;
 using GameScene.SpecialGridEntities.PickPoints;
 using UnityEngine;
 
@@ -9,7 +9,25 @@ namespace GameScene.Grid.Entities.ItemInteraction
         [SerializeField] private Transform itemHolder;
         [SerializeField] private bool pickable;
         [SerializeField] private bool pushable;
+        [SerializeField] private bool interactable = true;
         [SerializeField] private InteractableItemType type;
+
+        private bool wasCompletedAlready;
+
+        protected virtual void OnFirstComplete()
+        {
+            
+        }
+        
+        protected virtual void OnEachComplete()
+        {
+            
+        }
+
+        protected virtual void OnTopWithItem(InteractableItem item)
+        {
+            
+        }
 
         public void AttachToPickupPoint(Transform newParent)
         {
@@ -37,6 +55,26 @@ namespace GameScene.Grid.Entities.ItemInteraction
             return pushable;
         }
 
+        public bool IsInteractable()
+        {
+            return interactable;
+        }
+        
+        protected void SetPickable(bool val)
+        {
+            pickable = val;
+        }
+
+        protected void SetPushable(bool val)
+        {
+            pushable = val;
+        }
+
+        protected void SetInteractable(bool val)
+        {
+            interactable = val;
+        }
+
         public Transform GetItemHolder()
         {
             return itemHolder;
@@ -46,7 +84,20 @@ namespace GameScene.Grid.Entities.ItemInteraction
 
         public abstract InteractableItem GetItem();
 
-        public abstract void TopWithItem(InteractableItem item);
+        public void TopWithItem(InteractableItem item)
+        {
+            OnTopWithItem(item);
+
+            if (IsComplete())
+            {
+                if (!wasCompletedAlready)
+                {
+                    wasCompletedAlready = true;
+                    OnFirstComplete();
+                }
+                OnEachComplete();
+            }
+        }
 
         public abstract bool IsBearingItem();
 

@@ -6,7 +6,7 @@ public class FocusScene : MonoBehaviour
 {
     private void OnMouseUp()
     {
-        SceneTransitionManager.Get().TransitionToScene(SceneReference.START);
+        SceneTransitionManager.Get().TransitionToNonLevelScene("StartScene");
         AudioManager.instance.PlayMusic();
     }
 }

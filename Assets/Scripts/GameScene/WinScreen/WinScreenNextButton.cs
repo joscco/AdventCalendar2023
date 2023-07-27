@@ -5,12 +5,12 @@ namespace General.WinScreen
 {
     public class WinScreenNextButton : ScalingButton
     {
-        public override void OnClick()
+        protected override void OnClick()
         {
             SceneTransitionManager.Get().TransitionToNextLevel();
         }
 
-        public override bool IsEnabled()
+        protected override bool IsEnabled()
         {
             return true;
         }

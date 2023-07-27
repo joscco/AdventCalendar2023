@@ -15,7 +15,11 @@ namespace GameScene.Dialog.Bubble
         [SerializeField] private SpriteRenderer bubbleRenderer;
         [SerializeField] private DialogBubbleNextHint nextHint;
 
-        private Tween _typeseq;
+        private Sequence _bubbleSeq;
+        private Tween _typeSeq;
+        private Tween _typingSeq;
+        private Tween _bubbleSizeTween;
+        private Tween _bubbleScaleTween;
 
         private void Start()
         {
@@ -27,24 +31,30 @@ namespace GameScene.Dialog.Bubble
 
         public Sequence BlendOutBubble()
         {
-            return DOTween.Sequence()
+            _bubbleSeq?.Kill();
+            _bubbleSeq = DOTween.Sequence()
                 .Append(ResizeBubble(""))
                 .Append(RescaleAll(0));
+            return _bubbleSeq;
         }
 
-        public Sequence BlendInEmptyBubble()
+        public Sequence RescaleBubbleToEmptyText()
         {
-            return DOTween.Sequence()
+            _bubbleSeq?.Kill();
+            _bubbleSeq = DOTween.Sequence()
                 .Append(ResizeBubble(""))
                 .Append(RescaleAll(1));
+            return _bubbleSeq;
         }
 
-        public Sequence Type(string newText)
+        public Tween Type(string newText)
         {
-            return DOTween.Sequence()
+            _typeSeq?.Kill();
+            _typeSeq = DOTween.Sequence()
                 .Append(ResizeBubble(newText))
                 .AppendCallback(() => { textObject.text = newText; })
                 .Join(DoVisibleCharacters(textObject, newText.Length, newText.Length * 0.01f));
+            return _typeSeq;
         }
 
         public Tween Detype()
@@ -82,38 +92,42 @@ namespace GameScene.Dialog.Bubble
 
         private Tween RescaleAll(float scale)
         {
-            return transform.DOScale(scale, 0.2f)
+            _bubbleScaleTween?.Kill();
+            _bubbleScaleTween = transform.DOScale(scale, 0.2f)
                 .SetEase(Ease.InOutQuad);
+            return _bubbleScaleTween;
         }
 
         private Tween DoVisibleCharacters(TextMeshPro textMeshPro, int newLength, float duration)
         {
-            //_typeseq?.Kill();
-            _typeseq = DOTween.To(
+            _typingSeq?.Kill();
+            _typingSeq = DOTween.To(
                     () => textMeshPro.maxVisibleCharacters,
                     (len) => textMeshPro.maxVisibleCharacters = len,
                     newLength,
                     duration)
                 .SetEase(Ease.Linear);
-            return _typeseq;
+            return _typingSeq;
         }
 
         private Tween TweenResizeBubble(Vector2 newSize, float duration)
         {
-            return DOTween.To(
+            _bubbleSizeTween?.Kill();
+            _bubbleSizeTween = DOTween.To(
                     () => bubbleRenderer.size,
                     (size) => bubbleRenderer.size = size,
                     newSize,
                     duration)
                 .SetEase(Ease.InOutQuad);
+            return _bubbleSizeTween;
         }
 
-        public Tween BlendOutHint()
+        public Tween BlendOutContinuationHint()
         {
             return nextHint.BlendOut();
         }
 
-        public Tween BlendInHint()
+        public Tween BlendInKeyHintToContinue()
         {
             return nextHint.BlendIn();
         }

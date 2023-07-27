@@ -17,7 +17,7 @@ namespace GameScene.Dialog.Background
         {
             if (col.CompareTag("Player"))
             {
-                dialogManager.PublishFact(new DialogFact(areaFactId, 1));
+                dialogManager.PublishFactAndUpdate(new DialogFact(areaFactId, 1));
             }
         }
 
@@ -25,7 +25,7 @@ namespace GameScene.Dialog.Background
         {
             if (other.CompareTag("Player"))
             {
-                dialogManager.PublishFact(new DialogFact(areaFactId, 0));
+                dialogManager.PublishFactAndUpdate(new DialogFact(areaFactId, 0));
             }
         }
     }

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace GameScene
 {
     public interface ILevelManager
@@ -7,7 +5,5 @@ namespace GameScene
         public void HandleUpdate();
 
         public bool HasWon();
-
-        public bool HasLost();
     }
 }

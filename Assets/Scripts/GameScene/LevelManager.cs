@@ -3,7 +3,9 @@ using System.Linq;
 using DG.Tweening;
 using GameScene.Dialog;
 using GameScene.Grid.Entities.ItemInteraction;
-using GameScene.PlayerControl;
+using GameScene.Grid.Entities.Obstacles;
+using GameScene.Grid.Entities.Player;
+using GameScene.Grid.Entities.Shared;
 using GameScene.SpecialGridEntities;
 using GameScene.SpecialGridEntities.EntityManagers;
 using Levels.SheepLevel;
@@ -21,19 +23,18 @@ namespace GameScene
         [SerializeField] private GridAdapter grid;
         [SerializeField] private TilemapManager groundMap;
         [SerializeField] private TilemapManager slidingGroundMap;
-        [SerializeField] private TilemapManager collidersMap;
+        [SerializeField] private TemporaryObstacleManager obstacleManager;
         [SerializeField] private ToggleableTileManager toggleableTilesManager;
         [SerializeField] private ToggleableTileSwitchManager toggleableTileSwitchManager;
         [SerializeField] private PortalManager portalManager;
         [SerializeField] private InteractableItemManager interactableItemManager;
 
-        [SerializeField] private List<InteractableItem> pickPointsToListenTo;
+        [SerializeField] private List<InteractableItem> interactablesToListenTo;
         [SerializeField] private Player player;
 
         // Game State
         private bool _setup;
         private bool _hasWon;
-        private bool _hasLost;
 
         // Free Indices is a subset of all feasible indices consisting of all that are not blocked
         private List<Vector2Int> _potentialFreeFields;
@@ -50,15 +51,8 @@ namespace GameScene
             _potentialFreeFields = GetFieldsThePlayerCouldMoveToSometime();
             _currentFreeFields = _potentialFreeFields.Except(interactableItemManager.GetCoveredIndices())
                 .ToList();
-
-            if (!_potentialFreeFields.Contains(player.GetMainIndex()))
-            {
-                // Player is on unfeasible position! 
-                player.PlayDeathAnimation();
-                _hasLost = true;
-            }
-
-            if (pickPointsToListenTo.Count != 0 && pickPointsToListenTo.All(pickPoint => pickPoint.IsComplete()))
+            
+            if (interactablesToListenTo.Count != 0 && interactablesToListenTo.All(pickPoint => pickPoint.IsComplete()))
             {
                 player.PlayWinAnimation();
                 _hasWon = true;
@@ -72,8 +66,8 @@ namespace GameScene
             result.AddRange(slidingGroundMap.GetIndices());
             result.AddRange(toggleableTilesManager.GetActiveTileIndices());
 
-            collidersMap.GetIndices().ForEach(index => result.Remove(index));
-            toggleableTileSwitchManager.GetMainIndices().ForEach(index => result.Remove(index));
+            result = result.Except(obstacleManager.GetCoveredIndices()).ToList();
+            result = result.Except(toggleableTileSwitchManager.GetMainIndices()).ToList();
             return result;
         }
 
@@ -83,6 +77,7 @@ namespace GameScene
             InitToggleableTileSwitches();
             InitPlayer();
             InitPortals();
+            InitObstacles();
             InitInteractables();
 
             _setup = true;
@@ -111,6 +106,16 @@ namespace GameScene
             {
                 var index = grid.FindNearestIndexForPosition(switchy.transform.position);
                 toggleableTileSwitchManager.AddAt(switchy, index);
+            }
+        }
+        
+        public void InitObstacles()
+        {
+            var obstacles = FindObjectsOfType<TemporaryObstacle>();
+            foreach (var obstacle in obstacles)
+            {
+                var index = grid.FindNearestIndexForPosition(obstacle.transform.position);
+                obstacleManager.AddAt(obstacle, index);
             }
         }
 
@@ -142,9 +147,7 @@ namespace GameScene
                 
                 if (move != Vector2Int.zero && !player.IsPortaling())
                 {
-                    var holdingSpace = InputManager.instance.GetHoldingSpace();
-                    Debug.Log("Holding Space: " + holdingSpace);
-                    if (holdingSpace)
+                    if (InputManager.instance.GetHoldingSpace())
                     {
                         HandlePlayerItemInteraction(move);
                     }
@@ -165,21 +168,27 @@ namespace GameScene
         private void HandlePlayerItemInteraction(Vector2Int direction)
         {
             var nextIndex = player.GetMainIndex() + direction;
-            Debug.Log("Handling interaction!");
             if (!player.IsBearingItem() && interactableItemManager.HasAt(nextIndex))
             {
                 // Take item
-                Debug.Log("Taking item!");
                 var item = interactableItemManager.GetAt(nextIndex);
 
+                if (!item.IsInteractable())
+                {
+                    // We cannot interact with item
+                    return;
+                }
+                
                 if (item.IsBearingItem() && item.GetItem().IsPickable())
                 {
                     ExchangeItem(player, item);
+                    player.SwapFaceDirectionIfNecessary(nextIndex.x);
                 } else if (!item.IsBearingItem() && item.IsPickable())
                 {
-                    TakeItem(player, item);
+                    TakeItem(item);
+                    player.SwapFaceDirectionIfNecessary(nextIndex.x);
                 }
-                
+
             }
             else if (player.IsBearingItem())
             {
@@ -187,14 +196,17 @@ namespace GameScene
                 if (_currentFreeFields.Contains(nextIndex))
                 {
                     LetGoItemAt(player, nextIndex);
+                    player.SwapFaceDirectionIfNecessary(nextIndex.x);
                 }
                 else if (interactableItemManager.HasAt(nextIndex))
                 {
                     var item = interactableItemManager.GetAt(nextIndex);
+                    var itemIsInteractable = item.IsInteractable();
                     var fieldCanBeToppedWithItem = item.CanBeToppedWithItem(player.GetItem());
-                    if (fieldCanBeToppedWithItem)
+                    if (itemIsInteractable && fieldCanBeToppedWithItem)
                     {
                         ExchangeItem(player, item);
+                        player.SwapFaceDirectionIfNecessary(nextIndex.x);
                     }
                 }
             }
@@ -236,8 +248,8 @@ namespace GameScene
                 if (slidingGroundMap.HasTileAt(overNextIndex))
                 {
                     var nextSlidingIndexForItem = FindNextFreeNonSlidingTileInDirection(overNextIndex, direction);
-                    MoveTo(pushableToMove, nextSlidingIndexForItem + offset);
-                    MoveTo(player, nextIndex);
+                    MoveTo(pushableToMove, nextSlidingIndexForItem + offset, false);
+                    MoveTo(player, nextIndex, false);
                     return;
                 }
 
@@ -251,8 +263,8 @@ namespace GameScene
 
                 if (allIndicesAfterPushAreFree)
                 {
-                    MoveTo(pushableToMove, overNextIndex + offset);
-                    MoveTo(player, nextIndex);
+                    MoveTo(pushableToMove, overNextIndex + offset, false);
+                    MoveTo(player, nextIndex, false);
                 }
 
                 return;
@@ -262,14 +274,14 @@ namespace GameScene
             if (slidingGroundMap.HasTileAt(nextIndex))
             {
                 var nextSlidingIndex = FindNextFreeNonSlidingTileInDirection(nextIndex, direction);
-                MoveTo(player, nextSlidingIndex);
+                MoveTo(player, nextSlidingIndex, false);
                 return;
             }
 
             // Last case, simple movement
             if (_currentFreeFields.Contains(nextIndex))
             {
-                MoveTo(player, nextIndex);
+                MoveTo(player, nextIndex, true);
             }
         }
 
@@ -305,10 +317,10 @@ namespace GameScene
             CalculateGameStatus();
         }
         
-        private void TakeItem(IInteractableItemBearer bearerA, InteractableItem item)
+        private void TakeItem(InteractableItem item)
         {
             interactableItemManager.Release(item);
-            bearerA.TopWithItem(item);
+            player.TopWithItem(item);
             CalculateGameStatus();
         }
 
@@ -318,9 +330,9 @@ namespace GameScene
             CalculateGameStatus();
         }
 
-        private void MoveTo(MovableGridEntity entity, Vector2Int index)
+        private void MoveTo(MovableGridEntity entity, Vector2Int index, bool jump)
         {
-            entity.MoveTo(index, grid.GetPositionForIndex(index));
+            entity.MoveTo(index, grid.GetPositionForIndex(index), jump);
             if (entity.IsSingleIndex() && portalManager.HasAt(index))
             {
                 UsePortal(entity, index);
@@ -360,11 +372,6 @@ namespace GameScene
         public bool HasWon()
         {
             return _hasWon;
-        }
-
-        public bool HasLost()
-        {
-            return _hasLost;
         }
     }
 }

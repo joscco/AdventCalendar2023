@@ -1,5 +1,5 @@
+using GameScene.Grid.Entities.Shared;
 using GameScene.Grid.Managers;
-using GameScene.PlayerControl;
 using SceneManagement;
 using UnityEngine;
 

@@ -1,17 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using Code.GameScene.UI;
 using SceneManagement;
-using UnityEngine;
 
 public class LevelChoosingSceneBackButton : ScalingButton
 {
-    public override void OnClick()
+    protected override void OnClick()
     {
-        SceneTransitionManager.Get().TransitionToScene(SceneReference.START);
+        SceneTransitionManager.Get().TransitionToNonLevelScene("StartScene");
     }
 
-    public override bool IsEnabled()
+    protected override bool IsEnabled()
     {
         return true;
     }

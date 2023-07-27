@@ -1,6 +1,5 @@
 using GameScene;
 using GameScene.UI;
-using General.LoseScreen;
 using General.OptionScreen;
 using General.WinScreen;
 using UnityEngine;
@@ -21,7 +20,6 @@ namespace SceneManagement
 
         [SerializeField] private WinScreen winScreen;
         [SerializeField] private OptionScreen optionScreen;
-        [SerializeField] private LoseScreen loseScreen;
 
         [SerializeField] private OptionButton optionButton;
         [SerializeField] private GameSceneBackButton backButton;
@@ -57,19 +55,10 @@ namespace SceneManagement
                         BlendInWinScreen();
                         break;
                     }
-                    
-                    if (_levelManager.HasLost())
-                    {
-                        BlendInLoseScreen();;
-                        break;
-                    }
                     _levelManager.HandleUpdate();
                     break;
                 case GameSceneState.SHOWING_WIN_SCREEN:
                     winScreen.HandleUpdate();
-                    break;
-                case GameSceneState.SHOWING_LOSE_SCREEN:
-                    loseScreen.HandleUpdate();
                     break;
                 case GameSceneState.SHOWING_OPTION_SCREEN:
                     optionScreen.HandleUpdate();
@@ -81,12 +70,6 @@ namespace SceneManagement
         {
             winScreen.BlendIn(2f);
             _state = GameSceneState.SHOWING_WIN_SCREEN;
-        }
-
-        public void BlendInLoseScreen()
-        {
-            loseScreen.BlendIn(2f);
-            _state = GameSceneState.SHOWING_LOSE_SCREEN;
         }
 
         public void BlendInOptionScreen()
@@ -118,7 +101,6 @@ namespace SceneManagement
     {
         UNPAUSED,
         SHOWING_OPTION_SCREEN,
-        SHOWING_WIN_SCREEN,
-        SHOWING_LOSE_SCREEN
+        SHOWING_WIN_SCREEN
     }
 }

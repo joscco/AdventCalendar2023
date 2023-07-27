@@ -1,9 +1,8 @@
 using System.Linq;
-using GameScene.Grid.Entities.ItemInteraction;
 using GameScene.Grid.Managers;
 using UnityEngine;
 
-namespace GameScene.SpecialGridEntities.EntityManagers
+namespace GameScene.Grid.Entities.ItemInteraction
 {
     public class InteractableItemManager : GridEntityManager<InteractableItem>
     {
@@ -15,7 +14,7 @@ namespace GameScene.SpecialGridEntities.EntityManagers
         public void AddAtAndMoveTo(InteractableItem entity, Vector2Int index)
         {
             entity.transform.SetParent(transform);
-            entity.MoveTo(index, GetPositionForIndex(index));
+            entity.MoveTo(index, GetPositionForIndex(index), true);
             entities.Add(entity);
         }
     }

@@ -89,9 +89,9 @@ namespace Code.GameScene.UI
             }
         }
 
-        public abstract void OnClick();
+        protected abstract void OnClick();
 
-        public abstract bool IsEnabled();
+        protected abstract bool IsEnabled();
 
         public void Activate()
         {

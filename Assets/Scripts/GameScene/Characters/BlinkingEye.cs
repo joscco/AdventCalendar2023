@@ -1,67 +1,30 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine.Serialization;
 
-[RequireComponent(typeof(SpriteRenderer))]
-public class BlinkingEye : MonoBehaviour
+namespace GameScene.Characters
 {
-    [SerializeField] private Sprite openEye;
-    [SerializeField] private Sprite mediumEye;
-    [SerializeField] private Sprite closedEye;
-
-    private bool blinking;
-    private bool startingToBlink;
-    private SpriteRenderer _spriteRenderer;
-
-    private void Start()
+    [RequireComponent(typeof(SpriteRenderer))]
+    public class BlinkingEye : MonoBehaviour
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+        [SerializeField] private Sprite openEye;
+        [SerializeField] private Sprite mediumEye;
+        [SerializeField] private Sprite closedEye;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (startingToBlink)
+        [SerializeField] private SpriteRenderer spriteRenderer;
+
+        public void ToMedium()
         {
-            return;
+            spriteRenderer.sprite = mediumEye;
         }
 
-        if (blinking && Random.value < 0.015f)
+        public void ToClose()
         {
-            blinking = false;
-            startingToBlink = true;
-            DOVirtual.DelayedCall(0.1f, () =>
-            {
-                startingToBlink = false;
-                UpdateSprite();
-            });
-            UpdateSprite();
+            spriteRenderer.sprite = closedEye;
         }
-        else if (!blinking && Random.value < 0.001f)
-        {
-            blinking = true;
-            startingToBlink = true;
-            DOVirtual.DelayedCall(0.1f, () =>
-            {
-                startingToBlink = false;
-                UpdateSprite();
-            });
-            UpdateSprite();
-        }
-    }
 
-    private void UpdateSprite()
-    {
-        if (startingToBlink)
+        public void ToOpen()
         {
-            _spriteRenderer.sprite = mediumEye;
-        }
-        else
-        {
-            _spriteRenderer.sprite = blinking ? closedEye : openEye;
+            spriteRenderer.sprite = openEye;
         }
     }
 }

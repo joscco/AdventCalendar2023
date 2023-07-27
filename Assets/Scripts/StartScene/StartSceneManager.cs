@@ -1,52 +1,35 @@
 using DG.Tweening;
-using GameScene;
-using GameScene.UI;
 using General;
-using StartScene;
 using UnityEngine;
 
-public class StartSceneManager : MonoBehaviour
+namespace StartScene
 {
-    public TitleAnimation titleAnimation;
-    public StartButton startButton;
-
-    private void Start()
+    public class StartSceneManager : MonoBehaviour
     {
-        //startButton.OnSetActive();
-    }
-    
-    // private void Update()
-    // {
-    //     var move = InputManager.instance.GetMoveDirection();
-    //         
-    //     if (OptionScreen.instance.IsVisible())
-    //     {
-    //         // Option Screen is showing
-    //         OptionScreen.instance.HandleMoveInput(move);
-    //         if (InputManager.instance.GetEnterOrSpace())
-    //         {
-    //             OptionScreen.instance.OnPressEnter();
-    //         }
-    //     }
-    //     else
-    //     {
-    //         if (InputManager.instance.GetEnterOrSpace())
-    //         {
-    //             startButton.Trigger();
-    //         }
-    //     }
-    //
-    //     if (!SceneManager.Get().IsInTransition())
-    //     {
-    //         if (Input.GetKeyDown(KeyCode.O))
-    //         {
-    //             FindObjectOfType<OptionButton>()?.Trigger();
-    //         }
-    //     }
-    // }
+        private const KeyCode OptionScreenKey = KeyCode.O;
+        private const KeyCode StartKey = KeyCode.Space;
 
-    public void AfterSceneStart()
-    {
-        DOVirtual.DelayedCall(0.5f, () => titleAnimation.FadeIn());
+        public TitleAnimation titleAnimation;
+        public StartButton startButton;
+        public OptionButton optionButton;
+
+        private void Start()
+        {
+            DOVirtual.DelayedCall(0.5f, () => titleAnimation.FadeIn());
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(OptionScreenKey))
+            {
+                optionButton.Activate();
+                return;
+            }
+        
+            if (Input.GetKeyDown(StartKey))
+            {
+                startButton.Activate();
+            }
+        }
     }
 }

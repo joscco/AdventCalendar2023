@@ -1,14 +1,13 @@
 using DG.Tweening;
-using GameScene.Grid.Entities.Shared;
 using UnityEngine;
 
-namespace GameScene.PlayerControl
+namespace GameScene.Grid.Entities.Shared
 {
     public class MovableGridEntity : GridEntity
     {
         [SerializeField] private bool flipInMovingDirection;
         [SerializeField] private Transform flippable;
-        
+
         private bool _portaling;
         private Tween _moveTween;
 
@@ -29,54 +28,71 @@ namespace GameScene.PlayerControl
             _moveTween?.Kill();
         }
 
-        public Tween MoveTo(Vector2Int newIndex, Vector3 newPos)
+        public Tween MoveTo(Vector2Int newIndex, Vector3 newPos, bool jump = false)
         {
-            var oldIndex = currentMainIndex;
+            SwapFaceDirectionIfNecessary(newIndex.x);
             currentMainIndex = newIndex;
-
-            if (flippable && flipInMovingDirection)
-            {
-                SwapFaceDirectionIfNecessary(oldIndex.x, newIndex.x);
-            }
-
-            return TweenGlobalMovePosition(newPos);
+            return jump ? TweenGlobalJumpPosition(newPos) : TweenGlobalMovePosition(newPos);
         }
-        
+
         public Tween LocalMoveTo(Vector3 newPos)
         {
             currentMainIndex = Vector2Int.zero;
             return TweenLocalMovePosition(newPos);
         }
 
-        private void SwapFaceDirectionIfNecessary(int oldX, int newX)
+        public void SwapFaceDirectionIfNecessary(int newX)
         {
-            bool shouldFaceLeft = newX < oldX;
-            bool shouldFaceRight = newX > oldX;
+            if (flippable && flipInMovingDirection)
+            {
+                var oldX = currentMainIndex.x;
+                bool shouldFaceLeft = newX < oldX;
+                bool shouldFaceRight = newX > oldX;
 
-            if (shouldFaceLeft)
-            {
-                flippable.transform.localScale = new Vector3(-1, 1, 1);
-            }
-            else if (shouldFaceRight)
-            {
-                flippable.transform.localScale = new Vector3(1, 1, 1);
+                if (shouldFaceLeft)
+                {
+                    flippable.transform.localScale = new Vector3(-1, 1, 1);
+                }
+                else if (shouldFaceRight)
+                {
+                    flippable.transform.localScale = new Vector3(1, 1, 1);
+                }
             }
         }
 
         private Tween TweenGlobalMovePosition(Vector3 newGlobalPosition)
         {
             StopMoving();
-            var distance = (transform.position - new Vector3(newGlobalPosition.x, newGlobalPosition.y, transform.position.z)).magnitude;
-            _moveTween = transform.DOMove(newGlobalPosition, 0.1f + distance * 0.0005f)
-                .SetEase(Ease.OutSine);
+            var currentPosition = transform.position;
+            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z)).magnitude;
+            var duration = 0.1f + distance * 0.0005f;
+            _moveTween = transform.DOLocalMove(newGlobalPosition, duration).SetEase(Ease.OutSine);
             return _moveTween;
         }
-        
+
+        private Tween TweenGlobalJumpPosition(Vector3 newGlobalPosition)
+        {
+            StopMoving();
+            var currentPosition = transform.position;
+            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z)).magnitude;
+            var duration = 0.1f + distance * 0.0005f;
+            var middlePosition = (currentPosition + newGlobalPosition) / 2;
+            var offSetMiddlePosition = middlePosition + 30 * Vector3.up;
+            _moveTween = DOTween.Sequence()
+                .Append(transform.DOLocalMove(offSetMiddlePosition, duration / 2).SetEase(Ease.OutSine))
+                .Append(transform.DOLocalMove(newGlobalPosition, duration / 2).SetEase(Ease.OutSine));
+            return _moveTween;
+        }
+
         private Tween TweenLocalMovePosition(Vector3 newLocalPosition)
         {
             StopMoving();
-            _moveTween = transform.DOLocalMove(newLocalPosition, 0.12f)
-                .SetEase(Ease.OutSine);
+            var currentLocalPosition = transform.localPosition;
+            var middlePosition = (currentLocalPosition + newLocalPosition) / 2;
+            var offSetMiddlePosition = middlePosition + 75 * Vector3.up;
+            _moveTween = DOTween.Sequence()
+                .Append(transform.DOLocalMove(offSetMiddlePosition, 0.075f).SetEase(Ease.OutSine))
+                .Append(transform.DOLocalMove(newLocalPosition, 0.075f).SetEase(Ease.OutSine));
             return _moveTween;
         }
 

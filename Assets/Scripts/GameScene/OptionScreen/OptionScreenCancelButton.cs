@@ -5,12 +5,12 @@ namespace General.OptionScreen
 {
     public class OptionScreenCancelButton : ScalingButton
     {
-        public override void OnClick()
+        protected override void OnClick()
         {
             GameSceneHeart.Get().BlendOutOptionScreen();
         }
 
-        public override bool IsEnabled()
+        protected override bool IsEnabled()
         {
             return true;
         }

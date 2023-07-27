@@ -1,22 +1,18 @@
 using Code.GameScene.UI;
-using General;
 using SceneManagement;
 
 namespace GameScene.UI
 {
     public class GameSceneBackButton : ScalingButton
     {
-        public override void OnClick()
+        protected override void OnClick()
         {
-            if (!SceneTransitionManager.Get().IsInTransition())
-            {
-                SceneTransitionManager.Get().TransitionToScene(SceneReference.MENU_LEVEL);
-            }
+            SceneTransitionManager.Get().TransitionToNonLevelScene("LevelChoosingScene");
         }
 
-        public override bool IsEnabled()
+        protected override bool IsEnabled()
         {
-            return true;
+            return !SceneTransitionManager.Get().IsInTransition();
         }
     }
 }

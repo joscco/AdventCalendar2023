@@ -1,7 +1,8 @@
 using GameScene.Grid.Entities.ItemInteraction;
+using GameScene.Grid.Entities.Shared;
 using UnityEngine;
 
-namespace GameScene.PlayerControl
+namespace GameScene.Grid.Entities.Player
 {
     public class Player : MovableGridEntity, IInteractableItemBearer
     {

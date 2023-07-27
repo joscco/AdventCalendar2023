@@ -12,7 +12,6 @@ namespace GameScene.Grid.Managers
 
         public void AddAt(T entity, Vector2Int index)
         {
-            entity.transform.SetParent(transform);
             entity.SetIndicesAndPosition(index, GetPositionForIndex(index));
             entities.Add(entity);
         }
@@ -42,7 +41,7 @@ namespace GameScene.Grid.Managers
             return entities.Select(entity => entity.GetMainIndex()).ToList();
         }
         
-        public HashSet<Vector2Int> GetCoveredIndices()
+        public virtual HashSet<Vector2Int> GetCoveredIndices()
         {
             return entities.SelectMany(entity => entity.GetCoveredIndices()).ToHashSet();
         }
