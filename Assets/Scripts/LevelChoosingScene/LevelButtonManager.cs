@@ -1,6 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
+using Code.GameScene.UI;
 using DG.Tweening;
+using General.OptionScreen;
+using SceneManagement;
 using UnityEngine;
 
 namespace LevelChoosingScene
@@ -10,39 +12,43 @@ namespace LevelChoosingScene
         [SerializeField] private List<LevelButton> buttons;
         [SerializeField] private SpriteRenderer selection;
         [SerializeField] private int unlockedLevelsForTesting;
-        [SerializeField] private int availableLevelsForTesting;
 
-        private Dictionary<int, LevelButton> buttonDict = new();
-        private int unlockedLevel;
-        private int availableLevels;
-        private LevelButton selectedButton;
+        private readonly Dictionary<int, LevelButton> _buttonDict = new();
+        private int _unlockedLevel;
+        private LevelButton _focusedLevelButton;
         
         private const KeyCode OptionScreenKey = KeyCode.P;
         private const KeyCode BackScreenKey = KeyCode.Q;
         private const KeyCode StartKey = KeyCode.Space;
 
-        public OptionButton optionButton;
-        public LevelChoosingSceneBackButton backButton;
+        [SerializeField] private ScalingButton optionScreenButton;
+        [SerializeField] public ScalingButton backToStartButton;
 
         private void Start()
         {
-            unlockedLevel = Game.instance
+            _unlockedLevel = Game.instance
                 ? Game.instance.GetHighestUnlockedLevel()
                 : unlockedLevelsForTesting;
+            
+            optionScreenButton.OnButtonHover += () => optionScreenButton.Select();
+            optionScreenButton.OnButtonExit += () => optionScreenButton.Deselect();
+            optionScreenButton.OnButtonClick += ActivateOptionButton;
+            backToStartButton.OnButtonHover += () => backToStartButton.Select();
+            backToStartButton.OnButtonExit += () => backToStartButton.Deselect();
+            backToStartButton.OnButtonClick += ActivateBackToStartSceneButton;
 
-            availableLevels = Game.instance
-                ? Game.AVAILABLE_LEVELS
-                : availableLevelsForTesting;
-
-            InitLevelButtons(unlockedLevel);
-            ChangeButtonSelection(unlockedLevel, true);
+            InitLevelButtons(_unlockedLevel);
+            ChangeButtonSelection(_unlockedLevel, true);
         }
 
         private void InitLevelButtons(int highestLevelActive)
         {
             foreach (var button in buttons)
             {
-                buttonDict.Add(button.GetLevel(), button);
+                _buttonDict.Add(button.GetLevel(), button);
+                
+                // Set Events
+                button.OnButtonClick += () => SceneTransitionManager.Get().TransitionToLevel(button.GetLevel());
 
                 if (button.GetLevel() <= highestLevelActive)
                 {
@@ -59,25 +65,25 @@ namespace LevelChoosingScene
         {
             if (Input.GetKeyDown(BackScreenKey))
             {
-                backButton.Activate();
+                ActivateBackToStartSceneButton();
                 return;
             }
             
             if (Input.GetKeyDown(OptionScreenKey))
             {
-                optionButton.Activate();
+                ActivateOptionButton();
                 return;
             }
 
-            if (Input.GetKeyDown(StartKey) && null != selectedButton)
+            if (Input.GetKeyDown(StartKey) && null != _focusedLevelButton)
             {
-                selectedButton.Activate();
+                ActivateSelectedLevelButton();
             }
 
             // Arrow KeyHandling
             if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
-                var newLevel = selectedButton.GetLevel() - 4;
+                var newLevel = _focusedLevelButton.GetLevel() - 4;
                 if (newLevel > 0)
                 {
                     ChangeButtonSelection(newLevel);
@@ -88,8 +94,8 @@ namespace LevelChoosingScene
 
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
-                var newLevel = selectedButton.GetLevel() + 4;
-                if (newLevel <= unlockedLevel)
+                var newLevel = _focusedLevelButton.GetLevel() + 4;
+                if (newLevel <= _unlockedLevel)
                 {
                     ChangeButtonSelection(newLevel);
                 }
@@ -97,8 +103,8 @@ namespace LevelChoosingScene
 
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
             {
-                var newLevel = selectedButton.GetLevel() + 1;
-                if (newLevel <= unlockedLevel)
+                var newLevel = _focusedLevelButton.GetLevel() + 1;
+                if (newLevel <= _unlockedLevel)
                 {
                     ChangeButtonSelection(newLevel);
                 }
@@ -108,7 +114,7 @@ namespace LevelChoosingScene
 
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             {
-                var newLevel = selectedButton.GetLevel() - 1;
+                var newLevel = _focusedLevelButton.GetLevel() - 1;
                 if (newLevel > 0)
                 {
                     ChangeButtonSelection(newLevel);
@@ -117,19 +123,37 @@ namespace LevelChoosingScene
             }
         }
 
+        private void ActivateBackToStartSceneButton()
+        {
+            SceneTransitionManager.Get().TransitionToNonLevelScene("StartScene");
+            backToStartButton.ScaleUpThenDown();
+        }
+
+        private void ActivateSelectedLevelButton()
+        {
+            SceneTransitionManager.Get().TransitionToLevel(_focusedLevelButton.GetLevel());
+            _focusedLevelButton.ScaleUpThenDown();
+        }
+
+        private void ActivateOptionButton()
+        {
+            OptionScreen.instance.Toggle();
+            optionScreenButton.ScaleUpThenDown();
+        }
+
         private void ChangeButtonSelection(int newLevel, bool instant = false)
         {
-            if (selectedButton)
+            if (_focusedLevelButton)
             {
-                selectedButton.Deselect();
+                _focusedLevelButton.Deselect();
             }
 
-            var newButton = buttonDict[newLevel];
+            var newButton = _buttonDict[newLevel];
 
             if (null != newButton)
             {
                 newButton.Select();
-                selectedButton = newButton;
+                _focusedLevelButton = newButton;
                 if (instant)
                 {
                     selection.transform.position = newButton.transform.position;

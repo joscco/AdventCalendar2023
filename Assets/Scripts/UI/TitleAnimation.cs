@@ -35,7 +35,7 @@ namespace General
             }
         }
 
-        public void FadeIn()
+        public Sequence FadeIn()
         {
             var seq = DOTween.Sequence();
             for (int i = 0; i < letters.Count; i++)
@@ -49,7 +49,7 @@ namespace General
                 );
             }
 
-            seq.Play();
+            return seq;
         }
 
         public void FadeOut()

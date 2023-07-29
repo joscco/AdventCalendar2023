@@ -7,10 +7,13 @@ namespace General.OptionScreen
     {
         [SerializeField] private int offsetDownStart = -900;
 
+        public static OptionScreen instance;
+
         private bool showing;
 
         private void Start()
         {
+            instance = this;
             Vector3 pos = transform.position;
             pos.y = offsetDownStart;
             transform.position = pos;
@@ -35,7 +38,19 @@ namespace General.OptionScreen
 
         public void HandleUpdate()
         {
-            throw new System.NotImplementedException();
+            // To Implement
+        }
+
+        public void Toggle()
+        {
+            if (IsShowing())
+            {
+                BlendOut();
+            }
+            else
+            {
+                BlendIn();
+            }
         }
     }
 }

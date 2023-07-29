@@ -1,60 +1,77 @@
 using System;
 using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Code.GameScene.UI
 {
     [RequireComponent(typeof(Collider2D))]
-    public abstract class ScalingButton : MonoBehaviour
+    public class ScalingButton : MonoBehaviour
     {
         private const float ScaleTimeInSeconds = 0.3f;
         private const float ClickScaleTimeInSeconds = 0.15f;
         private const float ScaleWhenSelected = 1.15f;
         private const float ClickScale = 1.3f;
 
+        public event Action OnButtonHover;
+        public event Action OnButtonExit;
+        public event Action OnButtonClick;
+
         private Tween _scaleTween;
         protected bool _selected;
+
+
+        public void Select()
+        {
+            _selected = true;
+            ScaleUp();
+        }
+
+        public void Deselect()
+        {
+            _selected = false;
+            ScaleDown();
+        }
+        
+        /*** Scale Up and Down periodically until the Button is Selected */
+        public void StartWobbling()
+        {
+            _scaleTween?.Kill();
+            if (null != transform)
+            {
+                _scaleTween = DOTween.Sequence()
+                    .Append(transform.DOScale(1.03f, 0.5f).SetEase(Ease.OutBack))
+                    .Append(transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack))
+                    .SetLoops(-1)
+                    .Play();
+            }
+        }
 
         private void OnDestroy()
         {
             _scaleTween?.Kill();
         }
 
-        private void OnMouseEnter()
+        protected virtual void OnMouseEnter()
         {
-            if (IsEnabled())
-            {
-                Select();
-            }
+            OnButtonHover.Invoke();
         }
 
-        private void OnMouseExit()
+        protected virtual void OnMouseExit()
         {
-            if (IsEnabled())
-            {
-                Deselect();
-            }
+            OnButtonExit.Invoke();
         }
 
-        private void OnMouseUp()
+        protected virtual void OnMouseUp()
         {
-            if (IsEnabled())
-            {
-                OnClick();
-            }
+            OnButtonClick.Invoke();
         }
 
-        protected void ScaleUpOnClick()
+        public void ScaleUpThenDown()
         {
             _scaleTween?.Kill();
-            _scaleTween = transform.DOScale(ClickScale, ClickScaleTimeInSeconds).SetEase(Ease.OutBack);
-        }
-
-        protected void ScaleDownAfterClick()
-        {
-            _scaleTween?.Kill();
-            _scaleTween = transform.DOScale(_selected ? ScaleWhenSelected : 1f, ClickScaleTimeInSeconds).SetEase(Ease.OutBack);
+            _scaleTween = DOTween.Sequence()
+                .Append(transform.DOScale(ClickScale, ClickScaleTimeInSeconds).SetEase(Ease.OutBack))
+                .Append(transform.DOScale(_selected ? ScaleWhenSelected : 1f, ClickScaleTimeInSeconds).SetEase(Ease.OutBack));
         }
 
         private void ScaleUp()
@@ -73,44 +90,6 @@ namespace Code.GameScene.UI
             {
                 _scaleTween = transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
             }
-        }
-        
-        /*** Scale Up and Down periodically until the Button is Selected */
-        public void StartWobbling()
-        {
-            _scaleTween?.Kill();
-            if (null != transform)
-            {
-                _scaleTween = DOTween.Sequence()
-                    .Append(transform.DOScale(1.05f, 0.5f).SetEase(Ease.OutQuad))
-                    .Append(transform.DOScale(1f, 0.5f).SetEase(Ease.InQuad))
-                    .SetLoops(-1)
-                    .Play();
-            }
-        }
-
-        protected abstract void OnClick();
-
-        protected abstract bool IsEnabled();
-
-        public void Activate()
-        {
-            if (IsEnabled())
-            {
-                OnClick();
-            }
-        }
-
-        public virtual void Select()
-        {
-            _selected = true;
-            ScaleUp();
-        }
-
-        public virtual void Deselect()
-        {
-            _selected = false;
-            ScaleDown();
         }
     }
 }

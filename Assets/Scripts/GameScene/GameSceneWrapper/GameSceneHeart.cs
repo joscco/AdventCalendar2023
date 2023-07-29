@@ -1,55 +1,87 @@
-using GameScene;
-using GameScene.UI;
+using Code.GameScene.UI;
 using General.OptionScreen;
-using General.WinScreen;
+using SceneManagement;
 using UnityEngine;
 
-namespace SceneManagement
+namespace GameScene.GameSceneWrapper
 {
     public class GameSceneHeart : MonoBehaviour
     {
+        [SerializeField] private ScalingButton optionScreenButton;
+        [SerializeField] private ScalingButton backToLevelsButton;
+        [SerializeField] private ScalingButton retryButton;
+        [SerializeField] private WinScreen.WinScreen winScreen;
+        
         private static GameSceneHeart _instance;
 
-        private const KeyCode OPTION_SCREEN_KEY = KeyCode.O;
-        private const KeyCode BACK_TO_LEVELS_KEY = KeyCode.Q;
+        private const KeyCode OptionScreenKey = KeyCode.P;
+        private const KeyCode BackToLevelsKey = KeyCode.Q;
+        private const KeyCode RetryKey = KeyCode.R;
+        private LevelManager _levelManager;
+        private GameSceneState _state = GameSceneState.Unpaused;
 
         public static GameSceneHeart Get()
         {
             return _instance;
         }
 
-        [SerializeField] private WinScreen winScreen;
-        [SerializeField] private OptionScreen optionScreen;
-
-        [SerializeField] private OptionButton optionButton;
-        [SerializeField] private GameSceneBackButton backButton;
-
-        private LevelManager _levelManager;
-        private GameSceneState _state = GameSceneState.UNPAUSED;
-
         private void Start()
         {
             _instance = this;
             _levelManager = FindObjectOfType<LevelManager>();
+
+            optionScreenButton.OnButtonHover += () => optionScreenButton.Select();
+            optionScreenButton.OnButtonExit += () => optionScreenButton.Deselect();
+            optionScreenButton.OnButtonClick += ActivateOptionsButton;
+            backToLevelsButton.OnButtonHover += () => backToLevelsButton.Select();
+            backToLevelsButton.OnButtonExit += () => backToLevelsButton.Deselect();
+            backToLevelsButton.OnButtonClick += ActivateBackToLevelsButton;
+            retryButton.OnButtonHover += () => retryButton.Select();
+            retryButton.OnButtonExit += () => retryButton.Deselect();
+            retryButton.OnButtonClick += ActivateRetryButton;
+        }
+
+        private void ActivateBackToLevelsButton()
+        {
+            SceneTransitionManager.Get().TransitionToNonLevelScene("LevelChoosingScene");
+            backToLevelsButton.ScaleUpThenDown();
+        }
+
+        private void ActivateOptionsButton()
+        {
+            ToggleOptionScreen();
+            optionScreenButton.ScaleUpThenDown();
+        }
+        
+        private void ActivateRetryButton()
+        {
+            SceneTransitionManager.Get().ReloadCurrentScene();
+            retryButton.ScaleUpThenDown();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(OPTION_SCREEN_KEY))
+            if (Input.GetKeyDown(OptionScreenKey))
             {
-                optionButton.Activate();
+                ActivateOptionsButton();
                 return;
             }
 
-            if (Input.GetKeyDown(BACK_TO_LEVELS_KEY))
+            if (Input.GetKeyDown(BackToLevelsKey))
             {
-                backButton.Activate();
+                ActivateBackToLevelsButton();
+                return;
+            }
+            
+            if (Input.GetKeyDown(RetryKey))
+            {
+                ActivateRetryButton();
                 return;
             }
 
             switch (_state)
             {
-                case GameSceneState.UNPAUSED:
+                case GameSceneState.Unpaused:
                     if (_levelManager.HasWon())
                     {
                         BlendInWinScreen();
@@ -57,36 +89,36 @@ namespace SceneManagement
                     }
                     _levelManager.HandleUpdate();
                     break;
-                case GameSceneState.SHOWING_WIN_SCREEN:
+                case GameSceneState.ShowingWinScreen:
                     winScreen.HandleUpdate();
                     break;
-                case GameSceneState.SHOWING_OPTION_SCREEN:
-                    optionScreen.HandleUpdate();
+                case GameSceneState.ShowingOptionScreen:
+                    OptionScreen.instance.HandleUpdate();
                     break;
             }
         }
 
         public void BlendInWinScreen()
         {
-            winScreen.BlendIn(2f);
-            _state = GameSceneState.SHOWING_WIN_SCREEN;
+            winScreen.BlendIn(1f);
+            _state = GameSceneState.ShowingWinScreen;
         }
 
         public void BlendInOptionScreen()
         {
-            optionScreen.BlendIn();
-            _state = GameSceneState.SHOWING_OPTION_SCREEN;
+            OptionScreen.instance.BlendIn();
+            _state = GameSceneState.ShowingOptionScreen;
         }
 
         public void BlendOutOptionScreen()
         {
-            optionScreen.BlendOut();
-            _state = GameSceneState.UNPAUSED;
+            OptionScreen.instance.BlendOut();
+            _state = GameSceneState.Unpaused;
         }
 
-        public void ToggleOptionScreen()
+        private void ToggleOptionScreen()
         {
-            if (optionScreen.IsShowing())
+            if (OptionScreen.instance.IsShowing())
             {
                 BlendOutOptionScreen();
             }
@@ -99,8 +131,8 @@ namespace SceneManagement
 
     internal enum GameSceneState
     {
-        UNPAUSED,
-        SHOWING_OPTION_SCREEN,
-        SHOWING_WIN_SCREEN
+        Unpaused,
+        ShowingOptionScreen,
+        ShowingWinScreen
     }
 }
