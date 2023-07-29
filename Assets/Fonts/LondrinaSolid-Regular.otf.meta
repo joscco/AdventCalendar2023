@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ef9cf14311c4d44d5ba68dc4648ceb57
+guid: b1b24aca508654efbb9b9be1996a0cd8
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - FuturaHandwritten
+  - Londrina Solid
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
