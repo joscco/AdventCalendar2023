@@ -1,6 +1,7 @@
-using Code.GameScene.UI;
-using General.OptionScreen;
+
+
 using SceneManagement;
+using UI;
 using UnityEngine;
 
 namespace GameScene.GameSceneWrapper
@@ -12,7 +13,7 @@ namespace GameScene.GameSceneWrapper
         [SerializeField] private ScalingButton retryButton;
         [SerializeField] private WinScreen.WinScreen winScreen;
         
-        private static GameSceneHeart _instance;
+        public static GameSceneHeart instance;
 
         private const KeyCode OptionScreenKey = KeyCode.P;
         private const KeyCode BackToLevelsKey = KeyCode.Q;
@@ -20,24 +21,19 @@ namespace GameScene.GameSceneWrapper
         private LevelManager _levelManager;
         private GameSceneState _state = GameSceneState.Unpaused;
 
-        public static GameSceneHeart Get()
-        {
-            return _instance;
-        }
-
         private void Start()
         {
-            _instance = this;
+            instance = this;
             _levelManager = FindObjectOfType<LevelManager>();
 
-            optionScreenButton.OnButtonHover += () => optionScreenButton.Select();
-            optionScreenButton.OnButtonExit += () => optionScreenButton.Deselect();
+            optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
+            optionScreenButton.OnButtonExit += () => optionScreenButton.ScaleDown();
             optionScreenButton.OnButtonClick += ActivateOptionsButton;
-            backToLevelsButton.OnButtonHover += () => backToLevelsButton.Select();
-            backToLevelsButton.OnButtonExit += () => backToLevelsButton.Deselect();
+            backToLevelsButton.OnButtonHover += () => backToLevelsButton.ScaleUp();
+            backToLevelsButton.OnButtonExit += () => backToLevelsButton.ScaleDown();
             backToLevelsButton.OnButtonClick += ActivateBackToLevelsButton;
-            retryButton.OnButtonHover += () => retryButton.Select();
-            retryButton.OnButtonExit += () => retryButton.Deselect();
+            retryButton.OnButtonHover += () => retryButton.ScaleUp();
+            retryButton.OnButtonExit += () => retryButton.ScaleDown();
             retryButton.OnButtonClick += ActivateRetryButton;
         }
 
@@ -93,7 +89,7 @@ namespace GameScene.GameSceneWrapper
                     winScreen.HandleUpdate();
                     break;
                 case GameSceneState.ShowingOptionScreen:
-                    OptionScreen.instance.HandleUpdate();
+                    Options.OptionScreen.instance.HandleUpdate();
                     break;
             }
         }
@@ -106,19 +102,19 @@ namespace GameScene.GameSceneWrapper
 
         public void BlendInOptionScreen()
         {
-            OptionScreen.instance.BlendIn();
+            Options.OptionScreen.instance.BlendIn();
             _state = GameSceneState.ShowingOptionScreen;
         }
 
         public void BlendOutOptionScreen()
         {
-            OptionScreen.instance.BlendOut();
+            Options.OptionScreen.instance.BlendOut();
             _state = GameSceneState.Unpaused;
         }
 
         private void ToggleOptionScreen()
         {
-            if (OptionScreen.instance.IsShowing())
+            if (Options.OptionScreen.instance.IsShowing())
             {
                 BlendOutOptionScreen();
             }

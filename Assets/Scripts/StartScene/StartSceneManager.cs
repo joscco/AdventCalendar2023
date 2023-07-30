@@ -1,8 +1,10 @@
 using Code.GameScene.UI;
 using DG.Tweening;
+using GameScene.Options;
+using GameScene.OptionScreen;
 using General;
-using General.OptionScreen;
 using SceneManagement;
+using UI;
 using UnityEngine;
 
 namespace StartScene
@@ -21,11 +23,11 @@ namespace StartScene
             DOVirtual.DelayedCall(0.5f, () => titleAnimation.FadeIn());
             
             // Touch Control
-            optionScreenButton.OnButtonHover += () => optionScreenButton.Select();
-            optionScreenButton.OnButtonExit += () => optionScreenButton.Deselect();
+            optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
+            optionScreenButton.OnButtonExit += () => optionScreenButton.ScaleDown();
             optionScreenButton.OnButtonClick += ActivateOptionButton;
-            startButton.OnButtonHover += () => startButton.Select();
-            startButton.OnButtonExit += () => startButton.Deselect();
+            startButton.OnButtonHover += () => startButton.ScaleUp();
+            startButton.OnButtonExit += () => startButton.ScaleDown();
             startButton.OnButtonClick += ActivateStartButton;
             
             startButton.StartWobbling();

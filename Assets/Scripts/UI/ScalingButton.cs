@@ -2,7 +2,7 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Code.GameScene.UI
+namespace UI
 {
     [RequireComponent(typeof(Collider2D))]
     public class ScalingButton : MonoBehaviour
@@ -17,19 +17,32 @@ namespace Code.GameScene.UI
         public event Action OnButtonClick;
 
         private Tween _scaleTween;
-        protected bool _selected;
+        protected bool hovered;
 
-
-        public void Select()
+        public void ScaleUp()
         {
-            _selected = true;
-            ScaleUp();
+            _scaleTween?.Kill();
+            if (null != transform)
+            {
+                _scaleTween = transform.DOScale(ScaleWhenSelected, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+            }
         }
 
-        public void Deselect()
+        public void ScaleDown()
         {
-            _selected = false;
-            ScaleDown();
+            _scaleTween?.Kill();
+            if (null != transform)
+            {
+                _scaleTween = transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+            }
+        }
+
+        public void ScaleUpThenDown()
+        {
+            _scaleTween?.Kill();
+            _scaleTween = DOTween.Sequence()
+                .Append(transform.DOScale(ClickScale, ClickScaleTimeInSeconds).SetEase(Ease.OutBack))
+                .Append(transform.DOScale(hovered ? ScaleWhenSelected : 1f, ClickScaleTimeInSeconds).SetEase(Ease.OutBack));
         }
         
         /*** Scale Up and Down periodically until the Button is Selected */
@@ -53,43 +66,19 @@ namespace Code.GameScene.UI
 
         protected virtual void OnMouseEnter()
         {
-            OnButtonHover.Invoke();
+            hovered = true;
+            OnButtonHover?.Invoke();
         }
 
         protected virtual void OnMouseExit()
         {
-            OnButtonExit.Invoke();
+            hovered = false;
+            OnButtonExit?.Invoke();
         }
 
         protected virtual void OnMouseUp()
         {
-            OnButtonClick.Invoke();
-        }
-
-        public void ScaleUpThenDown()
-        {
-            _scaleTween?.Kill();
-            _scaleTween = DOTween.Sequence()
-                .Append(transform.DOScale(ClickScale, ClickScaleTimeInSeconds).SetEase(Ease.OutBack))
-                .Append(transform.DOScale(_selected ? ScaleWhenSelected : 1f, ClickScaleTimeInSeconds).SetEase(Ease.OutBack));
-        }
-
-        private void ScaleUp()
-        {
-            _scaleTween?.Kill();
-            if (null != transform)
-            {
-                _scaleTween = transform.DOScale(ScaleWhenSelected, ScaleTimeInSeconds).SetEase(Ease.OutBack);
-            }
-        }
-
-        private void ScaleDown()
-        {
-            _scaleTween?.Kill();
-            if (null != transform)
-            {
-                _scaleTween = transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
-            }
+            OnButtonClick?.Invoke();
         }
     }
 }

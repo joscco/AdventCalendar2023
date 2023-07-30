@@ -2,6 +2,7 @@ using Code.GameScene.UI;
 using DG.Tweening;
 using General;
 using SceneManagement;
+using UI;
 using UnityEngine;
 
 namespace GameScene.WinScreen
@@ -59,10 +60,10 @@ namespace GameScene.WinScreen
         {
             if (_selectedButton)
             {
-                _selectedButton.Deselect();
+                _selectedButton.ScaleDown();
             }
 
-            newButton.Select();
+            newButton.ScaleUp();
             _selectedButton = newButton;
             if (instant)
             {

@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Code.GameScene.UI;
 using DG.Tweening;
-using General.OptionScreen;
+using GameScene.Options;
+using GameScene.OptionScreen;
 using SceneManagement;
+using UI;
 using UnityEngine;
 
 namespace LevelChoosingScene
@@ -30,15 +32,15 @@ namespace LevelChoosingScene
                 ? Game.instance.GetHighestUnlockedLevel()
                 : unlockedLevelsForTesting;
             
-            optionScreenButton.OnButtonHover += () => optionScreenButton.Select();
-            optionScreenButton.OnButtonExit += () => optionScreenButton.Deselect();
+            optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
+            optionScreenButton.OnButtonExit += () => optionScreenButton.ScaleDown();
             optionScreenButton.OnButtonClick += ActivateOptionButton;
-            backToStartButton.OnButtonHover += () => backToStartButton.Select();
-            backToStartButton.OnButtonExit += () => backToStartButton.Deselect();
+            backToStartButton.OnButtonHover += () => backToStartButton.ScaleUp();
+            backToStartButton.OnButtonExit += () => backToStartButton.ScaleDown();
             backToStartButton.OnButtonClick += ActivateBackToStartSceneButton;
 
             InitLevelButtons(_unlockedLevel);
-            ChangeButtonSelection(_unlockedLevel, true);
+            ChangeButtonFocus(_unlockedLevel, true);
         }
 
         private void InitLevelButtons(int highestLevelActive)
@@ -48,6 +50,14 @@ namespace LevelChoosingScene
                 _buttonDict.Add(button.GetLevel(), button);
                 
                 // Set Events
+                button.OnButtonHover += () =>
+                {
+                    var buttonLevel = button.GetLevel();
+                    if (buttonLevel <= _unlockedLevel)
+                    {
+                        ChangeButtonFocus(button.GetLevel());
+                    }
+                };
                 button.OnButtonClick += () => SceneTransitionManager.Get().TransitionToLevel(button.GetLevel());
 
                 if (button.GetLevel() <= highestLevelActive)
@@ -86,7 +96,7 @@ namespace LevelChoosingScene
                 var newLevel = _focusedLevelButton.GetLevel() - 4;
                 if (newLevel > 0)
                 {
-                    ChangeButtonSelection(newLevel);
+                    ChangeButtonFocus(newLevel);
                 }
 
                 return;
@@ -97,7 +107,7 @@ namespace LevelChoosingScene
                 var newLevel = _focusedLevelButton.GetLevel() + 4;
                 if (newLevel <= _unlockedLevel)
                 {
-                    ChangeButtonSelection(newLevel);
+                    ChangeButtonFocus(newLevel);
                 }
             }
 
@@ -106,7 +116,7 @@ namespace LevelChoosingScene
                 var newLevel = _focusedLevelButton.GetLevel() + 1;
                 if (newLevel <= _unlockedLevel)
                 {
-                    ChangeButtonSelection(newLevel);
+                    ChangeButtonFocus(newLevel);
                 }
 
                 return;
@@ -117,7 +127,7 @@ namespace LevelChoosingScene
                 var newLevel = _focusedLevelButton.GetLevel() - 1;
                 if (newLevel > 0)
                 {
-                    ChangeButtonSelection(newLevel);
+                    ChangeButtonFocus(newLevel);
                 }
 
             }
@@ -141,18 +151,18 @@ namespace LevelChoosingScene
             optionScreenButton.ScaleUpThenDown();
         }
 
-        private void ChangeButtonSelection(int newLevel, bool instant = false)
+        private void ChangeButtonFocus(int newLevel, bool instant = false)
         {
             if (_focusedLevelButton)
             {
-                _focusedLevelButton.Deselect();
+                _focusedLevelButton.ScaleDown();
             }
 
             var newButton = _buttonDict[newLevel];
 
             if (null != newButton)
             {
-                newButton.Select();
+                newButton.ScaleUp();
                 _focusedLevelButton = newButton;
                 if (instant)
                 {

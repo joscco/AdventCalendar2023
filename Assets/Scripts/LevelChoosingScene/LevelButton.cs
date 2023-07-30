@@ -1,4 +1,5 @@
 using Code.GameScene.UI;
+using UI;
 using UnityEngine;
 using UnityEngine.Rendering;
 

@@ -117,7 +117,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_0
+      name: 0
       rect:
         serializedVersion: 2
         x: 0
@@ -125,7 +125,7 @@ TextureImporter:
         width: 52
         height: 76
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -138,7 +138,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_1
+      name: 1
       rect:
         serializedVersion: 2
         x: 57
@@ -146,7 +146,7 @@ TextureImporter:
         width: 44
         height: 80
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -159,7 +159,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_2
+      name: 2
       rect:
         serializedVersion: 2
         x: 106
@@ -167,7 +167,7 @@ TextureImporter:
         width: 51
         height: 84
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -180,7 +180,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_3
+      name: 3
       rect:
         serializedVersion: 2
         x: 161
@@ -188,7 +188,7 @@ TextureImporter:
         width: 51
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -201,7 +201,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_4
+      name: 4
       rect:
         serializedVersion: 2
         x: 218
@@ -209,7 +209,7 @@ TextureImporter:
         width: 47
         height: 92
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -222,7 +222,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_5
+      name: 5
       rect:
         serializedVersion: 2
         x: 270
@@ -230,7 +230,7 @@ TextureImporter:
         width: 55
         height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -243,7 +243,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_6
+      name: 6
       rect:
         serializedVersion: 2
         x: 329
@@ -251,7 +251,7 @@ TextureImporter:
         width: 60
         height: 103
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -264,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_7
+      name: 7
       rect:
         serializedVersion: 2
         x: 391
@@ -272,7 +272,7 @@ TextureImporter:
         width: 61
         height: 107
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -285,7 +285,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_8
+      name: 8
       rect:
         serializedVersion: 2
         x: 458
@@ -293,7 +293,7 @@ TextureImporter:
         width: 63
         height: 112
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -306,7 +306,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: optionScreenEmptyTenths_9
+      name: 9
       rect:
         serializedVersion: 2
         x: 525
@@ -314,7 +314,7 @@ TextureImporter:
         width: 61
         height: 116
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -337,16 +337,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      optionScreenEmptyTenths_0: 11292163
-      optionScreenEmptyTenths_1: -186555321
-      optionScreenEmptyTenths_2: 358016143
-      optionScreenEmptyTenths_3: 1435401016
-      optionScreenEmptyTenths_4: 1116559229
-      optionScreenEmptyTenths_5: -1609651339
-      optionScreenEmptyTenths_6: -1216145909
-      optionScreenEmptyTenths_7: 1439726725
-      optionScreenEmptyTenths_8: -638641949
-      optionScreenEmptyTenths_9: -507052147
+      0: 11292163
+      1: -186555321
+      2: 358016143
+      3: 1435401016
+      4: 1116559229
+      5: -1609651339
+      6: -1216145909
+      7: 1439726725
+      8: -638641949
+      9: -507052147
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
