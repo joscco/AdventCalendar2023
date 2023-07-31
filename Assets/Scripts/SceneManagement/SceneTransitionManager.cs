@@ -8,13 +8,13 @@ namespace SceneManagement
     public class SceneTransitionManager : MonoBehaviour
     {
         public SceneOverlay sceneOverlay;
-        
+
         private string _currentSceneName;
         private bool _currentlyInLevel;
         private int _currentLevel;
-        
+
         private bool _inTransition;
-        
+
         private static SceneTransitionManager _instance;
 
         private void Awake()
@@ -28,7 +28,7 @@ namespace SceneManagement
                 _instance = this;
             }
         }
-        
+
         private void Start()
         {
             SetStartScene("StartScene");
@@ -43,7 +43,7 @@ namespace SceneManagement
         {
             return _inTransition;
         }
-        
+
         private void SetStartScene(string sceneName)
         {
             SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
@@ -54,48 +54,39 @@ namespace SceneManagement
         {
             if (!_inTransition)
             {
+                _inTransition = true;
                 StartCoroutine(FadeInStartAndFadeOutScene(sceneName, false, 0));
             }
         }
-        
+
         public void TransitionToLevel(int level)
         {
             if (!_inTransition)
             {
+                _inTransition = true;
                 StartCoroutine(FadeInStartAndFadeOutScene(GetLevelSceneName(level), true, level));
             }
         }
 
         private IEnumerator FadeInStartAndFadeOutScene(string levelName, bool isLevel, int level)
         {
-            _inTransition = true;
-            
-            AsyncOperation asyncSceneLoad = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
-            asyncSceneLoad.allowSceneActivation = false;
-
             // Start Animation once faded in, Scene can be changed
             yield return sceneOverlay.CoverScreen().WaitForCompletion();
-        
-            if (_currentSceneName != null || levelName != _currentSceneName)
+            
+            if (_currentSceneName != null)
             {
-                SceneManager.UnloadSceneAsync(_currentSceneName);
+                yield return SceneManager.UnloadSceneAsync(_currentSceneName, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
             }
-
-            asyncSceneLoad.allowSceneActivation = true;
+            
+            yield return SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
+            
             _currentSceneName = levelName;
             _currentlyInLevel = isLevel;
             _currentLevel = level;
-
-            while (!asyncSceneLoad.isDone)
-            {
-                yield return null;
-            }
-            
             _inTransition = false;
 
             // Scene has transitioned, now reverse Animation
             yield return sceneOverlay.UncoverScreen().WaitForCompletion();
-            
         }
 
         public void TransitionToNextLevel()
@@ -105,7 +96,7 @@ namespace SceneManagement
                 Debug.LogError("Current Scene is not a level scene");
                 return;
             }
-            
+
             TransitionToLevel(_currentLevel + 1);
         }
 

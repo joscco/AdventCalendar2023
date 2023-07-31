@@ -12,11 +12,11 @@ namespace GameScene.GameSceneWrapper
         [SerializeField] private ScalingButton backToLevelsButton;
         [SerializeField] private ScalingButton retryButton;
         [SerializeField] private WinScreen.WinScreen winScreen;
+        [SerializeField] private LevelManager _levelManager;
 
         private const KeyCode OptionScreenKey = KeyCode.P;
         private const KeyCode BackToLevelsKey = KeyCode.Q;
         private const KeyCode RetryKey = KeyCode.R;
-        private LevelManager _levelManager;
         private LevelSceneState _state = LevelSceneState.Unpaused;
 
         private void Start()
@@ -46,11 +46,6 @@ namespace GameScene.GameSceneWrapper
 
         private void Update()
         {
-            if (null == _levelManager)
-            {
-                _levelManager = FindObjectOfType<LevelManager>();
-            }
-            
             if (Input.GetKeyDown(OptionScreenKey))
             {
                 ActivateOptionsButton();

@@ -9457,6 +9457,10 @@ PrefabInstance:
       propertyPath: retryButton
       value: 
       objectReference: {fileID: 8651006850084940971}
+    - target: {fileID: 8651006850042290207, guid: 6e9336adac5c34f98a1c51b3999d3dd0, type: 3}
+      propertyPath: _levelManager
+      value: 
+      objectReference: {fileID: 1117785091}
     - target: {fileID: 8981635755699796335, guid: 6e9336adac5c34f98a1c51b3999d3dd0, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
