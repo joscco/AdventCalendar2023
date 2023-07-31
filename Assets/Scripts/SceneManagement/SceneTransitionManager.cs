@@ -65,20 +65,18 @@ namespace SceneManagement
                 StartCoroutine(FadeInStartAndFadeOutScene(GetLevelSceneName(level), true, level));
             }
         }
-        
 
         private IEnumerator FadeInStartAndFadeOutScene(string levelName, bool isLevel, int level)
         {
             _inTransition = true;
-
-            // Start Loading Scene and Level in Background
+            
             AsyncOperation asyncSceneLoad = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
             asyncSceneLoad.allowSceneActivation = false;
 
             // Start Animation once faded in, Scene can be changed
             yield return sceneOverlay.CoverScreen().WaitForCompletion();
         
-            if (_currentSceneName != null)
+            if (_currentSceneName != null || levelName != _currentSceneName)
             {
                 SceneManager.UnloadSceneAsync(_currentSceneName);
             }
@@ -92,10 +90,12 @@ namespace SceneManagement
             {
                 yield return null;
             }
+            
+            _inTransition = false;
 
             // Scene has transitioned, now reverse Animation
             yield return sceneOverlay.UncoverScreen().WaitForCompletion();
-            _inTransition = false;
+            
         }
 
         public void TransitionToNextLevel()

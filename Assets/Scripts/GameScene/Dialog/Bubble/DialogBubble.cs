@@ -13,12 +13,10 @@ namespace GameScene.Dialog.Bubble
         private bool _showingBubble;
         private Sequence _bubbleSequence;
 
-        public Sequence ShowText(string newText, bool showContinueHint = true, float delay = 0f)
+        public Sequence ShowText(string newText, bool showContinueHint = true)
         {
             _bubbleSequence?.Kill();
-            _bubbleSequence = DOTween.Sequence()
-                .AppendInterval(delay);
-
+            _bubbleSequence = DOTween.Sequence();
             _bubbleSequence.Append(bubbleRenderer.Detype());
             _bubbleSequence.Append(bubbleRenderer.RescaleBubbleToEmptyText());
             _bubbleSequence.Append(bubbleRenderer.Type(newText));
@@ -34,11 +32,10 @@ namespace GameScene.Dialog.Bubble
             return ShowText("...", false);
         }
 
-        public Sequence Hide(float delay = 0f)
+        public Sequence Hide()
         {
             _bubbleSequence?.Kill();
-            _bubbleSequence = DOTween.Sequence()
-                .AppendInterval(delay);
+            _bubbleSequence = DOTween.Sequence();
 
             _bubbleSequence.Append(bubbleRenderer.BlendOutContinuationHint());
             _bubbleSequence.Join(bubbleRenderer.Detype());

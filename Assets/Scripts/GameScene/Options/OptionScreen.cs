@@ -1,4 +1,7 @@
+using System;
 using DG.Tweening;
+using General;
+using UI;
 using UnityEngine;
 
 namespace GameScene.Options
@@ -6,6 +9,7 @@ namespace GameScene.Options
     public class OptionScreen : MonoBehaviour
     {
         [SerializeField] private int offsetDownStart = -900;
+        [SerializeField] private ScalingButton cancelButton;
         [SerializeField] private LeftRightOptionGroup languageGroup;
         [SerializeField] private LeftRightOptionGroup musicVolumeGroup;
         [SerializeField] private LeftRightOptionGroup soundEffectVolumeGroup;
@@ -24,11 +28,25 @@ namespace GameScene.Options
             position.y = offsetDownStart;
             transform.position = position;
 
+            cancelButton.OnButtonHover += () => cancelButton.ScaleUp();
+            cancelButton.OnButtonExit += () => cancelButton.ScaleDown();
+            cancelButton.OnButtonClick += () => Toggle();
+
             ChangeFocusedGroup(languageGroup);
 
             languageGroup.wantsFocus += () => ChangeFocusedGroup(languageGroup);
             musicVolumeGroup.wantsFocus += () => ChangeFocusedGroup(musicVolumeGroup);
             soundEffectVolumeGroup.wantsFocus += () => ChangeFocusedGroup(soundEffectVolumeGroup);
+
+            languageGroup.changeValue += (value) => { };
+            musicVolumeGroup.changeValue += (value) => AudioManager.instance.SetMusicVolume(value * 1f / 9);
+            soundEffectVolumeGroup.changeValue += (value) => AudioManager.instance.SetSFXVolume(value * 1f / 9);
+
+            var startMusicVol = Mathf.RoundToInt(PlayerPrefs.GetFloat("musicLevel", 0.5f) * 9);
+            var startSfxVol = Mathf.RoundToInt(PlayerPrefs.GetFloat("sfxLevel", 0.5f) * 9);
+            
+            musicVolumeGroup.SetValue(startMusicVol);
+            soundEffectVolumeGroup.SetValue(startSfxVol);
         }
 
         public void BlendIn()
@@ -111,6 +129,7 @@ namespace GameScene.Options
         {
             if (IsShowing())
             {
+                cancelButton.ScaleUpThenDown();
                 BlendOut();
             }
             else

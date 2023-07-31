@@ -1,8 +1,7 @@
 using GameScene.Options;
-using UI;
 using UnityEngine;
 
-namespace GameScene.OptionScreen
+namespace UI
 {
     public class OnOffSpriteButton : OnOffButton
     {
@@ -12,10 +11,20 @@ namespace GameScene.OptionScreen
         
         public override void SetOn()
         {
-            spriteRenderer.sprite = spriteWhenActive;
+            SetActiveSprite();
         }
 
         public override void SetOff()
+        {
+            SetInactiveSprite();
+        }
+
+        protected void SetActiveSprite()
+        {
+            spriteRenderer.sprite = spriteWhenActive;
+        }
+        
+        protected void SetInactiveSprite()
         {
             spriteRenderer.sprite = spriteWhenInactive;
         }

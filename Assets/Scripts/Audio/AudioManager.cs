@@ -17,17 +17,14 @@ namespace General
         private void Start()
         {
             instance = this;
-            SetMusicVolume(PlayerPrefs.GetFloat("musicLevel", 1f));
-            SetSFXVolume(PlayerPrefs.GetFloat("sfxLevel", 1f));
         }
 
         public void SetMusicVolume(float value)
         {
-            float oldValue = MusicSource.volume;
             MusicSource.volume = value;
             PlayerPrefs.SetFloat("musicLevel", value);
             
-            if (oldValue <= 0.05 && value > 0.05)
+            if (!MusicSource.isPlaying && value > 0.05)
             {
                 PlayMusic();
             } else if (value <= 0.05)

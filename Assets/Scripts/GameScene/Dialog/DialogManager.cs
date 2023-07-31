@@ -86,7 +86,6 @@ namespace GameScene.Dialog
 
         private void UpdateDialogs()
         {
-            Debug.Log("Updating!");
             StartNewDialogIfNecessary();
             CancelCurrentDialogIfNecessary();
             ShowHintsForDialogsIfNecessary();

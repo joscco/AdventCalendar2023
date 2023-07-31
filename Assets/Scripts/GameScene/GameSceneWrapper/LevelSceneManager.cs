@@ -6,26 +6,21 @@ using UnityEngine;
 
 namespace GameScene.GameSceneWrapper
 {
-    public class GameSceneHeart : MonoBehaviour
+    public class LevelSceneManager : MonoBehaviour
     {
         [SerializeField] private ScalingButton optionScreenButton;
         [SerializeField] private ScalingButton backToLevelsButton;
         [SerializeField] private ScalingButton retryButton;
         [SerializeField] private WinScreen.WinScreen winScreen;
-        
-        public static GameSceneHeart instance;
 
         private const KeyCode OptionScreenKey = KeyCode.P;
         private const KeyCode BackToLevelsKey = KeyCode.Q;
         private const KeyCode RetryKey = KeyCode.R;
         private LevelManager _levelManager;
-        private GameSceneState _state = GameSceneState.Unpaused;
+        private LevelSceneState _state = LevelSceneState.Unpaused;
 
         private void Start()
         {
-            instance = this;
-            _levelManager = FindObjectOfType<LevelManager>();
-
             optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
             optionScreenButton.OnButtonExit += () => optionScreenButton.ScaleDown();
             optionScreenButton.OnButtonClick += ActivateOptionsButton;
@@ -43,12 +38,6 @@ namespace GameScene.GameSceneWrapper
             backToLevelsButton.ScaleUpThenDown();
         }
 
-        private void ActivateOptionsButton()
-        {
-            ToggleOptionScreen();
-            optionScreenButton.ScaleUpThenDown();
-        }
-        
         private void ActivateRetryButton()
         {
             SceneTransitionManager.Get().ReloadCurrentScene();
@@ -57,6 +46,11 @@ namespace GameScene.GameSceneWrapper
 
         private void Update()
         {
+            if (null == _levelManager)
+            {
+                _levelManager = FindObjectOfType<LevelManager>();
+            }
+            
             if (Input.GetKeyDown(OptionScreenKey))
             {
                 ActivateOptionsButton();
@@ -77,7 +71,7 @@ namespace GameScene.GameSceneWrapper
 
             switch (_state)
             {
-                case GameSceneState.Unpaused:
+                case LevelSceneState.Unpaused:
                     if (_levelManager.HasWon())
                     {
                         BlendInWinScreen();
@@ -85,10 +79,10 @@ namespace GameScene.GameSceneWrapper
                     }
                     _levelManager.HandleUpdate();
                     break;
-                case GameSceneState.ShowingWinScreen:
+                case LevelSceneState.ShowingWinScreen:
                     winScreen.HandleUpdate();
                     break;
-                case GameSceneState.ShowingOptionScreen:
+                case LevelSceneState.ShowingOptionScreen:
                     Options.OptionScreen.instance.HandleUpdate();
                     break;
             }
@@ -97,19 +91,13 @@ namespace GameScene.GameSceneWrapper
         public void BlendInWinScreen()
         {
             winScreen.BlendIn(1f);
-            _state = GameSceneState.ShowingWinScreen;
+            _state = LevelSceneState.ShowingWinScreen;
         }
 
-        public void BlendInOptionScreen()
+        private void ActivateOptionsButton()
         {
-            Options.OptionScreen.instance.BlendIn();
-            _state = GameSceneState.ShowingOptionScreen;
-        }
-
-        public void BlendOutOptionScreen()
-        {
-            Options.OptionScreen.instance.BlendOut();
-            _state = GameSceneState.Unpaused;
+            ToggleOptionScreen();
+            optionScreenButton.ScaleUpThenDown();
         }
 
         private void ToggleOptionScreen()
@@ -123,9 +111,21 @@ namespace GameScene.GameSceneWrapper
                 BlendInOptionScreen();
             }
         }
+        
+        private void BlendInOptionScreen()
+        {
+            Options.OptionScreen.instance.BlendIn();
+            _state = LevelSceneState.ShowingOptionScreen;
+        }
+
+        private void BlendOutOptionScreen()
+        {
+            Options.OptionScreen.instance.BlendOut();
+            _state = LevelSceneState.Unpaused;
+        }
     }
 
-    internal enum GameSceneState
+    internal enum LevelSceneState
     {
         Unpaused,
         ShowingOptionScreen,

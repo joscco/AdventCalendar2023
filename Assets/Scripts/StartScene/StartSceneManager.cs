@@ -1,7 +1,5 @@
-using Code.GameScene.UI;
 using DG.Tweening;
 using GameScene.Options;
-using GameScene.OptionScreen;
 using General;
 using SceneManagement;
 using UI;
@@ -44,6 +42,12 @@ namespace StartScene
             if (Input.GetKeyDown(StartKey))
             {
                 ActivateStartButton();
+            }
+            
+            // Updating Option Screen if necessary
+            if (OptionScreen.instance.IsShowing())
+            {
+                OptionScreen.instance.HandleUpdate();
             }
         }
 

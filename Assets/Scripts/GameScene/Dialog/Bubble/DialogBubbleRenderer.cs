@@ -11,6 +11,11 @@ namespace GameScene.Dialog.Bubble
         [SerializeField] private int paddingX = 30;
         [SerializeField] private int paddingY = 15;
 
+        private const float DetypeDuration = 0.1f;
+        private const float TypeDurationPerLetter = 0.01f;
+        private const float ScaleBubbleDuration = 0.1f;
+        private const float ResizeBubbleDuration = 0.15f;
+
         [SerializeField] private TextMeshPro textObject;
         [SerializeField] private SpriteRenderer bubbleRenderer;
         [SerializeField] private DialogBubbleNextHint nextHint;
@@ -53,13 +58,13 @@ namespace GameScene.Dialog.Bubble
             _typeSeq = DOTween.Sequence()
                 .Append(ResizeBubble(newText))
                 .AppendCallback(() => { textObject.text = newText; })
-                .Join(DoVisibleCharacters(textObject, newText.Length, newText.Length * 0.01f));
+                .Join(DoVisibleCharacters(textObject, newText.Length, newText.Length * TypeDurationPerLetter));
             return _typeSeq;
         }
 
         public Tween Detype()
         {
-            return DoVisibleCharacters(textObject, 0, 0.1f);
+            return DoVisibleCharacters(textObject, 0, DetypeDuration);
         }
 
         private void InstantResizeBubble(string newText)
@@ -78,8 +83,8 @@ namespace GameScene.Dialog.Bubble
                 {
                     textObject.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, paddedSize.y);
                 })
-                .Append(TweenResizeBubble(paddedSize, 0.15f))
-                .Join(nextHint.transform.DOLocalMove(new Vector2(paddedSize.x / 2, paddedSize.y), 0.15f));
+                .Append(TweenResizeBubble(paddedSize, ResizeBubbleDuration))
+                .Join(nextHint.transform.DOLocalMove(new Vector2(paddedSize.x / 2, paddedSize.y), ResizeBubbleDuration));
         }
 
         private Vector2 CalculatePaddedSize(string newText)
@@ -93,7 +98,7 @@ namespace GameScene.Dialog.Bubble
         private Tween RescaleAll(float scale)
         {
             _bubbleScaleTween?.Kill();
-            _bubbleScaleTween = transform.DOScale(scale, 0.2f)
+            _bubbleScaleTween = transform.DOScale(scale, ScaleBubbleDuration)
                 .SetEase(Ease.InOutQuad);
             return _bubbleScaleTween;
         }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using GameScene.Grid.Entities.Shared;
 using GameScene.SpecialGridEntities.PickPoints;
 using UnityEngine;
@@ -14,25 +15,17 @@ namespace GameScene.Grid.Entities.ItemInteraction
 
         private bool wasCompletedAlready;
 
-        protected virtual void OnFirstComplete()
-        {
-            
-        }
+        protected virtual void OnFirstComplete() { }
         
-        protected virtual void OnEachComplete()
-        {
-            
-        }
+        protected virtual void OnEachComplete() { }
 
-        protected virtual void OnTopWithItem(InteractableItem item)
-        {
-            
-        }
+        protected virtual void OnTopWithItem(InteractableItem item) { }
 
         public void AttachToPickupPoint(Transform newParent)
         {
             SetParent(newParent);
-            LocalMoveTo(Vector2.zero);
+            // Set index to zero just in case
+            JumpTo(Vector2Int.zero, newParent.position);
         }
 
         public InteractableItemType GetItemType()
@@ -104,5 +97,62 @@ namespace GameScene.Grid.Entities.ItemInteraction
         public abstract void RemoveItem(InteractableItem item);
 
         public abstract bool IsComplete();
+        
+        public override Tween MoveTo(Vector2Int newIndex, Vector3 newPos)
+        {
+            SwapFaceDirectionIfNecessary(newIndex.x);
+            currentMainIndex = newIndex;
+            return TweenGlobalMovePosition(newPos);
+        }
+
+        public override Tween JumpTo(Vector2Int newIndex, Vector3 newPos)
+        {
+            SwapFaceDirectionIfNecessary(newIndex.x);
+            currentMainIndex = newIndex;
+            return TweenGlobalJumpPosition(newPos);
+        }
+
+        public void SwapFaceDirectionIfNecessary(int newX)
+        {
+            if (flippable && flipInMovingDirection)
+            {
+                var oldX = currentMainIndex.x;
+                bool shouldFaceLeft = newX < oldX;
+                bool shouldFaceRight = newX > oldX;
+
+                if (shouldFaceLeft)
+                {
+                    flippable.transform.localScale = new Vector3(-1, 1, 1);
+                }
+                else if (shouldFaceRight)
+                {
+                    flippable.transform.localScale = new Vector3(1, 1, 1);
+                }
+            }
+        }
+
+        private Tween TweenGlobalMovePosition(Vector3 newGlobalPosition)
+        {
+            StopMoving();
+            var currentPosition = transform.position;
+            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z)).magnitude;
+            var duration = 0.1f + distance * 0.0005f;
+            _moveTween = transform.DOMove(newGlobalPosition, duration).SetEase(Ease.OutSine);
+            return _moveTween;
+        }
+
+        private Tween TweenGlobalJumpPosition(Vector3 newGlobalPosition)
+        {
+            StopMoving();
+            var currentPosition = transform.position;
+            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z)).magnitude;
+            var duration = 0.1f + distance * 0.0005f;
+            var middlePosition = (currentPosition + newGlobalPosition) / 2;
+            var offSetMiddlePosition = middlePosition + 45 * Vector3.up;
+            _moveTween = DOTween.Sequence()
+                .Append(transform.DOMove(offSetMiddlePosition, duration / 2).SetEase(Ease.OutSine))
+                .Append(transform.DOMove(newGlobalPosition, duration / 2).SetEase(Ease.OutSine));
+            return _moveTween;
+        }
     }
 }

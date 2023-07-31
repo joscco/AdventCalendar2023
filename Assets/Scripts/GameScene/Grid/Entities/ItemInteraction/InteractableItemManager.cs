@@ -11,10 +11,10 @@ namespace GameScene.Grid.Entities.ItemInteraction
             return entities.Any(entity => entity.GetCoveredIndices().Contains(index) && entity.IsPushable());
         }
         
-        public void AddAtAndMoveTo(InteractableItem entity, Vector2Int index)
+        public void AddAtAndJumpTo(InteractableItem entity, Vector2Int index)
         {
             entity.transform.SetParent(transform);
-            entity.MoveTo(index, GetPositionForIndex(index), true);
+            entity.JumpTo(index, GetPositionForIndex(index));
             entities.Add(entity);
         }
     }

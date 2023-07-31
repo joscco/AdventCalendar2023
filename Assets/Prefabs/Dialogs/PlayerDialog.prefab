@@ -143,7 +143,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -687452533739091126, guid: d276ed5ed268943f0919d1bf8c4129cb, type: 2}
+  - {fileID: -1849824030982398033, guid: 7e58f109238e04503874a5dd49376b86, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -187,8 +187,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d276ed5ed268943f0919d1bf8c4129cb, type: 2}
-  m_sharedMaterial: {fileID: -687452533739091126, guid: d276ed5ed268943f0919d1bf8c4129cb, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7e58f109238e04503874a5dd49376b86, type: 2}
+  m_sharedMaterial: {fileID: -1849824030982398033, guid: 7e58f109238e04503874a5dd49376b86, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
@@ -660,7 +660,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -687452533739091126, guid: d276ed5ed268943f0919d1bf8c4129cb, type: 2}
+  - {fileID: -1849824030982398033, guid: 7e58f109238e04503874a5dd49376b86, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -704,8 +704,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: E
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d276ed5ed268943f0919d1bf8c4129cb, type: 2}
-  m_sharedMaterial: {fileID: -687452533739091126, guid: d276ed5ed268943f0919d1bf8c4129cb, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7e58f109238e04503874a5dd49376b86, type: 2}
+  m_sharedMaterial: {fileID: -1849824030982398033, guid: 7e58f109238e04503874a5dd49376b86, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 17
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 4096
   m_textAlignment: 65535

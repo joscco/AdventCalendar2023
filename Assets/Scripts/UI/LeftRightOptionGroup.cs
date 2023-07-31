@@ -7,6 +7,7 @@ namespace GameScene.Options
     public class LeftRightOptionGroup : MonoBehaviour
     {
         public Action wantsFocus;
+        public Action<int> changeValue;
         
         [SerializeField] private List<OnOffButton> optionsFromLeftToRight;
         [SerializeField] private int currentIndex;
@@ -29,9 +30,10 @@ namespace GameScene.Options
             SetValue(currentIndex);
         }
 
-        private void SetValue(int value)
+        public void SetValue(int value)
         {
             currentIndex = value;
+            changeValue?.Invoke(value);
 
             if (incrementalValues)
             {
@@ -65,17 +67,6 @@ namespace GameScene.Options
             optionsFromLeftToRight[value].ScaleUpThenDown();
         }
 
-        private void DefocusButton(OnOffButton button)
-        {
-            button.ScaleDown();
-        }
-
-        private void FocusButton(OnOffButton button)
-        {
-            wantsFocus.Invoke();
-            button.ScaleUp();
-        }
-
         public void IncreaseValue()
         {
             SetValue(Math.Min(GetValue() + 1, _maxValue));
@@ -89,6 +80,17 @@ namespace GameScene.Options
         public int GetValue()
         {
             return currentIndex;
+        }
+
+        private void DefocusButton(OnOffButton button)
+        {
+            button.ScaleDown();
+        }
+
+        private void FocusButton(OnOffButton button)
+        {
+            wantsFocus.Invoke();
+            button.ScaleUp();
         }
     }
 }

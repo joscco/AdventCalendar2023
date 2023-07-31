@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Code.GameScene.UI;
 using DG.Tweening;
 using GameScene.Options;
-using GameScene.OptionScreen;
 using SceneManagement;
 using UI;
 using UnityEngine;
@@ -18,7 +16,7 @@ namespace LevelChoosingScene
         private readonly Dictionary<int, LevelButton> _buttonDict = new();
         private int _unlockedLevel;
         private LevelButton _focusedLevelButton;
-        
+
         private const KeyCode OptionScreenKey = KeyCode.P;
         private const KeyCode BackScreenKey = KeyCode.Q;
         private const KeyCode StartKey = KeyCode.Space;
@@ -31,10 +29,10 @@ namespace LevelChoosingScene
             _unlockedLevel = Game.instance
                 ? Game.instance.GetHighestUnlockedLevel()
                 : unlockedLevelsForTesting;
-            
+
             optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
             optionScreenButton.OnButtonExit += () => optionScreenButton.ScaleDown();
-            optionScreenButton.OnButtonClick += ActivateOptionButton;
+            optionScreenButton.OnButtonClick += ActivateOptionsButton;
             backToStartButton.OnButtonHover += () => backToStartButton.ScaleUp();
             backToStartButton.OnButtonExit += () => backToStartButton.ScaleDown();
             backToStartButton.OnButtonClick += ActivateBackToStartSceneButton;
@@ -48,7 +46,7 @@ namespace LevelChoosingScene
             foreach (var button in buttons)
             {
                 _buttonDict.Add(button.GetLevel(), button);
-                
+
                 // Set Events
                 button.OnButtonHover += () =>
                 {
@@ -78,10 +76,10 @@ namespace LevelChoosingScene
                 ActivateBackToStartSceneButton();
                 return;
             }
-            
+
             if (Input.GetKeyDown(OptionScreenKey))
             {
-                ActivateOptionButton();
+                ActivateOptionsButton();
                 return;
             }
 
@@ -90,7 +88,14 @@ namespace LevelChoosingScene
                 ActivateSelectedLevelButton();
             }
 
-            // Arrow KeyHandling
+            // Updating Option Screen if necessary
+            if (OptionScreen.instance.IsShowing())
+            {
+                OptionScreen.instance.HandleUpdate();
+                return;
+            }
+
+            // Arrow KeyHandling when not in option screen
             if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
                 var newLevel = _focusedLevelButton.GetLevel() - 4;
@@ -129,7 +134,6 @@ namespace LevelChoosingScene
                 {
                     ChangeButtonFocus(newLevel);
                 }
-
             }
         }
 
@@ -145,7 +149,7 @@ namespace LevelChoosingScene
             _focusedLevelButton.ScaleUpThenDown();
         }
 
-        private void ActivateOptionButton()
+        private void ActivateOptionsButton()
         {
             OptionScreen.instance.Toggle();
             optionScreenButton.ScaleUpThenDown();
