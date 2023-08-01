@@ -54,6 +54,8 @@ namespace GameScene
             _potentialFreeFields = GetFieldsThePlayerCouldMoveToSometime();
             _currentFreeFields = _potentialFreeFields.Except(interactableItemManager.GetCoveredIndices())
                 .ToList();
+
+            obstacleManager.CheckStatuses();
             
             if (interactablesToListenTo.Count != 0 && interactablesToListenTo.All(pickPoint => pickPoint.IsComplete()))
             {

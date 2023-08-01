@@ -3020,7 +3020,7 @@ GameObject:
   m_Component:
   - component: {fileID: 872144914}
   - component: {fileID: 872144915}
-  - component: {fileID: 872144918}
+  - component: {fileID: 872144916}
   m_Layer: 0
   m_Name: PineStick
   m_TagString: Untagged
@@ -3056,7 +3056,7 @@ SortingGroup:
   m_SortingLayerID: -1959063385
   m_SortingLayer: 4
   m_SortingOrder: 0
---- !u!114 &872144918
+--- !u!114 &872144916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3065,7 +3065,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 872144913}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 978547c66f0f49c497cb719b7f8c32e0, type: 3}
+  m_Script: {fileID: 11500000, guid: 35b85bcff2ea408993dc717d006a2907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currentMainIndex: {x: 0, y: 0}
@@ -3080,6 +3080,7 @@ MonoBehaviour:
   type: {fileID: 11400000, guid: 9e5617bd6be3e41d4ad40930f286faf1, type: 2}
   stack: []
   category: {fileID: 11400000, guid: 745b08b52186a49d2802386f6112b25b, type: 2}
+  orderForCompletion: {fileID: 11400000, guid: a2390cb8751ff4419acfe2dfd3ae5f23, type: 2}
 --- !u!1001 &930259725
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8581,8 +8582,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2051433428}
-  - component: {fileID: 2051433430}
   - component: {fileID: 2051433431}
+  - component: {fileID: 2051433432}
   m_Layer: 0
   m_Name: Lokomotive
   m_TagString: Untagged
@@ -8610,27 +8611,6 @@ Transform:
   m_Father: {fileID: 1680042944}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2051433430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2051433427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1461c2ca369b48249a50e8ffb3d6db68, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentMainIndex: {x: 0, y: 0}
-  relativeIndicesIncluded:
-  - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  - {x: 3, y: 0}
-  - {x: 4, y: 0}
-  - {x: 5, y: 0}
-  blocking: 1
 --- !u!210 &2051433431
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -8642,6 +8622,37 @@ SortingGroup:
   m_SortingLayerID: -1959063385
   m_SortingLayer: 4
   m_SortingOrder: 0
+--- !u!114 &2051433432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051433427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a20b548c25340119e660e67ac0e88ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMainIndex: {x: 0, y: 0}
+  relativeIndicesIncluded:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 4, y: 0}
+  - {x: 5, y: 0}
+  blocking: 1
+  itemsToListenToForCompletion:
+  - {fileID: 872144916}
+  wheels:
+  - {fileID: 962800155}
+  - {fileID: 398386787}
+  - {fileID: 2093810654}
+  - {fileID: 1633964126}
+  - {fileID: 2132421939}
+  offsetWhenComplete: {x: -1500, y: 0, z: 0}
+  secondsToMoveOut: 5
 --- !u!1 &2065436427
 GameObject:
   m_ObjectHideFlags: 0

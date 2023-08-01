@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using GameScene.SpecialGridEntities.PickPoints;
 using UnityEngine;
 
-namespace GameScene.Grid.Entities.ItemInteraction.Logic
+namespace GameScene.Grid.Entities.ItemInteraction.Logic.Orders
 {
     public abstract class AbstractInteractableItemOrder: ScriptableObject
     {

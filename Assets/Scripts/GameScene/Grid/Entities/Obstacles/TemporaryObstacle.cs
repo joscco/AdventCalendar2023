@@ -1,19 +1,38 @@
+using System.Collections.Generic;
+using GameScene.Grid.Entities.ItemInteraction;
+using GameScene.Grid.Entities.Shared;
 using UnityEngine;
 
-namespace GameScene.Grid.Entities.Shared
+namespace GameScene.Grid.Entities.Obstacles
 {
-    public class TemporaryObstacle : GridEntity
+    public abstract class TemporaryObstacle : GridEntity
     {
         [SerializeField] private bool blocking = true;
+        [SerializeField] private List<InteractableItem> itemsToListenToForCompletion;
+
+        public void CheckStatus()
+        {
+            if (blocking)
+            {
+                var allItemsComplete = true;
+                foreach (var item in itemsToListenToForCompletion)
+                {
+                    allItemsComplete &= item.IsComplete();
+                }
+
+                if (allItemsComplete)
+                {
+                    blocking = false;
+                    OnUnblock();
+                }
+            }
+        }
 
         public bool IsBlocking()
         {
             return blocking;
         }
 
-        public void SetBlocking(bool val)
-        {
-            this.blocking = val;
-        }
+        protected abstract void OnUnblock();
     }
 }

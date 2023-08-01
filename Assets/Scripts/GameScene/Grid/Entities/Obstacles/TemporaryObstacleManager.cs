@@ -14,5 +14,10 @@ namespace GameScene.Grid.Entities.Obstacles
                 .SelectMany(entity => entity.GetCoveredIndices())
                 .ToHashSet();
         }
+
+        public void CheckStatuses()
+        {
+           entities.ForEach(entity => entity.CheckStatus());
+        }
     }
 }

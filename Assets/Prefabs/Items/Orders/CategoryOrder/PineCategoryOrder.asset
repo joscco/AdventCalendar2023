@@ -9,12 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d98c7b060a446c8983722180efb4e72, type: 3}
-  m_Name: MediumPineOrder
+  m_Script: {fileID: 11500000, guid: c74d3c2e83e64040bb31f57d461cb5ac, type: 3}
+  m_Name: PineCategoryOrder
   m_EditorClassIdentifier: 
   orderFromBottomToTop:
-  - {fileID: 11400000, guid: 9e5617bd6be3e41d4ad40930f286faf1, type: 2}
-  - {fileID: 11400000, guid: 0118f3ade0d244402b9f06632cea611d, type: 2}
-  - {fileID: 11400000, guid: af3d9e11d94044af8ab6644e4de6c1d4, type: 2}
+  - {fileID: 11400000, guid: 745b08b52186a49d2802386f6112b25b, type: 2}
   allowDelayedStart: 1
   allowSkipsAfterFirstItem: 1
