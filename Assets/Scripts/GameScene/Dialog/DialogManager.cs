@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -5,6 +6,8 @@ using GameScene.Dialog.Background;
 using GameScene.Dialog.Bubble;
 using GameScene.Dialog.Data;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace GameScene.Dialog
 {
@@ -33,6 +36,18 @@ namespace GameScene.Dialog
             }
 
             UpdateDialogs();
+
+            LocalizationSettings.SelectedLocaleChanged += UpdateBubbleTexts;
+        }
+
+        private void UpdateBubbleTexts(Locale newLocale)
+        {
+            speakerList.ForEach(bubble => bubble.UpdateText());
+        }
+
+        private void OnDestroy()
+        {
+            LocalizationSettings.SelectedLocaleChanged -= UpdateBubbleTexts;
         }
 
         private void PublishFacts(List<DialogFact> newFacts)

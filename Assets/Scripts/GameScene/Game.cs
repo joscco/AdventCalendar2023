@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Localization;
 
 public class Game : MonoBehaviour
 {
@@ -20,13 +21,49 @@ public class Game : MonoBehaviour
     {
         if (newLevel > unlockedLevels)
         {
-            unlockedLevels = Math.Max(newLevel, AVAILABLE_LEVELS);
+            unlockedLevels = Math.Min(newLevel, AVAILABLE_LEVELS);
             PlayerPrefs.SetInt(KEY_UNLOCKED_LEVELS, unlockedLevels);
         }
     }
 
-    public int GetHighestUnlockedLevel()
+    public int GetUnlockedLevels()
     {
         return unlockedLevels;
+    }
+
+    public void SavePreferredLanguage(LanguageIdentifier identifier)
+    {
+        PlayerPrefs.SetString("preferredLanguage", identifier.ToString());
+    }
+
+    public LanguageIdentifier GetPreferredLanguage()
+    {
+        var savedValue = PlayerPrefs.GetString("preferredLanguage", "EN");
+        return (LanguageIdentifier) Enum.Parse(typeof(LanguageIdentifier), savedValue); 
+    }
+
+    public void SaveMusicVolume(float newVolume)
+    {
+        PlayerPrefs.SetFloat("musicLevel", newVolume);
+    }
+
+    public float GetMusicVolume()
+    {
+        return PlayerPrefs.GetFloat("musicLevel", 0.5f);
+    }
+    
+    public void SaveSFXVolume(float newVolume)
+    {
+        PlayerPrefs.SetFloat("sfxLevel", newVolume);
+    }
+
+    public float GetSFXVolume()
+    {
+        return PlayerPrefs.GetFloat("sfxLevel", 0.5f);
+    }
+
+    public enum LanguageIdentifier
+    {
+        EN, DE
     }
 }

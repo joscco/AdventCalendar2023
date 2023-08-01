@@ -109,5 +109,10 @@ namespace SceneManagement
         {
             TransitionToNonLevelScene(_currentSceneName);
         }
+
+        public int GetCurrentLevel()
+        {
+            return _currentLevel;
+        }
     }
 }

@@ -3,6 +3,8 @@ using DG.Tweening;
 using General;
 using UI;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace GameScene.Options
 {
@@ -11,6 +13,8 @@ namespace GameScene.Options
         [SerializeField] private int offsetDownStart = -900;
         [SerializeField] private ScalingButton cancelButton;
         [SerializeField] private LeftRightOptionGroup languageGroup;
+        [SerializeField] private Locale englishLocale;
+        [SerializeField] private Locale germanLocale;
         [SerializeField] private LeftRightOptionGroup musicVolumeGroup;
         [SerializeField] private LeftRightOptionGroup soundEffectVolumeGroup;
         [SerializeField] private GameObject selectionRect;
@@ -38,15 +42,21 @@ namespace GameScene.Options
             musicVolumeGroup.wantsFocus += () => ChangeFocusedGroup(musicVolumeGroup);
             soundEffectVolumeGroup.wantsFocus += () => ChangeFocusedGroup(soundEffectVolumeGroup);
 
-            languageGroup.changeValue += (value) => { };
+            languageGroup.changeValue += (value) =>
+            {
+                LocalizationSettings.SelectedLocale = value == 0 ? englishLocale : germanLocale;
+                Game.instance.SavePreferredLanguage(value == 0 ? Game.LanguageIdentifier.EN : Game.LanguageIdentifier.DE);
+            };
             musicVolumeGroup.changeValue += (value) => AudioManager.instance.SetMusicVolume(value * 1f / 9);
             soundEffectVolumeGroup.changeValue += (value) => AudioManager.instance.SetSFXVolume(value * 1f / 9);
 
-            var startMusicVol = Mathf.RoundToInt(PlayerPrefs.GetFloat("musicLevel", 0.5f) * 9);
-            var startSfxVol = Mathf.RoundToInt(PlayerPrefs.GetFloat("sfxLevel", 0.5f) * 9);
-            
+            var startMusicVol = Mathf.RoundToInt(Game.instance.GetMusicVolume() * 9);
+            var startSfxVol = Mathf.RoundToInt(Game.instance.GetSFXVolume() * 9);
+            var startLanguage = Game.instance.GetPreferredLanguage() == Game.LanguageIdentifier.EN ? 0 : 1;
+
             musicVolumeGroup.SetValue(startMusicVol);
             soundEffectVolumeGroup.SetValue(startSfxVol);
+            languageGroup.SetValue(startLanguage);
         }
 
         public void BlendIn()
@@ -79,13 +89,13 @@ namespace GameScene.Options
                 _focusedGroup.IncreaseValue();
                 return;
             }
-            
+
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
             {
                 DecreaseFocusedGroupIndex();
                 return;
             }
-            
+
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             {
                 IncreaseFocusedGroupIndex();
@@ -97,7 +107,8 @@ namespace GameScene.Options
             if (_focusedGroup == languageGroup)
             {
                 ChangeFocusedGroup(musicVolumeGroup);
-            } else if (_focusedGroup == musicVolumeGroup)
+            }
+            else if (_focusedGroup == musicVolumeGroup)
             {
                 ChangeFocusedGroup(soundEffectVolumeGroup);
             }
@@ -108,7 +119,8 @@ namespace GameScene.Options
             if (_focusedGroup == musicVolumeGroup)
             {
                 ChangeFocusedGroup(languageGroup);
-            } else if (_focusedGroup == soundEffectVolumeGroup)
+            }
+            else if (_focusedGroup == soundEffectVolumeGroup)
             {
                 ChangeFocusedGroup(musicVolumeGroup);
             }

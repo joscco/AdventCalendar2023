@@ -22,8 +22,8 @@ namespace General
         public void SetMusicVolume(float value)
         {
             MusicSource.volume = value;
-            PlayerPrefs.SetFloat("musicLevel", value);
-            
+            Game.instance.SaveMusicVolume(value);
+
             if (!MusicSource.isPlaying && value > 0.05)
             {
                 PlayMusic();
@@ -36,7 +36,7 @@ namespace General
         public void SetSFXVolume(float value)
         {
             EffectsSource.volume = value;
-            PlayerPrefs.SetFloat("sfxLevel", value);
+            Game.instance.SaveSFXVolume(value);
         }
         
         public void PlayBlub()
@@ -64,16 +64,6 @@ namespace General
         public void StopMusic()
         {
             MusicSource.Stop();
-        }
-
-        public float GetMusicVolume()
-        {
-            return MusicSource.volume;
-        }
-
-        public float GetSFXVolume()
-        {
-            return EffectsSource.volume;
         }
     }
 }

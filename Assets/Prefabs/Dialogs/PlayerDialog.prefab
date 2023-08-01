@@ -441,7 +441,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bubbleRenderer: {fileID: 1126444312788659798}
+  dotHintString:
+    m_TableReference:
+      m_TableCollectionName: GUID:6d25ff95a85104d1aa3101a1123ec07f
+    m_TableEntryReference:
+      m_KeyId: 71432674467840
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   speaker: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &1126444313220516532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,7 +626,7 @@ GameObject:
   - component: {fileID: 7362466733695309816}
   - component: {fileID: 7594689099488636856}
   m_Layer: 0
-  m_Name: DialogText
+  m_Name: HintText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

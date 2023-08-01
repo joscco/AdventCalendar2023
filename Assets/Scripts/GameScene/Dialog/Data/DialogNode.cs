@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace GameScene.Dialog.Background
 {
@@ -7,6 +8,6 @@ namespace GameScene.Dialog.Background
     public class DialogNode
     {
         public DialogSpeaker speaker;
-        public string text;
+        public LocalizedString text;
     }
 }

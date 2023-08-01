@@ -15,15 +15,45 @@ MonoBehaviour:
   id: train_bear_start_dialog
   nodes:
   - speaker: {fileID: 11400000, guid: deb03f6131e384c479851a8051b27086, type: 2}
-    text: Hey!
+    text:
+      m_TableReference:
+        m_TableCollectionName: GUID:6d25ff95a85104d1aa3101a1123ec07f
+      m_TableEntryReference:
+        m_KeyId: 31351365632
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
   - speaker: {fileID: 11400000, guid: a4a92f6d44ad7480c8ad041f6b023f5e, type: 2}
-    text: Hi.
+    text:
+      m_TableReference:
+        m_TableCollectionName: GUID:6d25ff95a85104d1aa3101a1123ec07f
+      m_TableEntryReference:
+        m_KeyId: 141426679808
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
   - speaker: {fileID: 11400000, guid: deb03f6131e384c479851a8051b27086, type: 2}
-    text: Could you move that train for me?
+    text:
+      m_TableReference:
+        m_TableCollectionName: GUID:6d25ff95a85104d1aa3101a1123ec07f
+      m_TableEntryReference:
+        m_KeyId: 239296569344
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
   - speaker: {fileID: 11400000, guid: a4a92f6d44ad7480c8ad041f6b023f5e, type: 2}
-    text: No.
-  - speaker: {fileID: 11400000, guid: deb03f6131e384c479851a8051b27086, type: 2}
-    text: Oh. Okay.
+    text:
+      m_TableReference:
+        m_TableCollectionName: GUID:6d25ff95a85104d1aa3101a1123ec07f
+      m_TableEntryReference:
+        m_KeyId: 357533999104
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
   hintSpeaker: {fileID: 11400000, guid: a4a92f6d44ad7480c8ad041f6b023f5e, type: 2}
   cancelConditions:
   - id: {fileID: 11400000, guid: 8e5f306a9d4ad48dfaa264ddc6e7ac87, type: 2}
@@ -48,3 +78,6 @@ MonoBehaviour:
   - id: {fileID: 11400000, guid: 5366851933cff4ec7b8fee56391bb022, type: 2}
     value: 1
   factPublishedOnStart: []
+  references:
+    version: 2
+    RefIds: []

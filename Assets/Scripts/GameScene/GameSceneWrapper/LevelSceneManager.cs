@@ -3,6 +3,7 @@
 using SceneManagement;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameScene.GameSceneWrapper
 {
@@ -12,7 +13,7 @@ namespace GameScene.GameSceneWrapper
         [SerializeField] private ScalingButton backToLevelsButton;
         [SerializeField] private ScalingButton retryButton;
         [SerializeField] private WinScreen.WinScreen winScreen;
-        [SerializeField] private LevelManager _levelManager;
+        [SerializeField] private LevelManager levelManager;
 
         private const KeyCode OptionScreenKey = KeyCode.P;
         private const KeyCode BackToLevelsKey = KeyCode.Q;
@@ -67,12 +68,13 @@ namespace GameScene.GameSceneWrapper
             switch (_state)
             {
                 case LevelSceneState.Unpaused:
-                    if (_levelManager.HasWon())
+                    if (levelManager.HasWon())
                     {
+                        Game.instance.SaveUnlockedLevel(SceneTransitionManager.Get().GetCurrentLevel() + 1);
                         BlendInWinScreen();
                         break;
                     }
-                    _levelManager.HandleUpdate();
+                    levelManager.HandleUpdate();
                     break;
                 case LevelSceneState.ShowingWinScreen:
                     winScreen.HandleUpdate();

@@ -27,7 +27,7 @@ namespace LevelChoosingScene
         private void Start()
         {
             _unlockedLevel = Game.instance
-                ? Game.instance.GetHighestUnlockedLevel()
+                ? Game.instance.GetUnlockedLevels()
                 : unlockedLevelsForTesting;
 
             optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
@@ -89,7 +89,7 @@ namespace LevelChoosingScene
             }
 
             // Updating Option Screen if necessary
-            if (OptionScreen.instance.IsShowing())
+            if (OptionScreen.instance && OptionScreen.instance.IsShowing())
             {
                 OptionScreen.instance.HandleUpdate();
                 return;
