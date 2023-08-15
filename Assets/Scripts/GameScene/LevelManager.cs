@@ -29,7 +29,9 @@ namespace GameScene
 
         [SerializeField] private CheckerManager checkerManager;
         [SerializeField] private List<Checker> checkers;
-        
+
+        [SerializeField] private ColoredTileManager coloredTileManager;
+
         [SerializeField] private GridAdapter grid;
         [SerializeField] private TilemapManager groundMap;
         [SerializeField] private TilemapManager slidingGroundMap;
@@ -83,6 +85,7 @@ namespace GameScene
             return groundMap.GetIndices()
                 .Concat(slidingGroundMap.GetIndices())
                 .Concat(toggleableTilesManager.GetActiveTileIndices())
+                .Concat(coloredTileManager.GetMainIndices())
                 .ToHashSet();
         }
 
@@ -91,6 +94,7 @@ namespace GameScene
             InitDialogAreas();
             InitToggleableTiles();
             InitToggleableTileSwitches();
+            InitColoredTiles();
             InitPlayer();
             InitPortals();
             InitObstacles();
@@ -104,6 +108,8 @@ namespace GameScene
 
             _setup = true;
         }
+
+        
 
         private void InitPlayer()
         {
@@ -121,6 +127,16 @@ namespace GameScene
                 var index = grid.FindNearestIndexForPosition(area.transform.position);
                 area.onFactPublish += factManager.PublishFactAndUpdate;
                 area.SetIndex(index);
+            }
+        }
+        
+        private void InitColoredTiles()
+        {
+            var coloredTiles = FindObjectsOfType<ColoredTile>();
+            foreach (var tile in coloredTiles)
+            {
+                var index = grid.FindNearestIndexForPosition(tile.transform.position);
+                coloredTileManager.AddAt(tile, index);
             }
         }
 
