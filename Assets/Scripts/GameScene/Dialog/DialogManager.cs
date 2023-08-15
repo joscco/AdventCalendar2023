@@ -1,13 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
-using GameScene.Dialog.Background;
 using GameScene.Dialog.Bubble;
 using GameScene.Dialog.Data;
+using GameScene.Facts;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
+using UnityEngine.Serialization;
 
 namespace GameScene.Dialog
 {
@@ -15,12 +15,12 @@ namespace GameScene.Dialog
     {
         [SerializeField] private List<DialogBubble> speakerList;
         [SerializeField] private List<Data.Dialog> dialogList;
+        [SerializeField] private FactManager factManager;
 
         private Data.Dialog _currentDialog;
         private int _currentNodeIndex;
 
         private readonly Dictionary<string, Data.Dialog> _dialogs = new();
-        private readonly Dictionary<DialogFactId, int> _facts = new();
         private readonly Dictionary<DialogSpeaker, DialogBubble> _speakerBubbles = new();
 
         private void Start()
@@ -37,6 +37,8 @@ namespace GameScene.Dialog
 
             UpdateDialogs();
 
+            factManager.onNewFacts += (_) => UpdateDialogs();
+
             LocalizationSettings.SelectedLocaleChanged += UpdateBubbleTexts;
         }
 
@@ -48,23 +50,6 @@ namespace GameScene.Dialog
         private void OnDestroy()
         {
             LocalizationSettings.SelectedLocaleChanged -= UpdateBubbleTexts;
-        }
-
-        private void PublishFacts(List<DialogFact> newFacts)
-        {
-            if (null != newFacts && newFacts.Count > 0)
-            {
-                foreach (var fact in newFacts)
-                {
-                    _facts[fact.id] = fact.value;
-                }
-            }
-        }
-
-        public void PublishFactAndUpdate(DialogFact newFact)
-        {
-            PublishFacts(new List<DialogFact> { newFact });
-            UpdateDialogs();
         }
 
         public bool HasCurrentDialog()
@@ -108,7 +93,8 @@ namespace GameScene.Dialog
 
         private void CancelCurrentDialogIfNecessary()
         {
-            if (null != _currentDialog && ConditionsAreMet(_currentDialog.cancelConditions))
+            if (null != _currentDialog 
+                && factManager.ConditionsAreMet(_currentDialog.cancelConditions))
             {
                 CancelCurrentDialog();
             }
@@ -124,14 +110,14 @@ namespace GameScene.Dialog
             // Otherwise we have an infinite loop of canceling the current dialog
             _currentDialog = null;
 
-            PublishFacts(factsToPublish);
+            factManager.PublishFactsAndUpdate(factsToPublish);
         }
 
         private void ShowHintsForDialogsIfNecessary()
         {
             foreach (var dialog in _dialogs.Values)
             {
-                if (ConditionsAreMet(dialog.hintConditions))
+                if (factManager.ConditionsAreMet(dialog.hintConditions))
                 {
                     ShowHint(dialog.hintSpeaker);
                 }
@@ -142,7 +128,7 @@ namespace GameScene.Dialog
         {
             foreach (var dialog in _dialogs.Values)
             {
-                if (ConditionsAreMet(dialog.startConditions) &&
+                if (factManager.ConditionsAreMet(dialog.startConditions) &&
                     (null == _currentDialog || _currentDialog.id != dialog.id))
                 {
                     StartDialog(dialog);
@@ -159,7 +145,7 @@ namespace GameScene.Dialog
 
             _currentDialog = null;
 
-            PublishFacts(factsToPublish);
+            factManager.PublishFactsAndUpdate(factsToPublish);
         }
 
         private void StartDialog(Data.Dialog dialog)
@@ -180,7 +166,7 @@ namespace GameScene.Dialog
             {
                 // Dialog Exists so take first speaker and show it
                 seq.Append(ShowSpeaker(_currentDialog.nodes[_currentNodeIndex]));
-                PublishFacts(dialog.factPublishedOnStart);
+                factManager.PublishFactsAndUpdate(dialog.factPublishedOnStart);
             }
         }
 
@@ -209,33 +195,6 @@ namespace GameScene.Dialog
             {
                 _speakerBubbles[speaker].ShowDotHint();
             }
-        }
-
-        private bool ConditionsAreMet(List<DialogFactCondition> demandedFacts)
-        {
-            return null == demandedFacts
-                   || demandedFacts.Count == 0
-                   || demandedFacts.All(condition => ConditionIsMet(condition));
-        }
-
-        private bool ConditionIsMet(DialogFactCondition condition)
-        {
-            int currentValue = _facts.ContainsKey(condition.id) ? _facts[condition.id] : 0;
-
-            switch (condition.op)
-            {
-                case DialogFactOperator.Equal:
-                    return currentValue == condition.value;
-                case DialogFactOperator.Less:
-                    return currentValue < condition.value;
-                case DialogFactOperator.Greater:
-                    return currentValue > condition.value;
-                case DialogFactOperator.NotEqual:
-                    return currentValue != condition.value;
-            }
-
-            // Unknown operator or key
-            return false;
         }
     }
 }

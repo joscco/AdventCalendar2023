@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1214695450849076150}
   - component: {fileID: 1214695450849076151}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DarkChessField
   m_TagString: Untagged
   m_Icon: {fileID: 0}

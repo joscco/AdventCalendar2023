@@ -12,21 +12,21 @@ namespace GameScene.Grid.Managers
 
         public void AddAt(T entity, Vector2Int index)
         {
-            entity.SetIndicesAndPosition(index, GetPositionForIndex(index));
+            entity.SetIndicesAndPosition(index, GetBasePositionForIndex(index));
             entities.Add(entity);
         }
 
         public bool HasAt(Vector2Int index)
         {
-            return entities.Any(entity => entity.GetCoveredIndices().Contains(index));
+            return entities.Any(entity => entity.GetMainIndex() == index);
         }
 
         public T GetAt(Vector2Int index)
         {
-            return entities.First(entity => entity.GetCoveredIndices().Contains(index));
+            return entities.First(entity => entity.GetMainIndex() == index);
         }
 
-        public void Release(T item)
+        public void RemoveItem(T item)
         {
             entities.Remove(item);
         }
@@ -39,11 +39,6 @@ namespace GameScene.Grid.Managers
         public List<Vector2Int> GetMainIndices()
         {
             return entities.Select(entity => entity.GetMainIndex()).ToList();
-        }
-        
-        public virtual HashSet<Vector2Int> GetCoveredIndices()
-        {
-            return entities.SelectMany(entity => entity.GetCoveredIndices()).ToHashSet();
         }
     }
 }

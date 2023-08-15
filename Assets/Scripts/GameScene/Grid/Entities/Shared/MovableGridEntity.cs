@@ -5,9 +5,6 @@ namespace GameScene.Grid.Entities.Shared
 {
     public abstract class MovableGridEntity : GridEntity
     {
-        [SerializeField] protected bool flipInMovingDirection;
-        [SerializeField] protected Transform flippable;
-
         private bool _portaling;
         protected Tween _moveTween;
 
@@ -23,14 +20,10 @@ namespace GameScene.Grid.Entities.Shared
             transform.position = newPos;
         }
 
-        public void StopMoving()
+        public virtual void StopMoving()
         {
             _moveTween?.Kill();
         }
-
-        public abstract Tween MoveTo(Vector2Int newIndex, Vector3 newPos);
-
-        public abstract Tween JumpTo(Vector2Int newIndex, Vector3 newPos);
 
         public bool IsPortaling()
         {

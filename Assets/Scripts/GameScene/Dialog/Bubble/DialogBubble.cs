@@ -1,5 +1,6 @@
 using DG.Tweening;
 using GameScene.Dialog.Background;
+using GameScene.Dialog.Data;
 using UnityEngine;
 using UnityEngine.Localization;
 

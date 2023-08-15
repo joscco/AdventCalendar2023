@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace SceneManagement
+namespace GameScene.Grid.Managers
 {
     public class GridAdapter : MonoBehaviour
     {
-        [SerializeField] private Grid grid;
+        [SerializeField] private UnityEngine.Grid grid;
 
-        public Vector3 GetPositionForIndex(Vector2Int index)
+        public Vector3 GetBasePositionForIndex(Vector2Int index)
         {
             var vec2 = grid.GetCellCenterWorld(IndexWrap(index));
             return new Vector3(vec2.x, vec2.y, index.y);

@@ -1,9 +1,9 @@
 
 
+using GameScene.Options;
 using SceneManagement;
 using UI;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameScene.GameSceneWrapper
 {
@@ -74,13 +74,14 @@ namespace GameScene.GameSceneWrapper
                         BlendInWinScreen();
                         break;
                     }
+                    
                     levelManager.HandleUpdate();
                     break;
                 case LevelSceneState.ShowingWinScreen:
                     winScreen.HandleUpdate();
                     break;
                 case LevelSceneState.ShowingOptionScreen:
-                    Options.OptionScreen.instance.HandleUpdate();
+                    OptionScreen.instance.HandleUpdate();
                     break;
             }
         }
@@ -99,25 +100,26 @@ namespace GameScene.GameSceneWrapper
 
         private void ToggleOptionScreen()
         {
-            if (Options.OptionScreen.instance.IsShowing())
+            if (OptionScreen.instance.IsShowing())
             {
                 BlendOutOptionScreen();
             }
             else
             {
                 BlendInOptionScreen();
+                
             }
         }
         
         private void BlendInOptionScreen()
         {
-            Options.OptionScreen.instance.BlendIn();
+            OptionScreen.instance.BlendIn();
             _state = LevelSceneState.ShowingOptionScreen;
         }
 
         private void BlendOutOptionScreen()
         {
-            Options.OptionScreen.instance.BlendOut();
+            OptionScreen.instance.BlendOut();
             _state = LevelSceneState.Unpaused;
         }
     }

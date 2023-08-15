@@ -5,21 +5,9 @@ namespace GameScene
 {
     public class InputManager : MonoBehaviour
     {
-        public static InputManager instance;
-
-        private void Start()
-        {
-            instance = this;
-        }
-
-        public bool GetE()
+        public bool JustPressedE()
         {
             return Input.GetKeyDown(KeyCode.E);
-        }
-
-        public bool GetHoldingSpace()
-        {
-            return Input.GetKey(KeyCode.Space);
         }
 
         public Vector2Int GetMoveDirection()
@@ -53,6 +41,16 @@ namespace GameScene
             }
 
             return new Vector2Int(0, verticalMove);
+        }
+
+        public bool JustPressedSpace()
+        {
+            return Input.GetKeyDown(KeyCode.Space);
+        }
+
+        public bool IsHoldingShift()
+        {
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using GameScene.Grid.Entities.ItemInteraction;
 using GameScene.Grid.Entities.Shared;
@@ -5,20 +7,28 @@ using UnityEngine;
 
 namespace GameScene.Grid.Entities.Player
 {
-    public class Player : MovableGridEntity, IInteractableItemBearer
+    public class Player : MovableGridEntity
     {
-        [SerializeField] private Transform itemPositionWhenPickedUp;
-        [SerializeField] private InteractableItem pickedItem;
+        private float itemStackBaseVerticalOffset = 120;
+        private float initialVerticalBodyOffset = -20;
+        private float jumpHeight = 40;
+        
+        [SerializeField] private List<InteractableItem> pickedItems;
+
+        [SerializeField] protected Transform flippablePart;
+        [SerializeField] protected Transform offsettablePart;
 
         [SerializeField] private SpriteRenderer bodySpriteRenderer;
         [SerializeField] private Sprite spriteWhenCarrying;
         [SerializeField] private Sprite spriteWhenNormal;
-        
+
+        private Tween _bodySpriteMoveTween;
+
         public void ShowCarrying()
         {
             bodySpriteRenderer.sprite = spriteWhenCarrying;
         }
-    
+
         public void ShowIdle()
         {
             bodySpriteRenderer.sprite = spriteWhenNormal;
@@ -26,30 +36,41 @@ namespace GameScene.Grid.Entities.Player
 
         public bool IsBearingItem()
         {
-            return pickedItem != null;
+            return pickedItems.Count > 0;
         }
 
-        public bool CanBeToppedWithItem(InteractableItem item)
+        public InteractableItem GetTopItem()
         {
-            return !IsBearingItem();
+            if (IsBearingItem())
+            {
+                return pickedItems[^1];
+            }
+
+            return null;
         }
 
-        public InteractableItem GetItem()
+        public Vector3 GetRelativeTopPosition()
         {
-            return pickedItem;
+            var y = itemStackBaseVerticalOffset + InteractableItem.ItemHeight * pickedItems.Count;
+            return new Vector3(0, y, 0);
         }
 
         public void TopWithItem(InteractableItem item)
         {
-            pickedItem = item;
+            var newRelativeTop = GetRelativeTopPosition();
+            pickedItems.Add(item);
             ShowCarrying();
-            item.AttachToPickupPoint(itemPositionWhenPickedUp);
+
+            item.AttachToPlayer(offsettablePart, offsettablePart.localPosition + newRelativeTop);
         }
 
         public void RemoveItem(InteractableItem item)
         {
-            pickedItem = null;
-            ShowIdle();
+            pickedItems.Remove(item);
+            if (!IsBearingItem())
+            {
+                ShowIdle();
+            }
         }
 
         public void PlayDeathAnimation()
@@ -61,71 +82,54 @@ namespace GameScene.Grid.Entities.Player
         {
             Debug.Log("Player Won!");
         }
-        
-        public override Tween MoveTo(Vector2Int newIndex, Vector3 newPos)
-        {
-            currentMainIndex = newIndex;
-            return TweenGlobalMovePosition(newPos);
-        }
 
-        public override Tween JumpTo(Vector2Int newIndex, Vector3 newPos)
+        public Tween MoveTo(Vector2Int newIndex, Vector3 newPos, float verticalOffset)
         {
             currentMainIndex = newIndex;
-            return TweenGlobalJumpPosition(newPos);
+            return TweenGlobalMovePosition(newPos, verticalOffset);
         }
 
         public void SwapFaceDirectionIfNecessary(int newX)
         {
-            if (flippable && flipInMovingDirection)
-            {
-                var oldX = currentMainIndex.x;
-                bool shouldFaceLeft = newX < oldX;
-                bool shouldFaceRight = newX > oldX;
+            var oldX = currentMainIndex.x;
+            bool shouldFaceLeft = newX < oldX;
+            bool shouldFaceRight = newX > oldX;
 
-                if (shouldFaceLeft)
-                {
-                    flippable.transform.localScale = new Vector3(-1, 1, 1);
-                }
-                else if (shouldFaceRight)
-                {
-                    flippable.transform.localScale = new Vector3(1, 1, 1);
-                }
+            if (shouldFaceLeft)
+            {
+                flippablePart.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else if (shouldFaceRight)
+            {
+                flippablePart.transform.localScale = new Vector3(1, 1, 1);
             }
         }
 
-        private Tween TweenGlobalMovePosition(Vector3 newGlobalPosition)
+        public override void StopMoving()
+        {
+            base.StopMoving();
+            _bodySpriteMoveTween?.Kill();
+        }
+
+        private Tween TweenGlobalMovePosition(Vector3 newGlobalPosition, float verticalOffset)
         {
             StopMoving();
             var currentPosition = transform.position;
-            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z)).magnitude;
+            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z))
+                .magnitude;
             var duration = 0.1f + distance * 0.0005f;
-            _moveTween = transform.DOLocalMove(newGlobalPosition, duration).SetEase(Ease.OutSine);
-            return _moveTween;
-        }
-
-        private Tween TweenGlobalJumpPosition(Vector3 newGlobalPosition)
-        {
-            StopMoving();
-            var currentPosition = transform.position;
-            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z)).magnitude;
-            
-            var verticalDistance = Mathf.Abs(currentPosition.y - newGlobalPosition.y);
-
-            if (verticalDistance < 10)
-            {
-                var duration = 0.1f + distance * 0.0008f;
-                var middlePosition = (currentPosition + newGlobalPosition) / 2;
-                var offSetMiddlePosition = middlePosition + Mathf.Max(0, 40 - verticalDistance) * Vector3.up;
-                _moveTween = DOTween.Sequence()
-                    .Append(transform.DOMove(offSetMiddlePosition, duration / 2).SetEase(Ease.InOutQuad))
-                    .Append(transform.DOMove(newGlobalPosition, duration / 2).SetEase(Ease.InOutQuad));
-            }
-            else
-            {
-                var duration = 0.1f + distance * 0.0005f;
-                _moveTween = transform.DOMove(newGlobalPosition, duration).SetEase(Ease.OutQuad);
-            }
-            
+            var currentOffset = offsettablePart.transform.localPosition.y;
+            var endOffset = initialVerticalBodyOffset + verticalOffset;
+            _moveTween = transform
+                .DOLocalMove(newGlobalPosition, duration)
+                .SetEase(Ease.OutSine);
+            _bodySpriteMoveTween = DOTween.Sequence()
+                .Append(offsettablePart.transform
+                    .DOLocalMoveY(Math.Max(currentOffset, endOffset) + jumpHeight, duration/2)
+                    .SetEase(Ease.OutSine))
+                .Append(offsettablePart.transform
+                    .DOLocalMoveY(endOffset, duration/2)
+                    .SetEase(Ease.InOutSine));
             return _moveTween;
         }
     }

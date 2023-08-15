@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -7,9 +5,9 @@ namespace GameScene.Grid.Entities.Shared
 {
     public class GridEntity : MonoBehaviour
     {
-        [SerializeField] protected Vector2Int currentMainIndex;
-        [SerializeField] private List<Vector2Int> relativeIndicesIncluded = new() { Vector2Int.zero };
         private Tween _scaleTween;
+        protected Vector2Int currentMainIndex;
+        protected int currentOrder;
 
         protected virtual void OnDestroy()
         {
@@ -25,21 +23,6 @@ namespace GameScene.Grid.Entities.Shared
         public Vector2Int GetMainIndex()
         {
             return currentMainIndex;
-        }
-
-        public List<Vector2Int> GetCoveredIndices()
-        {
-            return relativeIndicesIncluded.Select(index => currentMainIndex + index).ToList();
-        }
-
-        public List<Vector2Int> GetCoveredIndicesIfMainIndexWas(Vector2Int potentialMainIndex)
-        {
-            return relativeIndicesIncluded.Select(index => potentialMainIndex + index).ToList();
-        }
-
-        public bool IsSingleIndex()
-        {
-            return relativeIndicesIncluded.Count == 1;
         }
 
         public Tween BlendIn()

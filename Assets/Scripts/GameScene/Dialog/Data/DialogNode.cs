@@ -1,8 +1,8 @@
 using System;
-using UnityEngine;
+using GameScene.Dialog.Background;
 using UnityEngine.Localization;
 
-namespace GameScene.Dialog.Background
+namespace GameScene.Dialog.Data
 {
     [Serializable]
     public class DialogNode

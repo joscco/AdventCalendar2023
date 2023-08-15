@@ -1,35 +1,30 @@
 using System;
-using GameScene.Dialog.Background;
-using GameScene.Dialog.Data;
+using GameScene.Facts;
 using UnityEngine;
 
 namespace GameScene.Dialog.Area
 {
     public class DialogArea : MonoBehaviour
     {
-        [SerializeField] private DialogFactId areaFactId;
+        [SerializeField] private FactId areaFactId;
         [SerializeField] private int widthRight;
         [SerializeField] private int heightDown;
 
-        private DialogManager _dialogManager;
+        public Action<Fact> onFactPublish;
         private Vector2Int _mainIndex;
-
-        private void Start()
-        {
-            _dialogManager = FindObjectOfType<DialogManager>();
-        }
 
         public void OnPlayerMove(Vector2Int from, Vector2Int to)
         {
             if (HasIndex(from) && HasNotIndex(to))
             {
                 // Left
-                _dialogManager.PublishFactAndUpdate(new DialogFact(areaFactId, 0));
+                onFactPublish?.Invoke(new Fact(areaFactId, 0));
+                
             }
             else if (HasNotIndex(from) && HasIndex(to))
             {
                 // Entered
-                _dialogManager.PublishFactAndUpdate(new DialogFact(areaFactId, 1));
+                onFactPublish?.Invoke(new Fact(areaFactId, 1));
             }
         }
 

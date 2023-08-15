@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameScene.Dialog.Background;
+using GameScene.Facts;
 using UnityEngine;
 
 namespace GameScene.Dialog.Data
@@ -14,13 +15,13 @@ namespace GameScene.Dialog.Data
         
         public DialogSpeaker hintSpeaker;
         
-        public List<DialogFactCondition> cancelConditions;
-        public List<DialogFactCondition> startConditions;
-        public List<DialogFactCondition> hintConditions;
+        public List<FactCondition> cancelConditions;
+        public List<FactCondition> startConditions;
+        public List<FactCondition> hintConditions;
 
-        public List<DialogFact> factPublishedOnCancel;
-        public List<DialogFact> factPublishedOnEnd;
-        public List<DialogFact> factPublishedOnStart;
+        public List<Fact> factPublishedOnCancel;
+        public List<Fact> factPublishedOnEnd;
+        public List<Fact> factPublishedOnStart;
 
         public bool ContainsSpeaker(DialogSpeaker speaker)
         {
