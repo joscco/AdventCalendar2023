@@ -22,6 +22,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  defaultName: Cheese
   tags:
   - {fileID: 11400000, guid: 3a6492b9e59f9425fb41d1d727a5915d, type: 2}
   references:

@@ -7,8 +7,7 @@ namespace GameScene.Grid.Entities.ItemInteraction
     {
         public void AddAtAndMoveTo(InteractableItem entity, Vector2Int index)
         {
-            entity.transform.SetParent(transform);
-            entity.MoveTo(index, GetBasePositionForIndex(index));
+            entity.RelativeMoveTo(index, GetBasePositionForIndex(index));
             entities.Add(entity);
         }
     }

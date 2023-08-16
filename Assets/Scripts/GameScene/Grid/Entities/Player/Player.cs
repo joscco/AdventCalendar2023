@@ -9,29 +9,71 @@ namespace GameScene.Grid.Entities.Player
 {
     public class Player : MovableGridEntity
     {
-        private float itemStackBaseVerticalOffset = 120;
-        private float initialVerticalBodyOffset = -20;
+        private float itemStackBaseVerticalOffset = 140;
+        private float initialVerticalBodyOffset = 30;
         private float jumpHeight = 40;
-        
+
         [SerializeField] private List<InteractableItem> pickedItems;
 
         [SerializeField] protected Transform flippablePart;
         [SerializeField] protected Transform offsettablePart;
 
-        [SerializeField] private SpriteRenderer bodySpriteRenderer;
-        [SerializeField] private Sprite spriteWhenCarrying;
-        [SerializeField] private Sprite spriteWhenNormal;
+        [SerializeField] private Transform leftArm;
+        [SerializeField] private Transform rightArm;
+        [SerializeField] private Transform leftLeg;
+        [SerializeField] private Transform rightLeg;
 
         private Tween _bodySpriteMoveTween;
+        private Tween _armRotateTween;
+        private Tween _legRotateTween;
 
         public void ShowCarrying()
         {
-            bodySpriteRenderer.sprite = spriteWhenCarrying;
+            _armRotateTween?.Kill();
+            _armRotateTween = DOTween.Sequence()
+                .Append(leftArm.DOLocalRotate(new Vector3(0, 0, -60), 0.2f)
+                    .SetEase(Ease.InOutQuad))
+                .Join(rightArm.DOLocalRotate(new Vector3(0, 0, 60), 0.2f)
+                    .SetEase(Ease.InOutQuad));
         }
 
         public void ShowIdle()
         {
-            bodySpriteRenderer.sprite = spriteWhenNormal;
+            _armRotateTween?.Kill();
+            _armRotateTween = DOTween.Sequence()
+                .Append(leftArm.DOLocalRotate(new Vector3(0, 0, 60), 0.2f)
+                    .SetEase(Ease.InOutQuad))
+                .Join(rightArm.DOLocalRotate(new Vector3(0, 0, -60), 0.2f)
+                    .SetEase(Ease.InOutQuad));
+        }
+
+        private Tween ShowJump()
+        {
+            _legRotateTween?.Kill();
+            _legRotateTween = DOTween.Sequence()
+                .Append(leftLeg.DOLocalRotate(new Vector3(0, 0, -40), 0.1f)
+                    .SetEase(Ease.OutQuad))
+                .Join(rightLeg.DOLocalRotate(new Vector3(0, 0, 40), 0.1f)
+                    .SetEase(Ease.OutQuad));
+            return _legRotateTween;
+        }
+
+        private Tween ShowNonJump()
+        {
+            _legRotateTween?.Kill();
+            _legRotateTween = DOTween.Sequence()
+                .Append(leftLeg.DOLocalRotate(new Vector3(0, 0, 0), 0.15f)
+                    .SetEase(Ease.OutQuad))
+                .Join(rightLeg.DOLocalRotate(new Vector3(0, 0, 0), 0.15f)
+                    .SetEase(Ease.OutQuad));
+            return _legRotateTween;
+        }
+
+        protected void Jump()
+        {
+            DOTween.Sequence()
+                .Append(ShowJump())
+                .Append(ShowNonJump());
         }
 
         public bool IsBearingItem()
@@ -49,19 +91,15 @@ namespace GameScene.Grid.Entities.Player
             return null;
         }
 
-        public Vector3 GetRelativeTopPosition()
+        public float GetRelativeTop()
         {
-            var y = itemStackBaseVerticalOffset + InteractableItem.ItemHeight * pickedItems.Count;
-            return new Vector3(0, y, 0);
+            return itemStackBaseVerticalOffset + InteractableItem.ItemHeight * pickedItems.Count;
         }
 
         public void TopWithItem(InteractableItem item)
         {
-            var newRelativeTop = GetRelativeTopPosition();
             pickedItems.Add(item);
             ShowCarrying();
-
-            item.AttachToPlayer(offsettablePart, offsettablePart.localPosition + newRelativeTop);
         }
 
         public void RemoveItem(InteractableItem item)
@@ -105,32 +143,40 @@ namespace GameScene.Grid.Entities.Player
             }
         }
 
-        public override void StopMoving()
+        public void StopMoving()
         {
-            base.StopMoving();
             _bodySpriteMoveTween?.Kill();
         }
 
         private Tween TweenGlobalMovePosition(Vector3 newGlobalPosition, float verticalOffset)
         {
             StopMoving();
-            var currentPosition = transform.position;
-            var distance = (currentPosition - new Vector3(newGlobalPosition.x, newGlobalPosition.y, currentPosition.z))
-                .magnitude;
-            var duration = 0.1f + distance * 0.0005f;
-            var currentOffset = offsettablePart.transform.localPosition.y;
-            var endOffset = initialVerticalBodyOffset + verticalOffset;
+            Jump();
+            Vector2 dir = (transform.position - newGlobalPosition);
+            var duration = 0.2f + dir.magnitude * 0.00001f;
+
             _moveTween = transform
                 .DOLocalMove(newGlobalPosition, duration)
                 .SetEase(Ease.OutSine);
+
+            // Jump Animation:
+            var currentVerticalOffset = offsettablePart.transform.localPosition.y;
+            var endVerticalOffset = initialVerticalBodyOffset + verticalOffset;
+
             _bodySpriteMoveTween = DOTween.Sequence()
                 .Append(offsettablePart.transform
-                    .DOLocalMoveY(Math.Max(currentOffset, endOffset) + jumpHeight, duration/2)
+                    .DOLocalMoveY(Math.Max(currentVerticalOffset, endVerticalOffset) + jumpHeight, duration / 2)
                     .SetEase(Ease.OutSine))
                 .Append(offsettablePart.transform
-                    .DOLocalMoveY(endOffset, duration/2)
+                    .DOLocalMoveY(endVerticalOffset, duration / 2)
                     .SetEase(Ease.InOutSine));
-            return _moveTween;
+
+            return _bodySpriteMoveTween;
+        }
+
+        public Transform GetOffsettablePart()
+        {
+            return offsettablePart.transform;
         }
     }
 }

@@ -249,13 +249,13 @@ namespace GameScene
 
                 if (item.IsInteractable())
                 {
-                    TakeItem(item, playerIndex);
+                    TakeItem(item);
                 }
             }
             else if (player.IsBearingItem())
             {
                 var topPlayerItem = player.GetTopItem();
-                LetGoItemAt(topPlayerItem, playerIndex);
+                DropItemAt(topPlayerItem, playerIndex);
             }
         }
 
@@ -323,22 +323,29 @@ namespace GameScene
             entity.InstantUpdatePosition(index, grid.GetBasePositionForIndex(index));
         }
 
-        private void LetGoItemAt(InteractableItem item, Vector2Int index)
+        private void DropItemAt(InteractableItem item, Vector2Int index)
         {
             player.RemoveItem(item);
+            
+            item.transform.SetParent(transform);
             interactableItemManager.AddAtAndMoveTo(item, index);
 
             // Move has to be called AFTER dropping the item
             MovePlayerTo(index);
+            
             CalculateGameStatus();
         }
 
-        private void TakeItem(InteractableItem item, Vector2Int index)
+        private void TakeItem(InteractableItem item)
         {
             interactableItemManager.RemoveItem(item);
+            
+            item.transform.parent = player.GetOffsettablePart();
+            item.RelativeMoveTo(Vector2Int.zero, player.GetRelativeTop() * Vector3.up);
+            
             player.TopWithItem(item);
-
-            MovePlayerTo(index);
+            player.MoveTo(player.GetMainIndex(), player.transform.position, 0);
+            
             CalculateGameStatus();
         }
 
@@ -372,7 +379,7 @@ namespace GameScene
 
         private void MoveItemTo(InteractableItem item, Vector2Int index)
         {
-            item.MoveTo(index, grid.GetBasePositionForIndex(index));
+            item.RelativeMoveTo(index, grid.GetBasePositionForIndex(index));
             if (portalManager.HasAt(index))
             {
                 UsePortal(item, index);

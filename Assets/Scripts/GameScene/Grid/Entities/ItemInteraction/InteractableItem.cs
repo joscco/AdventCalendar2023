@@ -1,6 +1,5 @@
 using System;
 using DG.Tweening;
-using GameScene.Facts;
 using GameScene.Grid.Entities.ItemInteraction.Logic.Properties;
 using GameScene.Grid.Entities.Shared;
 using TMPro;
@@ -32,26 +31,20 @@ namespace GameScene.Grid.Entities.ItemInteraction
             LocalizationSettings.SelectedLocaleChanged += (_) => UpdateName();
         }
 
+        private void OnValidate()
+        {
+            iconRenderer.sprite = type.itemIcon;
+            nameRenderer.text = type.defaultName;
+        }
+
         private void UpdateName()
         {
             nameRenderer.text = type.name.GetLocalizedString();
         }
 
-        public void AttachToPlayer(Transform newParent, Vector3 relativePosition)
-        {
-            SetParent(newParent);
-            // Set index to zero just in case
-            MoveTo(Vector2Int.zero, relativePosition);
-        }
-
         public InteractableItemType GetItemType()
         {
             return type;
-        }
-
-        private void SetParent(Transform newParent)
-        {
-            transform.parent = newParent;
         }
 
         public bool IsInteractable()
@@ -69,17 +62,13 @@ namespace GameScene.Grid.Entities.ItemInteraction
             return true;
         }
         
-        public Tween MoveTo(Vector2Int newIndex, Vector3 newPos)
+        public Tween RelativeMoveTo(Vector2Int newIndex, Vector3 newPos)
         {
             currentMainIndex = newIndex;
-            return TweenRelativeMovePosition(newPos);
-        }
-
-        private Tween TweenRelativeMovePosition(Vector3 newGlobalPosition)
-        {
             StopMoving();
-            var duration = 0.2f;
-            _moveTween = transform.DOLocalMove(newGlobalPosition, duration).SetEase(Ease.OutSine);
+            var duration = 0.4f;
+            _moveTween = transform.DOLocalMove(newPos, duration)
+                .SetEase(Ease.OutBack);
             return _moveTween;
         }
     }

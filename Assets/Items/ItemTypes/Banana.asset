@@ -22,6 +22,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  defaultName: Banana
   tags:
   - {fileID: 11400000, guid: 7fccfb6f1b896414586e333ce6c26112, type: 2}
   - {fileID: 11400000, guid: 3a6492b9e59f9425fb41d1d727a5915d, type: 2}

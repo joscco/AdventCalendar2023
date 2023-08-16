@@ -9,6 +9,7 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Properties
     {
         public Sprite itemIcon;
         public LocalizedString name;
+        public string defaultName;
         public List<InteractableItemTag> tags;
     }
 }
