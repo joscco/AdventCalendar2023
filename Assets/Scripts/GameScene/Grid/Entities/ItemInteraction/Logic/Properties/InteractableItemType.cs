@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
+using UnityEngine.Serialization;
 
 namespace GameScene.Grid.Entities.ItemInteraction.Logic.Properties
 {
@@ -8,7 +9,7 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Properties
     public class InteractableItemType : ScriptableObject
     {
         public Sprite itemIcon;
-        public LocalizedString name;
+        public LocalizedString title;
         public string defaultName;
         public List<InteractableItemTag> tags;
     }

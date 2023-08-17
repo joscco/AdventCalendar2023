@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orange
   m_EditorClassIdentifier: 
   itemIcon: {fileID: 21300000, guid: 60dbd37f6d14e42a6b9530afca3c33e1, type: 3}
-  name:
+  title:
     m_TableReference:
       m_TableCollectionName: GUID:aa3b4b8ed5b8d438b8ccce49f6bf498d
     m_TableEntryReference:

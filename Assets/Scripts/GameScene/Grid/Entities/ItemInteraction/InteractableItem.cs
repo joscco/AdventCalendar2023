@@ -17,6 +17,7 @@ namespace GameScene.Grid.Entities.ItemInteraction
         [SerializeField] private InteractableItemType type;
         [SerializeField] private SpriteRenderer iconRenderer;
         [SerializeField] private TextMeshPro nameRenderer;
+        [SerializeField] private TileCheckMark checkMarkRenderer;
 
         private void Start()
         {
@@ -39,7 +40,7 @@ namespace GameScene.Grid.Entities.ItemInteraction
 
         private void UpdateName()
         {
-            nameRenderer.text = type.name.GetLocalizedString();
+            nameRenderer.text = type.title.GetLocalizedString();
         }
 
         public InteractableItemType GetItemType()
@@ -52,14 +53,14 @@ namespace GameScene.Grid.Entities.ItemInteraction
             return interactable;
         }
 
-        protected void SetInteractable(bool val)
+        public void Check()
         {
-            interactable = val;
+            checkMarkRenderer.Show();
         }
 
-        public virtual bool IsComplete()
+        public void Uncheck()
         {
-            return true;
+            checkMarkRenderer.Hide();
         }
         
         public Tween RelativeMoveTo(Vector2Int newIndex, Vector3 newPos)

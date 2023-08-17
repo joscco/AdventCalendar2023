@@ -28,7 +28,7 @@ namespace GameScene
         [SerializeField] private InputManager inputManager;
 
         [SerializeField] private CheckerManager checkerManager;
-        [SerializeField] private List<Checker> checkers;
+        private readonly List<Checker> winCheckers = new();
 
         [SerializeField] private ColoredTileManager coloredTileManager;
 
@@ -40,17 +40,11 @@ namespace GameScene
         [SerializeField] private ToggleableTileSwitchManager toggleableTileSwitchManager;
         [SerializeField] private PortalManager portalManager;
         [SerializeField] private InteractableItemManager interactableItemManager;
-
-        [SerializeField] private List<FactCondition> factsToListenToForWin;
         [SerializeField] private Player player;
 
         // Game State
         private bool _setup;
         private bool _hasWon;
-
-        // Free Indices is a subset of all feasible indices consisting of all that are not blocked
-        private HashSet<Vector2Int> _existingFields;
-        private HashSet<Vector2Int> _freeFields;
 
 
         private void Start()
@@ -67,26 +61,31 @@ namespace GameScene
 
         private void CalculateGameStatus()
         {
-            _existingFields = GetExistingFields();
-
-            _freeFields = _existingFields
-                .Except(obstacleManager.GetCoveredIndices())
-                .Except(toggleableTileSwitchManager.GetMainIndices())
-                .ToHashSet();
-
             var itemMap = interactableItemManager.GetEntities()
-                .ToDictionary(item => item.GetMainIndex(), item => item.GetItemType());
+                .ToDictionary(item => item.GetMainIndex(), item => item);
 
-            checkerManager.GetEntities().ForEach(checker => checker.Check(itemMap));
+            checkerManager.GetEntities()
+                .ForEach(checker => checker.Check(itemMap));
+
+            if (winCheckers.All(checker => checker.IsSatisfied(itemMap)))
+            {
+                Win();
+            };
         }
 
-        private HashSet<Vector2Int> GetExistingFields()
+        private bool FieldIsFreeAt(Vector2Int index)
         {
-            return groundMap.GetIndices()
-                .Concat(slidingGroundMap.GetIndices())
-                .Concat(toggleableTilesManager.GetActiveTileIndices())
-                .Concat(coloredTileManager.GetMainIndices())
-                .ToHashSet();
+            return FieldExistsAt(index) 
+                   && !obstacleManager.HasCoveredAt(index) 
+                   && !toggleableTilesManager.HasAt(index);
+        } 
+
+        private bool FieldExistsAt(Vector2Int vector2Int)
+        {
+            return groundMap.HasTileAt(vector2Int)
+                   || slidingGroundMap.HasTileAt(vector2Int)
+                   || toggleableTilesManager.HasActiveAt(vector2Int)
+                   || coloredTileManager.HasAt(vector2Int);
         }
 
         public void SetupLevel()
@@ -101,15 +100,9 @@ namespace GameScene
             InitInteractables();
             InitCheckers();
 
-            factManager.onNewFacts += _ =>
-            {
-                if (factManager.ConditionsAreMet(factsToListenToForWin)) Win();
-            };
-
             _setup = true;
         }
 
-        
 
         private void InitPlayer()
         {
@@ -127,9 +120,10 @@ namespace GameScene
                 var index = grid.FindNearestIndexForPosition(area.transform.position);
                 area.onFactPublish += factManager.PublishFactAndUpdate;
                 area.SetIndex(index);
+                area.OnPlayerMove(Vector2Int.zero, player.GetMainIndex());
             }
         }
-        
+
         private void InitColoredTiles()
         {
             var coloredTiles = FindObjectsOfType<ColoredTile>();
@@ -179,7 +173,7 @@ namespace GameScene
                 interactableItemManager.AddAt(item, index);
             }
         }
-        
+
         private void InitCheckers()
         {
             var checkersAvailable = FindObjectsOfType<Checker>();
@@ -187,11 +181,16 @@ namespace GameScene
             {
                 var index = grid.FindNearestIndexForPosition(availableChecker.transform.position);
                 checkerManager.AddAt(availableChecker, index);
-            }
-            
-            foreach (var checker in checkers)
-            {
-                checker.OnFirstSuccessfulCheck += factManager.PublishFactAndUpdate;
+
+                if (availableChecker.isImportantForWin)
+                {
+                    winCheckers.Add(availableChecker);
+                }
+
+                if (availableChecker.HasFactToPublish())
+                {
+                    availableChecker.OnFirstSuccessfulCheck += factManager.PublishFactAndUpdate;
+                }
             }
         }
 
@@ -264,7 +263,7 @@ namespace GameScene
         {
             var currentIndex = player.GetMainIndex();
             var nextIndex = player.GetMainIndex() + direction;
-            
+
             if (interactableItemManager.HasAt(nextIndex))
             {
                 var item1 = interactableItemManager.GetAt(nextIndex);
@@ -273,6 +272,7 @@ namespace GameScene
                     var item2 = interactableItemManager.GetAt(currentIndex);
                     MoveItemTo(item2, nextIndex);
                 }
+
                 MoveItemTo(item1, currentIndex);
             }
 
@@ -297,7 +297,7 @@ namespace GameScene
             }
 
             // Moving Stuff, tiles must be feasible to move there
-            if (!_existingFields.Contains(nextIndex))
+            if (!FieldExistsAt(nextIndex))
             {
                 // Player cannot move here -> Stop
                 return;
@@ -312,7 +312,7 @@ namespace GameScene
             }
 
             // Last case, simple movement
-            if (_freeFields.Contains(nextIndex))
+            if (FieldIsFreeAt(nextIndex))
             {
                 MovePlayerTo(nextIndex);
             }
@@ -326,26 +326,27 @@ namespace GameScene
         private void DropItemAt(InteractableItem item, Vector2Int index)
         {
             player.RemoveItem(item);
-            
+
             item.transform.SetParent(transform);
             interactableItemManager.AddAtAndMoveTo(item, index);
 
             // Move has to be called AFTER dropping the item
             MovePlayerTo(index);
-            
+
             CalculateGameStatus();
         }
 
         private void TakeItem(InteractableItem item)
         {
+            item.Uncheck();
             interactableItemManager.RemoveItem(item);
-            
+
             item.transform.parent = player.GetOffsettablePart();
             item.RelativeMoveTo(Vector2Int.zero, player.GetRelativeTop() * Vector3.up);
-            
+
             player.TopWithItem(item);
             player.MoveTo(player.GetMainIndex(), player.transform.position, 0);
-            
+
             CalculateGameStatus();
         }
 
@@ -391,7 +392,7 @@ namespace GameScene
             var nextIndex = portalManager.FindNextPortalIndexFor(index);
 
             // Only move if exit is fre
-            if (_freeFields.Contains(nextIndex))
+            if (FieldIsFreeAt(nextIndex))
             {
                 entity.SetPortaling(true);
 
@@ -406,7 +407,7 @@ namespace GameScene
         private Vector2Int FindNextFreeNonSlidingTileInDirection(Vector2Int nextIndex, Vector2Int direction)
         {
             var result = nextIndex;
-            while (slidingGroundMap.HasTileAt(result) && _freeFields.Contains(result + direction))
+            while (slidingGroundMap.HasTileAt(result) && FieldIsFreeAt(result + direction))
             {
                 result += direction;
             }

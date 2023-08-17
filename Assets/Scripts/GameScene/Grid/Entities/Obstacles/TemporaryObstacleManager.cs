@@ -20,10 +20,11 @@ namespace GameScene.Grid.Entities.Obstacles
             factManager.onNewFacts -= UpdateStatuses;
         }
 
-        public HashSet<Vector2Int> GetCoveredIndices()
+        public bool HasCoveredAt(Vector2Int index)
         {
-            return Enumerable.ToHashSet(entities.Where(entity => entity.IsBlocking())
-                .SelectMany(entity => entity.GetCoveredIndices()));
+            return entities
+                .Where(entity => entity.GetCoveredIndices().Contains(index))
+                .Any(entity => entity.IsBlocking());
         }
 
         private void UpdateStatuses(List<Fact> newFacts)

@@ -39,6 +39,14 @@ MonoBehaviour:
     m_Key: levelChoosingHelpText
     m_Metadata:
       m_Items: []
+  - m_Id: 5807468239118336
+    m_Key: arrowKeysHint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5808759090700288
+    m_Key: pickupHint
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

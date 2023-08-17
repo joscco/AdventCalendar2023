@@ -42,6 +42,15 @@ MonoBehaviour:
     m_Localized: "Nutze die LEERTASTE oder Klicke, um ein Level zu w\xE4hlen"
     m_Metadata:
       m_Items: []
+  - m_Id: 5807468239118336
+    m_Localized: Nutze die Pfeiltasten oder ASDW zum Bewegen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5808759090700288
+    m_Localized: "Hebe Dinge auf, indem du dich auf sie bewegst und dann die Leertaste
+      dr\xFCckst."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -42,6 +42,14 @@ MonoBehaviour:
     m_Localized: Press SPACE or Click to Select Level
     m_Metadata:
       m_Items: []
+  - m_Id: 5807468239118336
+    m_Localized: Use the arrow keys or ASDW to move.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5808759090700288
+    m_Localized: Pick up items by moving on them and then pressing space.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e3863d512e74980bff208c95303fb50, type: 3}
-  m_Name: Salmon
+  m_Name: Apple
   m_EditorClassIdentifier: 
-  itemIcon: {fileID: 21300000, guid: 02f6866d97a684e99b32a987867a83ab, type: 3}
+  itemIcon: {fileID: 21300000, guid: b06071d006d7b470a97235ff0a5488e0, type: 3}
   title:
     m_TableReference:
       m_TableCollectionName: GUID:aa3b4b8ed5b8d438b8ccce49f6bf498d
     m_TableEntryReference:
-      m_KeyId: 989410299469824
+      m_KeyId: 1228773298003968
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  defaultName: Salmon
+  defaultName: Apple
   tags:
-  - {fileID: 11400000, guid: be0b24aeca7f14c659f5cd0c9ac7bdbf, type: 2}
+  - {fileID: 11400000, guid: 7fccfb6f1b896414586e333ce6c26112, type: 2}
+  - {fileID: 11400000, guid: 1095436df191f4211937c56362a3ba5b, type: 2}
+  - {fileID: 11400000, guid: 3dc21766adc4e4f6fba07ef38b733ba8, type: 2}
   references:
     version: 2
     RefIds: []

@@ -9,12 +9,16 @@ namespace GameScene.SpecialGridEntities.EntityManagers
 {
     public class ToggleableTileManager : GridEntityManager<ToggleableTile>
     {
-        public List<Vector2Int> GetActiveTileIndices()
+
+        public bool HasActiveAt(Vector2Int vector2Int)
         {
-            return GetEntities()
-                .Where(tile => tile.IsActive())
-                .Select(tile => tile.GetMainIndex())
-                .ToList();
+            if (HasAt(vector2Int))
+            {
+                var tile = GetAt(vector2Int);
+                return tile.IsActive();
+            }
+
+            return false;
         }
     }
 }

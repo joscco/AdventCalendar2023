@@ -35,6 +35,12 @@ MonoBehaviour:
     m_Key: dotHint
     m_Metadata:
       m_Items: []
+  - m_Id: 5793232695844864
+    m_Key: 'arrow_hint
+
+'
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

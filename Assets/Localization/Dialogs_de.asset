@@ -38,6 +38,10 @@ MonoBehaviour:
     m_Localized: ...
     m_Metadata:
       m_Items: []
+  - m_Id: 5793232695844864
+    m_Localized: Nutze die Pfeiltasten oder ASDW zum Bewegen.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

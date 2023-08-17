@@ -104,6 +104,16 @@ MonoBehaviour:
     m_Localized: Sonne
     m_Metadata:
       m_Items: []
+  - m_Id: 1228773298003968
+    m_Localized: Apfel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1228788728848384
+    m_Localized: 'Pfir
+
+      sich'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

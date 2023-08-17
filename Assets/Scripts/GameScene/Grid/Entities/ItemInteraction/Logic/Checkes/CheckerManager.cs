@@ -8,7 +8,7 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Checkes
         public void AddAt(Checker entity, Vector2Int index)
         {
             entity.transform.SetParent(transform);
-            entity.SetIndex(index);
+            entity.SetIndicesAndPosition(index, GetBasePositionForIndex(index));
             entities.Add(entity);
         }
     }

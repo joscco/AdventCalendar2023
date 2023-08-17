@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GameScene.Grid.Entities.Obstacles
 {
-    public abstract class TemporaryObstacle : GridEntity
+    public class TemporaryObstacle : GridEntity
     {
         [SerializeField] private bool blocking = true;
         [SerializeField] private List<Vector2Int> relativeIndicesIncluded = new() { Vector2Int.zero };
@@ -23,7 +23,9 @@ namespace GameScene.Grid.Entities.Obstacles
             return blocking;
         }
 
-        protected abstract void OnUnblock();
+        protected virtual void OnUnblock()
+        {
+        }
 
         public List<Vector2Int> GetCoveredIndices()
         {

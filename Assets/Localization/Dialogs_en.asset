@@ -38,6 +38,10 @@ MonoBehaviour:
     m_Localized: ...
     m_Metadata:
       m_Items: []
+  - m_Id: 5793232695844864
+    m_Localized: Use the arrow keys or ASDW to move.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
