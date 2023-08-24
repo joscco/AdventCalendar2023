@@ -1,30 +1,29 @@
 using UI;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class LevelButton : ScalingButton
 {
-    [SerializeField] private Sprite activeSprite;
-    [SerializeField] private Sprite inactiveSprite;
-    [SerializeField] private SortingGroup sortingGroup;
-    [SerializeField] private SpriteRenderer boxRenderer;
-    [SerializeField] private SpriteRenderer numberRenderer;
+    [SerializeField] private LevelButtonBase baseButton;
+    [SerializeField] private Sprite image;
     [SerializeField] private int level;
+
+    public const float Width = 600f;
+
+    private void Start()
+    {
+        baseButton.Sort((level - 1) % 4 + 1);
+        baseButton.SetSprite(image);
+        transform.localPosition = Vector2.right * (level - 1) * Width;
+    }
 
     public void TurnOn()
     {
-        sortingGroup.sortingOrder = (level - 1) % 4 + 1;
-        numberRenderer.color = new Color(1, 1, 1, 1);
-        boxRenderer.color = new Color(1, 1, 1, 1);
-        boxRenderer.sprite = activeSprite;
+        baseButton.TurnOn();
     }
 
     public void TurnOff()
     {
-        sortingGroup.sortingOrder = 0;
-        numberRenderer.color = new Color(1, 1, 1, 0.4f);
-        boxRenderer.color = new Color(1, 1, 1, 0.5f);
-        boxRenderer.sprite = inactiveSprite;
+        baseButton.TurnOff();
     }
 
     public int GetLevel()

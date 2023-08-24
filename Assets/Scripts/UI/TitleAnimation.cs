@@ -3,7 +3,7 @@ using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
-namespace General
+namespace UI
 {
     public class TitleAnimation : MonoBehaviour
     {

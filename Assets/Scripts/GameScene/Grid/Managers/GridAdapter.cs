@@ -4,7 +4,10 @@ namespace GameScene.Grid.Managers
 {
     public class GridAdapter : MonoBehaviour
     {
-        [SerializeField] private UnityEngine.Grid grid;
+        public UnityEngine.Grid grid;
+        public TilemapManager groundMap;
+        public TilemapManager slideMap;
+        public TilemapManager wallMap;
 
         public Vector3 GetBasePositionForIndex(Vector2Int index)
         {

@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace GameScene.Grid.Managers
 {
-    public class GridEntityManager<T> : GridAdapter where T : GridEntity
+    public class GridEntityManager<T>: MonoBehaviour where T : GridEntity
     {
         protected readonly List<T> entities = new();
 
-        public void AddAt(T entity, Vector2Int index)
+        public void AddAt(T entity, Vector2Int index, Vector2 position)
         {
-            entity.SetIndicesAndPosition(index, GetBasePositionForIndex(index));
+            entity.SetIndicesAndPosition(index, position);
             entities.Add(entity);
         }
 
@@ -34,11 +34,6 @@ namespace GameScene.Grid.Managers
         public List<T> GetEntities()
         {
             return entities;
-        }
-        
-        public List<Vector2Int> GetMainIndices()
-        {
-            return entities.Select(entity => entity.GetMainIndex()).ToList();
         }
     }
 }

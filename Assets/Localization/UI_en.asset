@@ -43,11 +43,40 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5807468239118336
-    m_Localized: Use the arrow keys or ASDW to move.
+    m_Localized: This is you.
     m_Metadata:
       m_Items: []
   - m_Id: 5808759090700288
-    m_Localized: Pick up items by moving on them and then pressing space.
+    m_Localized: Use the arrow or asdw keys to move.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6150844289376256
+    m_Localized: 'This is a word. Jump on a word, then press space to pick it up. '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6151161429090304
+    m_Localized: Press space again to drop it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6156748325904384
+    m_Localized: This is a color area. Fill color areas with words!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6156751618433024
+    m_Localized: Pick up the word from the right and drop it onto the color area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6160484691599360
+    m_Localized: Not every word fits every color area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6160648546279424
+    m_Localized: Some areas only allow certain categories of words.  Can you find
+      a match for this "fruity" area?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6867982218158080
+    m_Localized: joscco presents
     m_Metadata:
       m_Items: []
   references:

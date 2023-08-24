@@ -1,62 +1,67 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine;
 using DG.Tweening;
 using GameScene.Dialog;
 using GameScene.Dialog.Area;
 using GameScene.Facts;
+using GameScene.Grid;
+using GameScene.Grid.Entities.Essentials;
 using GameScene.Grid.Entities.ItemInteraction;
 using GameScene.Grid.Entities.ItemInteraction.Logic.Checkes;
 using GameScene.Grid.Entities.Obstacles;
-using GameScene.Grid.Entities.Player;
 using GameScene.Grid.Entities.Shared;
+using GameScene.Grid.Entities.ToggleableTile;
 using GameScene.Grid.Managers;
-using GameScene.SpecialGridEntities;
 using GameScene.SpecialGridEntities.EntityManagers;
-using Levels.SheepLevel;
 using Levels.WizardLevel;
 using UnityEngine;
 
 namespace GameScene
 {
-    public class LevelManager : MonoBehaviour, ILevelManager
+    public class LevelManager : MonoBehaviour
     {
         // Infrastructure
         [SerializeField] private DialogManager dialogManager;
+        [SerializeField] private CinemachineVirtualCamera playerCam;
         [SerializeField] private FactManager factManager;
-        private readonly List<DialogArea> _dialogAreas = new();
 
         [SerializeField] private InputManager inputManager;
 
-        [SerializeField] private CheckerManager checkerManager;
-        private readonly List<Checker> winCheckers = new();
-
-        [SerializeField] private ColoredTileManager coloredTileManager;
-
-        [SerializeField] private GridAdapter grid;
-        [SerializeField] private TilemapManager groundMap;
-        [SerializeField] private TilemapManager slidingGroundMap;
-        [SerializeField] private TemporaryObstacleManager obstacleManager;
         [SerializeField] private ToggleableTileManager toggleableTilesManager;
         [SerializeField] private ToggleableTileSwitchManager toggleableTileSwitchManager;
+        [SerializeField] private WallManager wallManager;
         [SerializeField] private PortalManager portalManager;
         [SerializeField] private InteractableItemManager interactableItemManager;
+
+        // Prefabs
+        [SerializeField] private GrassFloor grassFloorPrefab;
+        [SerializeField] private Wall wallPrefab;
+        [SerializeField] private PuzzleArea puzzleAreaPrefab;
+        [SerializeField] private MultiTagChecker tagCheckerPrefab;
+        [SerializeField] private ColoredTile tilePrefab;
+
         [SerializeField] private Player player;
+        [SerializeField] private Star winStar;
 
         // Game State
         private bool _setup;
         private bool _hasWon;
 
+        // To be resolved at start
+        private GridAdapter _grid;
+        private List<PuzzleArea> _puzzleAreas = new List<PuzzleArea>();
+        private readonly List<DialogArea> _dialogAreas = new List<DialogArea>();
+
+
+        private void Awake()
+        {
+            SetupLevel();
+        }
 
         private void Start()
         {
-            SetupLevel();
             CalculateGameStatus();
-        }
-
-        private void Win()
-        {
-            player.PlayWinAnimation();
-            _hasWon = true;
         }
 
         private void CalculateGameStatus()
@@ -64,50 +69,185 @@ namespace GameScene
             var itemMap = interactableItemManager.GetEntities()
                 .ToDictionary(item => item.GetMainIndex(), item => item);
 
-            checkerManager.GetEntities()
-                .ForEach(checker => checker.Check(itemMap));
+            _puzzleAreas.ForEach(area => area.Check(itemMap, player.GetMainIndex()));
 
-            if (winCheckers.All(checker => checker.IsSatisfied(itemMap)))
+            if (player.GetMainIndex() == winStar.GetMainIndex())
             {
                 Win();
-            };
+            }
+        }
+
+        private void Win()
+        {
+            winStar.transform.DOScale(1.2f, 0.5f)
+                .SetEase(Ease.InOutBack)
+                .SetLoops(-1, LoopType.Yoyo);
+            _hasWon = true;
         }
 
         private bool FieldIsFreeAt(Vector2Int index)
         {
-            return FieldExistsAt(index) 
-                   && !obstacleManager.HasCoveredAt(index) 
+            return FieldExistsAt(index)
+                   && !wallManager.HasBlockedAt(index)
                    && !toggleableTilesManager.HasAt(index);
-        } 
+        }
 
         private bool FieldExistsAt(Vector2Int vector2Int)
         {
-            return groundMap.HasTileAt(vector2Int)
-                   || slidingGroundMap.HasTileAt(vector2Int)
-                   || toggleableTilesManager.HasActiveAt(vector2Int)
-                   || coloredTileManager.HasAt(vector2Int);
+            return _grid.groundMap.HasTileAt(vector2Int)
+                   || _grid.slideMap.HasTileAt(vector2Int)
+                   || toggleableTilesManager.HasActiveAt(vector2Int);
         }
 
         public void SetupLevel()
         {
-            InitDialogAreas();
+            var gridAdapter = FindObjectOfType<GridAdapter>();
+
+            if (!gridAdapter)
+            {
+                Debug.LogError("No grid adaptor was found!");
+            }
+
+            // Grid is the base of all items. Set it first!
+            _grid = gridAdapter;
+
             InitToggleableTiles();
             InitToggleableTileSwitches();
-            InitColoredTiles();
-            InitPlayer();
+            InitWalls();
             InitPortals();
-            InitObstacles();
             InitInteractables();
-            InitCheckers();
+
+            // Puzzle Areas after colored tiles and walls!
+            InitPuzzleAreas();
+            InitPlayer();
+            InitWinStar();
+
+            InitDialogAreas();
 
             _setup = true;
         }
 
+        private void InitWalls()
+        {
+            foreach (var wallIndex in _grid.wallMap.GetIndices())
+            {
+                var wall = Instantiate(wallPrefab, transform);
+                wallManager.AddAt(wall, wallIndex, _grid.GetBasePositionForIndex(wallIndex));
+            }
+
+            _grid.wallMap.Hide();
+        }
+
+        private void InitPuzzleAreas()
+        {
+            var areaParents = FindObjectsOfType<AreaParent>().ToList();
+
+            foreach (var areaParent in areaParents)
+            {
+                var newPuzzleArea = Instantiate(puzzleAreaPrefab, transform);
+
+                var areaRects = areaParent.GetComponentsInChildren<AreaRect>().ToList();
+
+                var indicesForThisArea = areaRects.Select(area => area.GetBounds())
+                    .SelectMany(GetIndicesFromBounds)
+                    .ToHashSet();
+
+                var grassFloorList = new List<GrassFloor>();
+                foreach (var index in indicesForThisArea)
+                {
+                    var newGrass = Instantiate(grassFloorPrefab, transform);
+                    newGrass.SetIndicesAndPosition(index, _grid.GetBasePositionForIndex(index));
+                    grassFloorList.Add(newGrass);
+                }
+
+                newPuzzleArea.SetGrassFloorsInChargeOf(grassFloorList);
+
+                var wallList = wallManager.GetEntities()
+                    .Where(wall => indicesForThisArea.Contains(wall.GetMainIndex()))
+                    .ToList();
+                newPuzzleArea.SetWallsInChargeOf(wallList);
+
+                // Set up coloredTiles and checkers
+                var checkerAreas = areaParent.GetComponentsInChildren<CheckerArea>();
+                var indexList = new HashSet<Vector2Int>();
+                var checkersPerIndex = new Dictionary<Vector2Int, HashSet<CheckerArea>>();
+
+                foreach (var checkerArea in checkerAreas)
+                {
+                    var areaIndices = GetIndicesFromBounds(checkerArea.GetBounds());
+
+                    foreach (var index in areaIndices)
+                    {
+                        indexList.Add(index);
+                        if (checkersPerIndex.ContainsKey(index))
+                        {
+                            checkersPerIndex[index].Add(checkerArea);
+                        }
+                        else
+                        {
+                            checkersPerIndex.Add(index, new HashSet<CheckerArea> { checkerArea });
+                        }
+                    }
+                }
+
+                var checkerList = new List<MultiTagChecker>();
+
+                foreach (var index in indexList)
+                {
+                    var checker = Instantiate(tagCheckerPrefab, newPuzzleArea.transform);
+                    checker.SetIndicesAndPosition(index, _grid.GetBasePositionForIndex(index));
+                    checker.SetDemandedTags(checkersPerIndex[index]
+                        .Where(checker => null != checker.demandedTag)
+                        .Select(checker => checker.demandedTag)
+                        .ToList());
+                    checkerList.Add(checker);
+
+                    var colors = checkersPerIndex[index].ToList();
+                    for (int i = 0; i < colors.Count; i++)
+                    {
+                        var areaChecker = colors[i];
+                        var colorTile = Instantiate(tilePrefab, areaChecker.transform);
+                        colorTile.SetScheme(areaChecker.color, areaChecker.pattern);
+                        colorTile.transform.position = _grid.GetBasePositionForIndex(index);
+                    }
+                }
+
+                newPuzzleArea.SetCheckers(checkerList);
+
+                _puzzleAreas.Add(newPuzzleArea);
+            }
+        }
+
+        private IEnumerable<Vector2Int> GetIndicesFromBounds(Bounds bounds)
+        {
+            var bottomLeft = _grid.FindNearestIndexForPosition(bounds.min);
+            var topRight = _grid.FindNearestIndexForPosition(bounds.max);
+            var list = new List<Vector2Int>();
+            for (var x = bottomLeft.x; x <= topRight.x; x++)
+            {
+                for (var y = bottomLeft.y; y <= topRight.y; y++)
+                {
+                    list.Add(new Vector2Int(x, y));
+                }
+            }
+
+            return list;
+        }
+
+        private void InitWinStar()
+        {
+            var starPos = FindObjectOfType<StarPlaceholder>();
+            var index = _grid.FindNearestIndexForPosition(starPos.transform.position);
+            winStar.SetIndicesAndPosition(index, _grid.GetBasePositionForIndex(index));
+            starPos.transform.localScale = Vector3.zero;
+        }
 
         private void InitPlayer()
         {
-            var index = grid.FindNearestIndexForPosition(player.transform.position);
-            player.SetIndicesAndPosition(index, grid.GetBasePositionForIndex(index));
+            var playerPos = _grid.GetComponentInChildren<PlayerPlaceholder>();
+            var index = _grid.FindNearestIndexForPosition(playerPos.transform.position);
+            player.SetIndicesAndPosition(index, _grid.GetBasePositionForIndex(index));
+            playerPos.transform.localScale = Vector3.zero;
         }
 
         private void InitDialogAreas()
@@ -117,90 +257,42 @@ namespace GameScene
 
             foreach (var area in foundAreas)
             {
-                var index = grid.FindNearestIndexForPosition(area.transform.position);
+                var index = _grid.FindNearestIndexForPosition(area.transform.position);
                 area.onFactPublish += factManager.PublishFactAndUpdate;
                 area.SetIndex(index);
                 area.OnPlayerMove(Vector2Int.zero, player.GetMainIndex());
             }
         }
 
-        private void InitColoredTiles()
-        {
-            var coloredTiles = FindObjectsOfType<ColoredTile>();
-            foreach (var tile in coloredTiles)
-            {
-                var index = grid.FindNearestIndexForPosition(tile.transform.position);
-                coloredTileManager.AddAt(tile, index);
-            }
-        }
 
         private void InitToggleableTiles()
         {
-            var toggleTile = FindObjectsOfType<ToggleableTile>();
-            foreach (var tile in toggleTile)
-            {
-                var index = grid.FindNearestIndexForPosition(tile.transform.position);
-                toggleableTilesManager.AddAt(tile, index);
-            }
+            AddAllFindable(toggleableTilesManager);
         }
 
         private void InitToggleableTileSwitches()
         {
-            var switches = FindObjectsOfType<ToggleableTileSwitch>();
-            foreach (var switchy in switches)
-            {
-                var index = grid.FindNearestIndexForPosition(switchy.transform.position);
-                toggleableTileSwitchManager.AddAt(switchy, index);
-            }
-        }
-
-        public void InitObstacles()
-        {
-            var obstacles = FindObjectsOfType<TemporaryObstacle>();
-            foreach (var obstacle in obstacles)
-            {
-                var index = grid.FindNearestIndexForPosition(obstacle.transform.position);
-                obstacleManager.AddAt(obstacle, index);
-            }
+            AddAllFindable(toggleableTileSwitchManager);
         }
 
         public void InitInteractables()
         {
-            var items = FindObjectsOfType<InteractableItem>();
-            foreach (var item in items)
-            {
-                var index = grid.FindNearestIndexForPosition(item.transform.position);
-                interactableItemManager.AddAt(item, index);
-            }
-        }
-
-        private void InitCheckers()
-        {
-            var checkersAvailable = FindObjectsOfType<Checker>();
-            foreach (var availableChecker in checkersAvailable)
-            {
-                var index = grid.FindNearestIndexForPosition(availableChecker.transform.position);
-                checkerManager.AddAt(availableChecker, index);
-
-                if (availableChecker.isImportantForWin)
-                {
-                    winCheckers.Add(availableChecker);
-                }
-
-                if (availableChecker.HasFactToPublish())
-                {
-                    availableChecker.OnFirstSuccessfulCheck += factManager.PublishFactAndUpdate;
-                }
-            }
+            AddAllFindable(interactableItemManager);
         }
 
         public void InitPortals()
         {
-            var portals = FindObjectsOfType<Portal>();
-            foreach (var portal in portals)
+            AddAllFindable(portalManager);
+        }
+
+        private void AddAllFindable<T>(GridEntityManager<T> manager) where T : GridEntity
+        {
+            var items = FindObjectsOfType<T>();
+            foreach (var item in items)
             {
-                var index = grid.FindNearestIndexForPosition(portal.transform.position);
-                portalManager.AddAt(portal, index);
+                var index = _grid.FindNearestIndexForPosition(item.transform.position);
+                var newPos = _grid.GetBasePositionForIndex(index);
+                manager.AddAt(item, index, newPos);
             }
         }
 
@@ -304,7 +396,7 @@ namespace GameScene
             }
 
             // Sliding
-            if (slidingGroundMap.HasTileAt(nextIndex))
+            if (_grid.slideMap.HasTileAt(nextIndex))
             {
                 var nextSlidingIndex = FindNextFreeNonSlidingTileInDirection(nextIndex, direction);
                 MovePlayerTo(nextSlidingIndex);
@@ -320,7 +412,7 @@ namespace GameScene
 
         private void InstantMoveTo(MovableGridEntity entity, Vector2Int index)
         {
-            entity.InstantUpdatePosition(index, grid.GetBasePositionForIndex(index));
+            entity.InstantUpdatePosition(index, _grid.GetBasePositionForIndex(index));
         }
 
         private void DropItemAt(InteractableItem item, Vector2Int index)
@@ -328,7 +420,7 @@ namespace GameScene
             player.RemoveItem(item);
 
             item.transform.SetParent(transform);
-            interactableItemManager.AddAtAndMoveTo(item, index);
+            interactableItemManager.AddAtAndMoveTo(item, index, _grid.GetBasePositionForIndex(index));
 
             // Move has to be called AFTER dropping the item
             MovePlayerTo(index);
@@ -368,7 +460,7 @@ namespace GameScene
                 verticalOffset = InteractableItem.ItemJumpHeight;
             }
 
-            player.MoveTo(nextIndex, grid.GetBasePositionForIndex(nextIndex), verticalOffset);
+            player.MoveTo(nextIndex, _grid.GetBasePositionForIndex(nextIndex), verticalOffset);
 
             if (portalManager.HasAt(nextIndex))
             {
@@ -380,7 +472,7 @@ namespace GameScene
 
         private void MoveItemTo(InteractableItem item, Vector2Int index)
         {
-            item.RelativeMoveTo(index, grid.GetBasePositionForIndex(index));
+            item.RelativeMoveTo(index, _grid.GetBasePositionForIndex(index));
             if (portalManager.HasAt(index))
             {
                 UsePortal(item, index);
@@ -407,7 +499,7 @@ namespace GameScene
         private Vector2Int FindNextFreeNonSlidingTileInDirection(Vector2Int nextIndex, Vector2Int direction)
         {
             var result = nextIndex;
-            while (slidingGroundMap.HasTileAt(result) && FieldIsFreeAt(result + direction))
+            while (_grid.slideMap.HasTileAt(result) && FieldIsFreeAt(result + direction))
             {
                 result += direction;
             }

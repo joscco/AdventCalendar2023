@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using GameScene.Options;
 using SceneManagement;
@@ -9,9 +10,10 @@ namespace LevelChoosingScene
 {
     public class LevelButtonManager : MonoBehaviour
     {
-        [SerializeField] private List<LevelButton> buttons;
+        private List<LevelButton> buttons;
         [SerializeField] private SpriteRenderer selection;
         [SerializeField] private int unlockedLevelsForTesting;
+        [SerializeField] private Transform buttonContainer;
 
         private readonly Dictionary<int, LevelButton> _buttonDict = new();
         private int _unlockedLevel;
@@ -43,6 +45,7 @@ namespace LevelChoosingScene
 
         private void InitLevelButtons(int highestLevelActive)
         {
+            buttons = GetComponentsInChildren<LevelButton>().ToList();
             foreach (var button in buttons)
             {
                 _buttonDict.Add(button.GetLevel(), button);
@@ -98,7 +101,7 @@ namespace LevelChoosingScene
             // Arrow KeyHandling when not in option screen
             if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
-                var newLevel = _focusedLevelButton.GetLevel() - 4;
+                var newLevel = _focusedLevelButton.GetLevel() - 1;
                 if (newLevel > 0)
                 {
                     ChangeButtonFocus(newLevel);
@@ -109,28 +112,8 @@ namespace LevelChoosingScene
 
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
-                var newLevel = _focusedLevelButton.GetLevel() + 4;
-                if (newLevel <= _unlockedLevel)
-                {
-                    ChangeButtonFocus(newLevel);
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-            {
                 var newLevel = _focusedLevelButton.GetLevel() + 1;
                 if (newLevel <= _unlockedLevel)
-                {
-                    ChangeButtonFocus(newLevel);
-                }
-
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-            {
-                var newLevel = _focusedLevelButton.GetLevel() - 1;
-                if (newLevel > 0)
                 {
                     ChangeButtonFocus(newLevel);
                 }
@@ -157,6 +140,17 @@ namespace LevelChoosingScene
 
         private void ChangeButtonFocus(int newLevel, bool instant = false)
         {
+            if (instant)
+            {
+                buttonContainer.localPosition = new Vector2(-(newLevel - 1) * LevelButton.Width, buttonContainer.localPosition.y);
+            }
+            else
+            {
+                buttonContainer.DOLocalMoveX(-(newLevel - 1) * LevelButton.Width, 0.3f)
+                    .SetEase(Ease.OutBack);
+            }
+
+
             if (_focusedLevelButton)
             {
                 _focusedLevelButton.ScaleDown();
@@ -168,15 +162,6 @@ namespace LevelChoosingScene
             {
                 newButton.ScaleUp();
                 _focusedLevelButton = newButton;
-                if (instant)
-                {
-                    selection.transform.position = newButton.transform.position;
-                }
-                else
-                {
-                    selection.transform.DOMove(newButton.transform.position, 0.2f)
-                        .SetEase(Ease.OutBack);
-                }
             }
         }
     }

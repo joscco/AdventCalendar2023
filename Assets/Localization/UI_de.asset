@@ -43,12 +43,41 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5807468239118336
-    m_Localized: Nutze die Pfeiltasten oder ASDW zum Bewegen.
+    m_Localized: Das bist du.
     m_Metadata:
       m_Items: []
   - m_Id: 5808759090700288
-    m_Localized: "Hebe Dinge auf, indem du dich auf sie bewegst und dann die Leertaste
-      dr\xFCckst."
+    m_Localized: Nutze die Pfeiltasten oder ASDW, um dich zu bewegen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6150844289376256
+    m_Localized: "Das ist ein Wort. Springe auf ein Wort und dr\xFCcke dann die Leertaste,
+      um es aufzunehmen. "
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6151161429090304
+    m_Localized: "Dr\xFCcke die Leertaste erneut, um es abzulegen."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6156748325904384
+    m_Localized: "Dies ist ein Farbfeld. F\xFClle Farbfelder mit W\xF6rtern!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6156751618433024
+    m_Localized: Nimm das Wort links von dir und setze es auf das Farbfeld.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6160484691599360
+    m_Localized: Nicht jedes Wort passt zu jedem Farbfeld.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6160648546279424
+    m_Localized: "Manche Felder erlauben nur W\xF6rter bestimmer Kategorien. Kannst
+      du ein Wort f\xFCr dieses \"fruchtige\" Feld finden?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6867982218158080
+    m_Localized: "joscco pr\xE4sentiert"
     m_Metadata:
       m_Items: []
   references:

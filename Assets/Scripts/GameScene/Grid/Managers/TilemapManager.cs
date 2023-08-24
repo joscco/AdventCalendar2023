@@ -1,19 +1,17 @@
 using System.Collections.Generic;
-using System.Linq;
-using GameScene.Grid.Managers;
-using SceneManagement;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Levels.SheepLevel
+namespace GameScene.Grid.Managers
 {
-    public class TilemapManager : GridAdapter
+    public class TilemapManager : MonoBehaviour
     {
         private Vector2Int _tileBoundsMin = new(-500, -500);
         private Vector2Int _tileBoundsMax = new(500, 500);
         private List<Vector2Int> indices = new List<Vector2Int>();
 
         [SerializeField] private Tilemap tilemap;
+        [SerializeField] private TilemapRenderer tileRenderer;
 
         public bool HasTileAt(Vector2Int index)
         {
@@ -23,6 +21,11 @@ namespace Levels.SheepLevel
         public TileBase GetAt(Vector2Int index)
         {
             return tilemap.GetTile(IndexWrap(index));
+        }
+        
+        public Vector3Int IndexWrap(Vector2Int index)
+        {
+            return new Vector3Int(index.x, index.y, 0);
         }
 
         public List<Vector2Int> GetIndices()
@@ -45,6 +48,11 @@ namespace Levels.SheepLevel
             }
             
             return indices;
+        }
+
+        public void Hide()
+        {
+            tileRenderer.enabled = false;
         }
     }
 }

@@ -40,11 +40,39 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5807468239118336
-    m_Key: arrowKeysHint
+    m_Key: arrowKeysHintUp
     m_Metadata:
       m_Items: []
   - m_Id: 5808759090700288
-    m_Key: pickupHint
+    m_Key: arrowKeysHintDown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6150844289376256
+    m_Key: PickupHintUp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6151161429090304
+    m_Key: PickupHintDown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6156748325904384
+    m_Key: AreaHintUp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6156751618433024
+    m_Key: AreaHintDown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6160484691599360
+    m_Key: CategoriesHintUp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6160648546279424
+    m_Key: CategoriesHintDown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6867982218158080
+    m_Key: josccoPresents
     m_Metadata:
       m_Items: []
   m_Metadata:

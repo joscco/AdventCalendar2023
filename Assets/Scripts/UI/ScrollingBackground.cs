@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace General
+namespace UI
 {
     [RequireComponent(typeof(MeshRenderer))]
     public class ScrollingBackground : MonoBehaviour

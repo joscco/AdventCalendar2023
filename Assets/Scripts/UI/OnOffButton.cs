@@ -1,6 +1,4 @@
-using UI;
-
-namespace GameScene.Options
+namespace UI
 {
     public abstract class OnOffButton : ScalingButton
     {

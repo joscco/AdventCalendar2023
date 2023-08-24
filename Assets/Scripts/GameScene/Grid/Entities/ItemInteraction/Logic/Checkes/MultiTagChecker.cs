@@ -1,29 +1,52 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameScene.Grid.Entities.ItemInteraction.Logic.Properties;
+using GameScene.Grid.Entities.Shared;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GameScene.Grid.Entities.ItemInteraction.Logic.Checkes
 {
-    public class MultiTagChecker : Checker
+    public class MultiTagChecker : GridEntity
     {
-        [SerializeField] private List<InteractableItemTag> demandedTags;
+        [SerializeField] private List<InteractableItemTag> _demandedTags;
+        private bool _wasCheckedSuccessful;
+
+        public void SetDemandedTags(List<InteractableItemTag> tags)
+        {
+            _demandedTags = tags;
+        }
+
+        public void Check(Dictionary<Vector2Int, InteractableItem> itemMap)
+        {
+            if (IsSatisfied(itemMap))
+            {
+                if (!_wasCheckedSuccessful)
+                {
+                    _wasCheckedSuccessful = true;
+                }
+
+                if (itemMap.ContainsKey(currentMainIndex))
+                {
+                    var item = itemMap[currentMainIndex];
+                    OnSatisfied(item);
+                }
+               
+            }
+        }
 
 
-        public override bool IsSatisfied(Dictionary<Vector2Int, InteractableItem> typeMap)
+        public bool IsSatisfied(Dictionary<Vector2Int, InteractableItem> typeMap)
         {
             if (typeMap.ContainsKey(currentMainIndex))
             {
                 var item = typeMap[currentMainIndex];
-                return !demandedTags.Except(item.GetItemType().tags).Any();
+                return !_demandedTags.Except(item.GetItemType().tags).Any();
             }
 
             return false;
         }
         
-        protected override void OnSatisfied(InteractableItem item)
+        protected void OnSatisfied(InteractableItem item)
         {
             item.Check();
         }

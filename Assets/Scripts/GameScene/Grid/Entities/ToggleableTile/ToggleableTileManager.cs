@@ -1,13 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using GameScene.Grid.Managers;
-using Levels.WizardLevel;
-using SceneManagement;
 using UnityEngine;
 
-namespace GameScene.SpecialGridEntities.EntityManagers
+namespace GameScene.Grid.Entities.ToggleableTile
 {
-    public class ToggleableTileManager : GridEntityManager<ToggleableTile>
+    public class ToggleableTileManager : GridEntityManager<Levels.WizardLevel.ToggleableTile>
     {
 
         public bool HasActiveAt(Vector2Int vector2Int)
