@@ -11,6 +11,8 @@ namespace LevelChoosingScene
     public class LevelButtonManager : MonoBehaviour
     {
         private List<LevelButton> buttons;
+        [SerializeField] private ScalingButton leftButton;
+        [SerializeField] private ScalingButton rightButton;
         [SerializeField] private SpriteRenderer selection;
         [SerializeField] private int unlockedLevelsForTesting;
         [SerializeField] private Transform buttonContainer;
@@ -35,9 +37,18 @@ namespace LevelChoosingScene
             optionScreenButton.OnButtonHover += () => optionScreenButton.ScaleUp();
             optionScreenButton.OnButtonExit += () => optionScreenButton.ScaleDown();
             optionScreenButton.OnButtonClick += ActivateOptionsButton;
+            
             backToStartButton.OnButtonHover += () => backToStartButton.ScaleUp();
             backToStartButton.OnButtonExit += () => backToStartButton.ScaleDown();
             backToStartButton.OnButtonClick += ActivateBackToStartSceneButton;
+
+            leftButton.OnButtonHover += () => leftButton.ScaleUp();
+            leftButton.OnButtonExit += () => leftButton.ScaleDown();
+            leftButton.OnButtonClick += DecreaseSelectedLevel;
+            
+            rightButton.OnButtonClick += IncreaseSelectedLevel;
+            rightButton.OnButtonHover += () => rightButton.ScaleUp();
+            rightButton.OnButtonExit += () => rightButton.ScaleDown();
 
             InitLevelButtons(_unlockedLevel);
             ChangeButtonFocus(_unlockedLevel, true);
@@ -50,15 +61,6 @@ namespace LevelChoosingScene
             {
                 _buttonDict.Add(button.GetLevel(), button);
 
-                // Set Events
-                button.OnButtonHover += () =>
-                {
-                    var buttonLevel = button.GetLevel();
-                    if (buttonLevel <= _unlockedLevel)
-                    {
-                        ChangeButtonFocus(button.GetLevel());
-                    }
-                };
                 button.OnButtonClick += () => SceneTransitionManager.Get().TransitionToLevel(button.GetLevel());
 
                 if (button.GetLevel() <= highestLevelActive)
@@ -101,23 +103,36 @@ namespace LevelChoosingScene
             // Arrow KeyHandling when not in option screen
             if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
-                var newLevel = _focusedLevelButton.GetLevel() - 1;
-                if (newLevel > 0)
-                {
-                    ChangeButtonFocus(newLevel);
-                }
-
+                DecreaseSelectedLevel();
                 return;
             }
 
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
-                var newLevel = _focusedLevelButton.GetLevel() + 1;
-                if (newLevel <= _unlockedLevel)
-                {
-                    ChangeButtonFocus(newLevel);
-                }
+                IncreaseSelectedLevel();
             }
+        }
+
+        private void DecreaseSelectedLevel()
+        {
+            var newLevel = _focusedLevelButton.GetLevel() - 1;
+            if (newLevel > 0)
+            {
+                ChangeButtonFocus(newLevel);
+            }
+
+            leftButton.ScaleUpThenDown();
+        }
+
+        private void IncreaseSelectedLevel()
+        {
+            var newLevel = _focusedLevelButton.GetLevel() + 1;
+            if (newLevel <= _unlockedLevel)
+            {
+                ChangeButtonFocus(newLevel);
+            }
+            
+            rightButton.ScaleUpThenDown();
         }
 
         private void ActivateBackToStartSceneButton()
@@ -147,7 +162,7 @@ namespace LevelChoosingScene
             else
             {
                 buttonContainer.DOLocalMoveX(-(newLevel - 1) * LevelButton.Width, 0.3f)
-                    .SetEase(Ease.OutBack);
+                    .SetEase(Ease.InOutBack);
             }
 
 

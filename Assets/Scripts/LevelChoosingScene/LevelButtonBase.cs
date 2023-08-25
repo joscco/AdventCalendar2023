@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.Localization;
 
 public class LevelButtonBase : MonoBehaviour
 {
     [SerializeField] private Sprite activeSprite;
     [SerializeField] private Sprite inactiveSprite;
-    [SerializeField] private SortingGroup sortingGroup;
     [SerializeField] private SpriteRenderer boxRenderer;
     [SerializeField] private SpriteRenderer numberRenderer;
+    [SerializeField] private TextMeshPro textObject;
     
     public void TurnOn()
     {
@@ -19,14 +18,8 @@ public class LevelButtonBase : MonoBehaviour
         boxRenderer.sprite = activeSprite;
     }
 
-    public void Sort(int sortingLayer)
-    {
-        sortingGroup.sortingOrder = sortingLayer;
-    }
-
     public void TurnOff()
     {
-        sortingGroup.sortingOrder = 0;
         numberRenderer.color = new Color(1, 1, 1, 0.4f);
         boxRenderer.color = new Color(1, 1, 1, 0.5f);
         boxRenderer.sprite = inactiveSprite;
@@ -35,5 +28,10 @@ public class LevelButtonBase : MonoBehaviour
     public void SetSprite(Sprite image)
     {
         numberRenderer.sprite = image;
+    }
+
+    public void SetText(LocalizedString text)
+    {
+        textObject.text = null != text ? text.GetLocalizedString() : "DEFAULT";
     }
 }

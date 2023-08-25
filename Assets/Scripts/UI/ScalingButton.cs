@@ -24,8 +24,13 @@ namespace UI
             _scaleTween?.Kill();
             if (null != transform)
             {
-                _scaleTween = transform.DOScale(ScaleWhenSelected, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+                _scaleTween = transform.DOScale(GetScaleWhenSelected(), ScaleTimeInSeconds).SetEase(Ease.OutBack);
             }
+        }
+
+        protected virtual float GetScaleWhenSelected()
+        {
+            return ScaleWhenSelected;
         }
 
         public void ScaleDown()
@@ -33,8 +38,13 @@ namespace UI
             _scaleTween?.Kill();
             if (null != transform)
             {
-                _scaleTween = transform.DOScale(1f, ScaleTimeInSeconds).SetEase(Ease.OutBack);
+                _scaleTween = transform.DOScale(GetScaleWhenNeutral(), ScaleTimeInSeconds).SetEase(Ease.OutBack);
             }
+        }
+        
+        protected virtual float GetScaleWhenNeutral()
+        {
+            return 1f;
         }
 
         public void ScaleUpThenDown()

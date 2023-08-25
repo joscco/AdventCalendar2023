@@ -1,19 +1,32 @@
 using UI;
 using UnityEngine;
+using UnityEngine.Localization;
 
 public class LevelButton : ScalingButton
 {
     [SerializeField] private LevelButtonBase baseButton;
     [SerializeField] private Sprite image;
     [SerializeField] private int level;
+    [SerializeField] private LocalizedString text;
 
-    public const float Width = 600f;
+    public const float Width = 750f;
 
     private void Start()
     {
-        baseButton.Sort((level - 1) % 4 + 1);
+        transform.localScale = 0.9f * Vector3.one;
         baseButton.SetSprite(image);
+        baseButton.SetText(text);
         transform.localPosition = Vector2.right * (level - 1) * Width;
+    }
+
+    protected override float GetScaleWhenSelected()
+    {
+        return 1.1f;
+    }
+    
+    protected override float GetScaleWhenNeutral()
+    {
+        return 0.9f;
     }
 
     public void TurnOn()
