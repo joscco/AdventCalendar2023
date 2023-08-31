@@ -16,7 +16,7 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Checkes
             _demandedTags = tags;
         }
 
-        public void Check(Dictionary<Vector2Int, InteractableItem> itemMap)
+        public void Check(Dictionary<Vector2Int, WordTile> itemMap)
         {
             if (IsSatisfied(itemMap))
             {
@@ -35,7 +35,7 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Checkes
         }
 
 
-        public bool IsSatisfied(Dictionary<Vector2Int, InteractableItem> typeMap)
+        public bool IsSatisfied(Dictionary<Vector2Int, WordTile> typeMap)
         {
             if (typeMap.ContainsKey(currentMainIndex))
             {
@@ -46,7 +46,7 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Checkes
             return false;
         }
         
-        protected void OnSatisfied(InteractableItem item)
+        protected void OnSatisfied(WordTile item)
         {
             item.Check();
         }

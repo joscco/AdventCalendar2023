@@ -11,9 +11,10 @@ namespace GameScene.Grid.Entities.Essentials
     {
         private const float ItemStackBaseVerticalOffset = 140;
         private const float InitialVerticalBodyOffset = 30;
+        private const float MaxVerticalBodyOffset = 120;
         private const float JumpHeight = 40;
 
-        [SerializeField] private List<InteractableItem> pickedItems;
+        [SerializeField] private List<WordTile> pickedItems;
 
         [SerializeField] protected Transform flippablePart;
         [SerializeField] protected Transform offsettablePart;
@@ -81,7 +82,7 @@ namespace GameScene.Grid.Entities.Essentials
             return pickedItems.Count > 0;
         }
 
-        public InteractableItem GetTopItem()
+        public WordTile GetTopItem()
         {
             if (IsBearingItem())
             {
@@ -93,16 +94,16 @@ namespace GameScene.Grid.Entities.Essentials
 
         public float GetRelativeTop()
         {
-            return ItemStackBaseVerticalOffset + InteractableItem.ItemHeight * pickedItems.Count;
+            return ItemStackBaseVerticalOffset + WordTile.ItemHeight * pickedItems.Count;
         }
 
-        public void TopWithItem(InteractableItem item)
+        public void TopWithItem(WordTile item)
         {
             pickedItems.Add(item);
             ShowCarrying();
         }
 
-        public void RemoveItem(InteractableItem item)
+        public void RemoveItem(WordTile item)
         {
             pickedItems.Remove(item);
             if (!IsBearingItem())
@@ -144,18 +145,18 @@ namespace GameScene.Grid.Entities.Essentials
             Jump();
             Vector2 dir = (transform.position - newGlobalPosition);
             var duration = 0.2f + dir.magnitude * 0.00001f;
-
             _moveTween = transform
                 .DOLocalMove(newGlobalPosition, duration)
                 .SetEase(Ease.OutSine);
 
             // Jump Animation:
             var currentVerticalOffset = offsettablePart.transform.localPosition.y;
-            var endVerticalOffset = InitialVerticalBodyOffset + verticalOffset;
+            var endVerticalOffset = Mathf.Min(InitialVerticalBodyOffset + verticalOffset, MaxVerticalBodyOffset);
+            var inbetweenVerticalOffset = Mathf.Min(Math.Max(currentVerticalOffset, endVerticalOffset) + JumpHeight, MaxVerticalBodyOffset);
 
             _bodySpriteMoveTween = DOTween.Sequence()
                 .Append(offsettablePart.transform
-                    .DOLocalMoveY(Math.Max(currentVerticalOffset, endVerticalOffset) + JumpHeight, duration / 2)
+                    .DOLocalMoveY(inbetweenVerticalOffset, duration / 2)
                     .SetEase(Ease.OutSine))
                 .Append(offsettablePart.transform
                     .DOLocalMoveY(endVerticalOffset, duration / 2)

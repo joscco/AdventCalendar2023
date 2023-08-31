@@ -15,7 +15,6 @@ namespace GameScene.Dialog
     {
         [SerializeField] private List<DialogBubble> speakerList;
         [SerializeField] private List<Data.Dialog> dialogList;
-        [SerializeField] private FactManager factManager;
 
         private Data.Dialog _currentDialog;
         private int _currentNodeIndex;
@@ -37,7 +36,7 @@ namespace GameScene.Dialog
 
             UpdateDialogs();
 
-            factManager.onNewFacts += (_) => UpdateDialogs();
+            FactManager.onNewFacts += (_) => UpdateDialogs();
 
             LocalizationSettings.SelectedLocaleChanged += UpdateBubbleTexts;
         }
@@ -94,7 +93,7 @@ namespace GameScene.Dialog
         private void CancelCurrentDialogIfNecessary()
         {
             if (null != _currentDialog 
-                && factManager.ConditionsAreMet(_currentDialog.cancelConditions))
+                && FactManager.ConditionsAreMet(_currentDialog.cancelConditions))
             {
                 CancelCurrentDialog();
             }
@@ -110,14 +109,14 @@ namespace GameScene.Dialog
             // Otherwise we have an infinite loop of canceling the current dialog
             _currentDialog = null;
 
-            factManager.PublishFactsAndUpdate(factsToPublish);
+            FactManager.PublishFactsAndUpdate(factsToPublish);
         }
 
         private void ShowHintsForDialogsIfNecessary()
         {
             foreach (var dialog in _dialogs.Values)
             {
-                if (factManager.ConditionsAreMet(dialog.hintConditions))
+                if (FactManager.ConditionsAreMet(dialog.hintConditions))
                 {
                     ShowHint(dialog.hintSpeaker);
                 }
@@ -128,7 +127,7 @@ namespace GameScene.Dialog
         {
             foreach (var dialog in _dialogs.Values)
             {
-                if (factManager.ConditionsAreMet(dialog.startConditions) &&
+                if (FactManager.ConditionsAreMet(dialog.startConditions) &&
                     (null == _currentDialog || _currentDialog.id != dialog.id))
                 {
                     StartDialog(dialog);
@@ -145,7 +144,7 @@ namespace GameScene.Dialog
 
             _currentDialog = null;
 
-            factManager.PublishFactsAndUpdate(factsToPublish);
+            FactManager.PublishFactsAndUpdate(factsToPublish);
         }
 
         private void StartDialog(Data.Dialog dialog)
@@ -166,7 +165,7 @@ namespace GameScene.Dialog
             {
                 // Dialog Exists so take first speaker and show it
                 seq.Append(ShowSpeaker(_currentDialog.nodes[_currentNodeIndex]));
-                factManager.PublishFactsAndUpdate(dialog.factPublishedOnStart);
+                FactManager.PublishFactsAndUpdate(dialog.factPublishedOnStart);
             }
         }
 

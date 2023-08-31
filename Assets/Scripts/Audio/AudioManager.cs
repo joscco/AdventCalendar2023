@@ -1,4 +1,5 @@
 using DG.Tweening;
+using GameScene;
 using UnityEngine;
 
 namespace General
@@ -36,7 +37,7 @@ namespace General
         public void SetSFXVolume(float value)
         {
             EffectsSource.volume = value;
-            Game.instance.SaveSFXVolume(value);
+            Game.SaveSfxVolume(value);
         }
         
         public void PlayBlub()

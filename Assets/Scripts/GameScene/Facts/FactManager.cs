@@ -7,38 +7,60 @@ namespace GameScene.Facts
 {
     public class FactManager : MonoBehaviour
     {
-        public Action<List<Fact>> onNewFacts;
+        private static FactManager _instance;
+        public static Action<List<Fact>> onNewFacts;
         private readonly Dictionary<FactId, int> _facts = new();
 
-
-        public void PublishFactAndUpdate(Fact newFact)
+        public static void PublishFactAndUpdate(Fact newFact)
         {
             PublishFactsAndUpdate(new List<Fact> { newFact });
         }
 
-        public void PublishFactsAndUpdate(List<Fact> newFacts)
+        public static void PublishFactsAndUpdate(List<Fact> newFacts)
         {
+            InitInstanceIfNecessary();
+            
             if (null != newFacts && newFacts.Count > 0)
             {
-                foreach (var fact in newFacts)
+                if (!AllFactsAlreadyKnown(newFacts))
                 {
-                    _facts[fact.id] = fact.value;
+                    foreach (var fact in newFacts)
+                    {
+                        _instance._facts[fact.id] = fact.value;
+                    }
+
+                    onNewFacts?.Invoke(newFacts);
                 }
-                
-                onNewFacts?.Invoke(newFacts);
             }
         }
 
-        public bool ConditionsAreMet(List<FactCondition> demandedFacts)
+        private static bool AllFactsAlreadyKnown(List<Fact> newFacts)
         {
+            InitInstanceIfNecessary();
+            return newFacts.All(
+                fact => _instance._facts.ContainsKey(fact.id) && _instance._facts[fact.id] == fact.value);
+        }
+
+        public static bool ConditionsAreMet(List<FactCondition> demandedFacts)
+        {
+            InitInstanceIfNecessary();
             return null == demandedFacts
                    || demandedFacts.Count == 0
                    || demandedFacts.All(condition => ConditionIsMet(condition));
         }
 
-        private bool ConditionIsMet(FactCondition condition)
+        private static void InitInstanceIfNecessary()
         {
-            int currentValue = _facts.ContainsKey(condition.id) ? _facts[condition.id] : 0;
+            if (null == _instance)
+            {
+                _instance = FindObjectOfType<FactManager>();
+            }
+        }
+
+        private static bool ConditionIsMet(FactCondition condition)
+        {
+            InitInstanceIfNecessary();
+            int currentValue = _instance._facts.ContainsKey(condition.id) ? _instance._facts[condition.id] : 0;
 
             switch (condition.op)
             {

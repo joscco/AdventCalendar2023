@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e3863d512e74980bff208c95303fb50, type: 3}
+  m_Name: Lime
+  m_EditorClassIdentifier: 
+  itemIcon: {fileID: 21300000, guid: 8c646eb7d32dd4e81b70cb2d4c667cfe, type: 3}
+  additionalVerticalOffsetImage: 0
+  title:
+    m_TableReference:
+      m_TableCollectionName: GUID:aa3b4b8ed5b8d438b8ccce49f6bf498d
+    m_TableEntryReference:
+      m_KeyId: 989182276132864
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  additionalVerticalOffsetTitle: 0
+  defaultName: Limette
+  tags:
+  - {fileID: 11400000, guid: db2c219d8895943f2ac82c8ba037688b, type: 2}
+  - {fileID: 11400000, guid: 7fccfb6f1b896414586e333ce6c26112, type: 2}
+  - {fileID: 11400000, guid: 1095436df191f4211937c56362a3ba5b, type: 2}
+  references:
+    version: 2
+    RefIds: []

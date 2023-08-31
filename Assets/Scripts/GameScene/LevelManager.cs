@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Cinemachine;
 using DG.Tweening;
 using GameScene.Dialog;
 using GameScene.Dialog.Area;
@@ -23,7 +22,6 @@ namespace GameScene
     {
         // Infrastructure
         [SerializeField] private DialogManager dialogManager;
-        [SerializeField] private CinemachineVirtualCamera playerCam;
         [SerializeField] private FactManager factManager;
 
         [SerializeField] private InputManager inputManager;
@@ -51,7 +49,7 @@ namespace GameScene
         // To be resolved at start
         private GridAdapter _grid;
         private List<PuzzleArea> _puzzleAreas = new List<PuzzleArea>();
-        private readonly List<DialogArea> _dialogAreas = new List<DialogArea>();
+        private readonly List<FactArea> _dialogAreas = new List<FactArea>();
 
 
         private void Awake()
@@ -197,8 +195,8 @@ namespace GameScene
                     var checker = Instantiate(tagCheckerPrefab, newPuzzleArea.transform);
                     checker.SetIndicesAndPosition(index, _grid.GetBasePositionForIndex(index));
                     checker.SetDemandedTags(checkersPerIndex[index]
-                        .Where(checker => null != checker.demandedTag)
-                        .Select(checker => checker.demandedTag)
+                        .Where(checkerArea => null != checkerArea.demandedTag)
+                        .Select(checkerArea => checkerArea.demandedTag)
                         .ToList());
                     checkerList.Add(checker);
 
@@ -252,15 +250,14 @@ namespace GameScene
 
         private void InitDialogAreas()
         {
-            var foundAreas = FindObjectsOfType<DialogArea>();
+            var foundAreas = FindObjectsOfType<FactArea>();
             _dialogAreas.AddRange(foundAreas);
 
             foreach (var area in foundAreas)
             {
-                var index = _grid.FindNearestIndexForPosition(area.transform.position);
-                area.onFactPublish += factManager.PublishFactAndUpdate;
-                area.SetIndex(index);
+                area.SetIndices(GetIndicesFromBounds(area.GetBounds()).ToHashSet());
                 area.OnPlayerMove(Vector2Int.zero, player.GetMainIndex());
+                area.OnPlayerStart(player.GetMainIndex());
             }
         }
 
@@ -415,12 +412,12 @@ namespace GameScene
             entity.InstantUpdatePosition(index, _grid.GetBasePositionForIndex(index));
         }
 
-        private void DropItemAt(InteractableItem item, Vector2Int index)
+        private void DropItemAt(WordTile item, Vector2Int index)
         {
             player.RemoveItem(item);
 
             item.transform.SetParent(transform);
-            interactableItemManager.AddAtAndMoveTo(item, index, _grid.GetBasePositionForIndex(index));
+            interactableItemManager.AddAtAndMoveTo(item, index, _grid.GetBasePositionForIndex(index), true);
 
             // Move has to be called AFTER dropping the item
             MovePlayerTo(index);
@@ -428,7 +425,7 @@ namespace GameScene
             CalculateGameStatus();
         }
 
-        private void TakeItem(InteractableItem item)
+        private void TakeItem(WordTile item)
         {
             item.Uncheck();
             interactableItemManager.RemoveItem(item);
@@ -457,7 +454,7 @@ namespace GameScene
 
             if (interactableItemManager.HasAt(nextIndex))
             {
-                verticalOffset = InteractableItem.ItemJumpHeight;
+                verticalOffset = WordTile.ItemJumpHeight;
             }
 
             player.MoveTo(nextIndex, _grid.GetBasePositionForIndex(nextIndex), verticalOffset);
@@ -470,7 +467,7 @@ namespace GameScene
             CalculateGameStatus();
         }
 
-        private void MoveItemTo(InteractableItem item, Vector2Int index)
+        private void MoveItemTo(WordTile item, Vector2Int index)
         {
             item.RelativeMoveTo(index, _grid.GetBasePositionForIndex(index));
             if (portalManager.HasAt(index))

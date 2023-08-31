@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace GameScene.Grid.Entities.ItemInteraction
 {
-    public class InteractableItemManager : GridEntityManager<InteractableItem>
+    public class InteractableItemManager : GridEntityManager<WordTile>
     {
-        public void AddAtAndMoveTo(InteractableItem entity, Vector2Int index, Vector2 position)
+        public void AddAtAndMoveTo(WordTile entity, Vector2Int index, Vector2 position, bool emitParticles = false)
         {
-            entity.RelativeMoveTo(index, position);
+            entity.RelativeMoveTo(index, position, emitParticles);
             entities.Add(entity);
         }
     }

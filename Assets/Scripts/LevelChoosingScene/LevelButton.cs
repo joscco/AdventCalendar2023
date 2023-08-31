@@ -5,7 +5,6 @@ using UnityEngine.Localization;
 public class LevelButton : ScalingButton
 {
     [SerializeField] private LevelButtonBase baseButton;
-    [SerializeField] private Sprite image;
     [SerializeField] private int level;
     [SerializeField] private LocalizedString text;
 
@@ -14,7 +13,7 @@ public class LevelButton : ScalingButton
     private void Start()
     {
         transform.localScale = 0.9f * Vector3.one;
-        baseButton.SetSprite(image);
+        baseButton.SetNumber(level);
         baseButton.SetText(text);
         transform.localPosition = Vector2.right * (level - 1) * Width;
     }

@@ -26,6 +26,10 @@ MonoBehaviour:
     m_Localized: Yellow
     m_Metadata:
       m_Items: []
+  - m_Id: 5766005358845952
+    m_Localized: Red
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

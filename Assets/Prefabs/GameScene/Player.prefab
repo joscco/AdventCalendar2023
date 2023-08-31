@@ -841,6 +841,10 @@ MonoBehaviour:
   rightArm: {fileID: 6729867937582856304}
   leftLeg: {fileID: 6729867937114485543}
   rightLeg: {fileID: 6729867938460264775}
+  particleEmitters:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &6729867938810088656
 GameObject:
   m_ObjectHideFlags: 0

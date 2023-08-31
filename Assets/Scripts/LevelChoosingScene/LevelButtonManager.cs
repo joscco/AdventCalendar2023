@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using GameScene;
 using GameScene.Options;
 using SceneManagement;
 using UI;
@@ -10,10 +11,9 @@ namespace LevelChoosingScene
 {
     public class LevelButtonManager : MonoBehaviour
     {
-        private List<LevelButton> buttons;
+        private List<LevelButton> _buttons;
         [SerializeField] private ScalingButton leftButton;
         [SerializeField] private ScalingButton rightButton;
-        [SerializeField] private SpriteRenderer selection;
         [SerializeField] private int unlockedLevelsForTesting;
         [SerializeField] private Transform buttonContainer;
 
@@ -56,8 +56,8 @@ namespace LevelChoosingScene
 
         private void InitLevelButtons(int highestLevelActive)
         {
-            buttons = GetComponentsInChildren<LevelButton>().ToList();
-            foreach (var button in buttons)
+            _buttons = GetComponentsInChildren<LevelButton>().ToList();
+            foreach (var button in _buttons)
             {
                 _buttonDict.Add(button.GetLevel(), button);
 

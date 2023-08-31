@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Cheese
   m_EditorClassIdentifier: 
   itemIcon: {fileID: 21300000, guid: ea480840acdf442f5bf1e6c7f80bcd37, type: 3}
+  additionalVerticalOffsetImage: 0
   title:
     m_TableReference:
       m_TableCollectionName: GUID:aa3b4b8ed5b8d438b8ccce49f6bf498d
@@ -22,9 +23,11 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  additionalVerticalOffsetTitle: 0
   defaultName: Cheese
   tags:
   - {fileID: 11400000, guid: 3a6492b9e59f9425fb41d1d727a5915d, type: 2}
+  - {fileID: 11400000, guid: db2c219d8895943f2ac82c8ba037688b, type: 2}
   references:
     version: 2
     RefIds: []

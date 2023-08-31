@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scrollSpeedX: -0.05
   scrollSpeedY: 0.05
-  backgroundMaterial: {fileID: 2100000, guid: 9cda78ce92fa7406fabfa7920ac66668, type: 2}
+  backgroundMaterial: {fileID: 2100000, guid: bed9ce7a5c7d74ff89ef363b53619fb1, type: 2}
 --- !u!33 &1429286836789827545
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -79,7 +79,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9cda78ce92fa7406fabfa7920ac66668, type: 2}
+  - {fileID: 2100000, guid: bed9ce7a5c7d74ff89ef363b53619fb1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

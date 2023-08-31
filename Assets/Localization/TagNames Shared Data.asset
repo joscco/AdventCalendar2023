@@ -23,6 +23,10 @@ MonoBehaviour:
     m_Key: yellow_tag
     m_Metadata:
       m_Items: []
+  - m_Id: 5766005358845952
+    m_Key: red_tag
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

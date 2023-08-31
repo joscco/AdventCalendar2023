@@ -80,6 +80,15 @@ MonoBehaviour:
     m_Localized: "joscco pr\xE4sentiert"
     m_Metadata:
       m_Items: []
+  - m_Id: 10966394169450496
+    m_Localized: Das ist ein Stern. Dein Ziel in jedem Level ist es, diesen Stern
+      zu erreichen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10966413211590656
+    m_Localized: "Springe auf ihn, um das Level abzuschlie\xDFen."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

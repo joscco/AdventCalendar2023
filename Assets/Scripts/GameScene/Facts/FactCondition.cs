@@ -3,7 +3,7 @@ using System;
 namespace GameScene.Facts
 {
     [Serializable]
-    public struct FactCondition
+    public class FactCondition
     {
         public FactCondition(FactId id, DialogFactOperator op, int value)
         {

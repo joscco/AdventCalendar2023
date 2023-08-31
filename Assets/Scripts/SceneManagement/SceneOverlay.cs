@@ -1,17 +1,19 @@
-using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using GameScene.Grid.Entities.ItemInteraction.Logic.Properties;
+using SceneManagement;
 using UnityEngine;
 
 public class SceneOverlay : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer chessBoardFieldDarkPrefab;
-    [SerializeField] private SpriteRenderer chessBoardFieldLightPrefab;
+    [SerializeField] private List<InteractableItemType> words;
+    [SerializeField] private SceneOverlayTile wordTilePrefab;
     [SerializeField] private int screenWidth = 1920;
     [SerializeField] private int screenHeight = 1080;
 
-    private SpriteRenderer[,] _fields;
+    private SceneOverlayTile[,] _fields;
     private Sequence _fieldScaleTween;
     private int _numberOfRows;
     private int _numberOfColumns;
@@ -20,23 +22,25 @@ public class SceneOverlay : MonoBehaviour
 
     private void Start()
     {
-        var chessBoardTexture = chessBoardFieldDarkPrefab.sprite.texture;
-        _chessBoardFieldHeight = chessBoardTexture.height;
-        _chessBoardFieldWidth = chessBoardTexture.width;
+        var chessBoardTexture = wordTilePrefab.baseRenderer.sprite.texture;
+        _chessBoardFieldHeight = chessBoardTexture.height - 10;
+        _chessBoardFieldWidth = chessBoardTexture.width - 10;
         _numberOfColumns = screenWidth / _chessBoardFieldWidth + 1;
         _numberOfRows = screenHeight / _chessBoardFieldHeight + 1;
-        _fields = new SpriteRenderer[_numberOfRows, _numberOfColumns];
+        _fields = new SceneOverlayTile[_numberOfRows, _numberOfColumns];
 
         for (int row = 0; row < _numberOfRows; row++)
         {
             for (int col = 0; col < _numberOfColumns; col++)
             {
-                var isEven = (row + col) % 2 == 0;
                 var newField = Instantiate(
-                    isEven ? chessBoardFieldDarkPrefab : chessBoardFieldLightPrefab,
+                    wordTilePrefab,
                     transform
                 );
-                newField.color = new Color(1, 1, 1, 0);
+                
+                newField.baseRenderer.color = new Color(1, 1, 1, 0);
+                var randomIndex = Random.Range(0, words.Count);
+                newField.iconRenderer.sprite = words[randomIndex].itemIcon;
 
                 var newFieldTransform = newField.transform;
                 newFieldTransform.position = GetPositionForIndex(row, col) + 30 * Vector2.up;
@@ -86,6 +90,7 @@ public class SceneOverlay : MonoBehaviour
     private TweenerCore<Color, Color, ColorOptions> FadeField(float opacity, int row, int col)
     {
         return _fields[row, col]
+            .baseRenderer
             .DOFade(opacity, 0.5f)
             .SetEase(Ease.InOutExpo);
     }

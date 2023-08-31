@@ -45,14 +45,14 @@ namespace GameScene.Options
             languageGroup.changeValue += (value) =>
             {
                 LocalizationSettings.SelectedLocale = value == 0 ? englishLocale : germanLocale;
-                Game.instance.SavePreferredLanguage(value == 0 ? Game.LanguageIdentifier.EN : Game.LanguageIdentifier.DE);
+                Game.instance.SavePreferredLanguage(value == 0 ? Game.LanguageIdentifier.En : Game.LanguageIdentifier.De);
             };
             musicVolumeGroup.changeValue += (value) => AudioManager.instance.SetMusicVolume(value * 1f / 9);
             soundEffectVolumeGroup.changeValue += (value) => AudioManager.instance.SetSFXVolume(value * 1f / 9);
 
             var startMusicVol = Mathf.RoundToInt(Game.instance.GetMusicVolume() * 9);
-            var startSfxVol = Mathf.RoundToInt(Game.instance.GetSFXVolume() * 9);
-            var startLanguage = Game.instance.GetPreferredLanguage() == Game.LanguageIdentifier.EN ? 0 : 1;
+            var startSfxVol = Mathf.RoundToInt(Game.GetSfxVolume() * 9);
+            var startLanguage = Game.instance.GetPreferredLanguage() == Game.LanguageIdentifier.En ? 0 : 1;
 
             musicVolumeGroup.SetValue(startMusicVol);
             soundEffectVolumeGroup.SetValue(startSfxVol);

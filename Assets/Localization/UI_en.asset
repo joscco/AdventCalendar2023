@@ -63,7 +63,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6156751618433024
-    m_Localized: Pick up the word from the right and drop it onto the color area.
+    m_Localized: Pick up the word from the left and drop it onto the color area.
     m_Metadata:
       m_Items: []
   - m_Id: 6160484691599360
@@ -71,12 +71,20 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6160648546279424
-    m_Localized: Some areas only allow certain categories of words.  Can you find
+    m_Localized: Some areas only allow certain categories of words. Can you find
       a match for this "fruity" area?
     m_Metadata:
       m_Items: []
   - m_Id: 6867982218158080
     m_Localized: joscco presents
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10966394169450496
+    m_Localized: This is a star. Your goal in each level is to reach this star.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10966413211590656
+    m_Localized: Jump on it to complete the level.
     m_Metadata:
       m_Items: []
   references:

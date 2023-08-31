@@ -29,7 +29,7 @@ namespace GameScene.Grid.Entities.Obstacles
             this._checkers = checkers;
         }
 
-        public void Check(Dictionary<Vector2Int, InteractableItem> itemMap, Vector2Int playerIndex)
+        public void Check(Dictionary<Vector2Int, WordTile> itemMap, Vector2Int playerIndex)
         {
             if (!_wasSolved)
             {
@@ -59,7 +59,7 @@ namespace GameScene.Grid.Entities.Obstacles
             });
         }
 
-        private void UncheckAllMyItems(Dictionary<Vector2Int, InteractableItem> itemMap)
+        private void UncheckAllMyItems(Dictionary<Vector2Int, WordTile> itemMap)
         {
             foreach (var checkerIndex in _checkers.Select(checker => checker.GetMainIndex()))
             { 

@@ -97,3 +97,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf45f883ef584872b1c71a2269469439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flowerPrefab: {fileID: 4324584090814744813, guid: 616591360dd684b57b8b1f52bcd1bcfd, type: 3}

@@ -75,6 +75,14 @@ MonoBehaviour:
     m_Key: josccoPresents
     m_Metadata:
       m_Items: []
+  - m_Id: 10966394169450496
+    m_Key: starHintUp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10966413211590656
+    m_Key: StarHintDown
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

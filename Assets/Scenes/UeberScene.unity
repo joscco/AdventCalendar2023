@@ -2785,8 +2785,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e32dea7339a74491ababe851059953a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chessBoardFieldDarkPrefab: {fileID: 1214695450849076151, guid: fabbe3dce130940a98675eeafbc7f76d, type: 3}
-  chessBoardFieldLightPrefab: {fileID: 451955774374480727, guid: 55879e4eaed96492e97e823bd7679923, type: 3}
+  words:
+  - {fileID: 11400000, guid: af51f58098d2f47458b4e93d60646a6f, type: 2}
+  - {fileID: 11400000, guid: bf508bdce4d8543b0a68d1742729e989, type: 2}
+  - {fileID: 11400000, guid: 1aa450120ab204154a630dee99649aae, type: 2}
+  - {fileID: 11400000, guid: afa5f69fb186c4592b2f3befaed21328, type: 2}
+  - {fileID: 11400000, guid: 42914ddbe033e4362b94f1261da5569b, type: 2}
+  - {fileID: 11400000, guid: 9f7298887c01f4a2f8ff4385ff4f6c1f, type: 2}
+  - {fileID: 11400000, guid: fbb98e63ac29041b1a8dcdf46b3e0d99, type: 2}
+  - {fileID: 11400000, guid: 91a6d2f2404c24a27b7543cbd9fddd24, type: 2}
+  - {fileID: 11400000, guid: 3ef539cb593614234a505b48324a0ec3, type: 2}
+  - {fileID: 11400000, guid: 6e365ebf2e7024d8fba22ea6b4cf6f31, type: 2}
+  - {fileID: 11400000, guid: 9103952c1051a4bba8a35f15d420459e, type: 2}
+  - {fileID: 11400000, guid: f7339de830d124ae68d22ab58fcd2125, type: 2}
+  - {fileID: 11400000, guid: 65ac26852770e4095961ab3fbf4f426e, type: 2}
+  - {fileID: 11400000, guid: b8dc981daf2614c7d8f7fe1cff7e6eae, type: 2}
+  - {fileID: 11400000, guid: 4b518d44841c04f729e3bd09ee169d3c, type: 2}
+  - {fileID: 11400000, guid: 8d6114488fb4c4a08b86504df3b20d99, type: 2}
+  - {fileID: 11400000, guid: c3d17fd08da8047f3994f602c0906f97, type: 2}
+  - {fileID: 11400000, guid: b54b52efd8829475294451490fe60960, type: 2}
+  - {fileID: 11400000, guid: 0c1b181619af8478f848a6dbef6913e0, type: 2}
+  - {fileID: 11400000, guid: ad6b75328308643ddb86c5459a90d24a, type: 2}
+  - {fileID: 11400000, guid: e2a7bf8b57d974d06bb77e510a321829, type: 2}
+  - {fileID: 11400000, guid: 361e9f83285fd40aa8c31078c7532e28, type: 2}
+  - {fileID: 11400000, guid: e8b7e3074a7ef4647b397abecbc62a9a, type: 2}
+  - {fileID: 11400000, guid: da479ed1925b54e0b9370369a5bbd4e3, type: 2}
+  - {fileID: 11400000, guid: a338b0808fc0943a0aececc3548860eb, type: 2}
+  - {fileID: 11400000, guid: df6be6d32fc984b3a985e0abc421c24f, type: 2}
+  - {fileID: 11400000, guid: 5d38b0c90f4ef41e6a5c47247824a0d1, type: 2}
+  - {fileID: 11400000, guid: b4e3f4c17320c4441aa69023d49c57b3, type: 2}
+  - {fileID: 11400000, guid: 7d38349c77df742b986e1eaa7c3696d2, type: 2}
+  - {fileID: 11400000, guid: 3a45063cf8c6a40e4ab6ae8cefc404d6, type: 2}
+  - {fileID: 11400000, guid: e84b1dd8ebfc14d65a516fdd92bea17a, type: 2}
+  - {fileID: 11400000, guid: 1723552072c7c4b06accb57231936eef, type: 2}
+  - {fileID: 11400000, guid: 976238981c1084d9fa25248f773abe2f, type: 2}
+  - {fileID: 11400000, guid: 7567ea2ec06344a2aab6ca0b3e2cc418, type: 2}
+  - {fileID: 11400000, guid: 4eb2377f6131f4069a69607db456dca0, type: 2}
+  - {fileID: 11400000, guid: dc0eae4dbe6e04c24a909715f5f10e80, type: 2}
+  - {fileID: 11400000, guid: 83e0f1c3793354987b88f6a501363ed6, type: 2}
+  - {fileID: 11400000, guid: 258c12675aaa747409ee59c52141188b, type: 2}
+  - {fileID: 11400000, guid: 4476af794d3b7490299be9ed1fe2d701, type: 2}
+  - {fileID: 11400000, guid: 732540afc7d5b42978849e0f89ba7245, type: 2}
+  wordTilePrefab: {fileID: 242807352951304162, guid: 108ea66efcb0b4618be35ec93f85c055, type: 3}
   screenWidth: 1920
   screenHeight: 1080
 --- !u!210 &1086889226
