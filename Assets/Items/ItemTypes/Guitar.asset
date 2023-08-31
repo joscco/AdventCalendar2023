@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Guitar
   m_EditorClassIdentifier: 
   itemIcon: {fileID: 21300000, guid: 21a79e1b9877648ec843c6d87c6c58b2, type: 3}
-  additionalVerticalOffsetImage: 0
+  additionalOffsetImage: {x: 15, y: 0}
   title:
     m_TableReference:
       m_TableCollectionName: GUID:aa3b4b8ed5b8d438b8ccce49f6bf498d
@@ -23,7 +23,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  additionalVerticalOffsetTitle: 0
+  additionalOffsetTitle: {x: 0, y: 0}
   defaultName: Guitar
   tags:
   - {fileID: 11400000, guid: 1ccaca75b38d946d283232e319e34e13, type: 2}

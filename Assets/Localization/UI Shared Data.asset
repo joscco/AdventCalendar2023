@@ -83,6 +83,14 @@ MonoBehaviour:
     m_Key: StarHintDown
     m_Metadata:
       m_Items: []
+  - m_Id: 10999101071024128
+    m_Key: MoreThanOneWordHint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11006546451357696
+    m_Key: MoreThanOneCategoryHint
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

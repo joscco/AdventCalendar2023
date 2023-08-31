@@ -10,25 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e3863d512e74980bff208c95303fb50, type: 3}
-  m_Name: Bug
+  m_Name: Strawberry
   m_EditorClassIdentifier: 
-  itemIcon: {fileID: 21300000, guid: e597cccb9de3243e18c5e0a1d1df316e, type: 3}
-  additionalOffsetImage: {x: 0, y: 0}
+  itemIcon: {fileID: 21300000, guid: a519aabe85e1741a7ac4ebadf283aec6, type: 3}
+  additionalOffsetImage: {x: 0, y: 13}
   title:
     m_TableReference:
       m_TableCollectionName: GUID:aa3b4b8ed5b8d438b8ccce49f6bf498d
     m_TableEntryReference:
-      m_KeyId: 4370565493153792
+      m_KeyId: 6527191637549056
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  additionalOffsetTitle: {x: 0, y: 0}
-  defaultName: Bug
+  additionalOffsetTitle: {x: 0, y: 7}
+  defaultName: 'Straw
+
+    berry'
   tags:
-  - {fileID: 11400000, guid: be0b24aeca7f14c659f5cd0c9ac7bdbf, type: 2}
-  - {fileID: 11400000, guid: 1095436df191f4211937c56362a3ba5b, type: 2}
-  - {fileID: 11400000, guid: 6ed0939bf991e4eaea703cd6e2379b20, type: 2}
+  - {fileID: 11400000, guid: 7fccfb6f1b896414586e333ce6c26112, type: 2}
+  - {fileID: 11400000, guid: 3dc21766adc4e4f6fba07ef38b733ba8, type: 2}
   references:
     version: 2
     RefIds: []

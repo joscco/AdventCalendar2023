@@ -8,9 +8,10 @@ namespace GameScene.Grid.Entities.ItemInteraction.Logic.Properties
     public class InteractableItemType : ScriptableObject
     {
         public Sprite itemIcon;
-        public float additionalVerticalOffsetImage;
+        public Vector2 additionalOffsetImage;
         public LocalizedString title;
-        public float additionalVerticalOffsetTitle;
+        public Vector2 additionalOffsetTitle;
+        [TextArea(3, 10)]
         public string defaultName;
         public List<InteractableItemTag> tags;
     }

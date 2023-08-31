@@ -9,7 +9,7 @@ namespace GameScene
     
         public static Game instance;
         private int _unlockedLevels = 1;
-        public const int AvailableLevels = 2;
+        public const int AvailableLevels = 3;
     
         void Start()
         {

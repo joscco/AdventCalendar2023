@@ -87,6 +87,16 @@ MonoBehaviour:
     m_Localized: Jump on it to complete the level.
     m_Metadata:
       m_Items: []
+  - m_Id: 10999101071024128
+    m_Localized: Bigger color areas need more than one word of a certain category
+      to be completed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11006546451357696
+    m_Localized: Color fields can also overlap. In this case, the words on the intersection
+      must fit several categories.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

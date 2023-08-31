@@ -89,6 +89,16 @@ MonoBehaviour:
     m_Localized: "Springe auf ihn, um das Level abzuschlie\xDFen."
     m_Metadata:
       m_Items: []
+  - m_Id: 10999101071024128
+    m_Localized: "Gr\xF6\xDFere Farbfelder brauchen mehr als ein Wort einer Kategorie,
+      um vervollst\xE4ndigt zu werden."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11006546451357696
+    m_Localized: "Farbfelder k\xF6nnen sich auch \xFCberschneiden. In diesem Fall
+      m\xFCssen die W\xF6rter auf den Schnittmengen zu mehreren Kategorien geh\xF6ren."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -14,6 +14,9 @@ namespace GameScene.Grid.Entities.ItemInteraction
         public static readonly int ItemHeight = 20;
         public static readonly int ItemJumpHeight = 40;
 
+        public static readonly Vector2 defaultOffsetText = new Vector2(0, -50);
+        public static readonly Vector2 defaultOffsetIcon = new Vector2(0, 0);
+
         [SerializeField] private bool interactable = true;
         [SerializeField] private InteractableItemType type;
         [SerializeField] private SpriteRenderer iconRenderer;
@@ -31,6 +34,8 @@ namespace GameScene.Grid.Entities.ItemInteraction
             }
             
             iconRenderer.sprite = type.itemIcon;
+            iconRenderer.transform.localPosition = defaultOffsetIcon + type.additionalOffsetImage;
+            nameRenderer.transform.localPosition = defaultOffsetText + type.additionalOffsetTitle;
             UpdateName();
             LocalizationSettings.SelectedLocaleChanged += (_) => UpdateName();
         }
@@ -39,6 +44,8 @@ namespace GameScene.Grid.Entities.ItemInteraction
         {
             iconRenderer.sprite = type.itemIcon;
             nameRenderer.text = type.defaultName;
+            iconRenderer.transform.localPosition = defaultOffsetIcon + type.additionalOffsetImage;
+            nameRenderer.transform.localPosition = defaultOffsetText + type.additionalOffsetTitle;
         }
         
         private void EmitParticles()

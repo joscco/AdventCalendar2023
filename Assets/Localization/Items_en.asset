@@ -184,6 +184,16 @@ MonoBehaviour:
     m_Localized: Soap
     m_Metadata:
       m_Items: []
+  - m_Id: 6527191637549056
+    m_Localized: 'Straw
+
+      berry'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6527259983732736
+    m_Localized: Brick
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
